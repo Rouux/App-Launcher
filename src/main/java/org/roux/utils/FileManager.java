@@ -1,4 +1,4 @@
-package org.roux;
+package org.roux.utils;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;

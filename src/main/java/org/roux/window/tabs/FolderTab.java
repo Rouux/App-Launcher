@@ -12,7 +12,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
-import org.roux.FileManager;
+import org.roux.utils.FileManager;
 import org.roux.window.MainWindow;
 
 import java.io.File;

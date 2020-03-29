@@ -16,7 +16,7 @@ import javafx.stage.StageStyle;
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.JMetroStyleClass;
 import jfxtras.styles.jmetro.Style;
-import org.roux.FileManager;
+import org.roux.utils.FileManager;
 import org.roux.game.Game;
 import org.roux.game.GameLibrary;
 import org.roux.utils.AutoCompleteTextField;

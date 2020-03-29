@@ -5,7 +5,6 @@ import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
-import org.roux.FileManager;
 import org.roux.game.GameLibrary;
 import org.roux.window.MainWindow;
 

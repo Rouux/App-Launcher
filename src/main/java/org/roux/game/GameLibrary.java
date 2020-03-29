@@ -2,7 +2,7 @@ package org.roux.game;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.roux.FileManager;
+import org.roux.utils.FileManager;
 
 import java.nio.file.Path;
 import java.util.*;
