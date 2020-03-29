@@ -16,7 +16,10 @@ import org.roux.game.Game;
 import org.roux.game.GameLibrary;
 import org.roux.window.EditKeywordsWindow;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.roux.utils.Utils.makeTextButton;
 import static org.roux.utils.Utils.makeVerticalSeparator;
@@ -29,6 +32,8 @@ public class GameTab extends CustomTab {
     private TableView<Game> gameView;
     private HBox gameViewButtons;
 
+    private final Map<Game, List<String>> gameToKeywords = new HashMap<>();
+
     public GameTab(Stage sourceWindow, String name, Button confirmButton, Button cancelButton,
                    GameLibrary gameLibrary) {
         super(sourceWindow, name, confirmButton, cancelButton);
@@ -39,9 +44,12 @@ public class GameTab extends CustomTab {
         this.gameViewButtons = buildGameViewButtons();
 
         confirmButton.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+            gameToKeywords.forEach(Game::setKeywords);
+            gameToKeywords.clear();
         });
 
         cancelButton.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+            gameToKeywords.clear();
         });
 
         VBox root = new VBox(gameView, gameViewButtons);
@@ -71,7 +79,13 @@ public class GameTab extends CustomTab {
         Button edit = makeTextButton("Edit keywords...", event -> {
             List<Game> games = this.gameView.getSelectionModel().getSelectedItems();
             if(games != null && !games.isEmpty()) {
-                this.editKeywordsWindow.edit(games.get(0));
+                Game game = games.get(0);
+                // Conserve tous les mots affichés dans l'edit de keywords
+                if(this.gameToKeywords.get(game) == null) {
+                    List<String> list = new ArrayList<>(game.getKeywords());
+                    this.gameToKeywords.put(game, list);
+                }
+                this.editKeywordsWindow.edit(game.getName(), this.gameToKeywords.get(game));
             }
         });
         Button ban = makeTextButton("Ban application", event -> {

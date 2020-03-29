@@ -5,6 +5,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class Game {
 
@@ -14,9 +15,15 @@ public class Game {
 
     public Game() {}
 
+    private static String beautifyName(String name) {
+        return name.replaceAll("([0-9a-z])([A-Z])", "$1 $2")
+                .replaceAll("([0-9])([a-zA-Z])", "$1 $2")
+                .replaceAll("_", " ");
+    }
+
     public Game(Path path, String name, String... keywords) {
         this.executablePath = path;
-        this.name = name;
+        this.name = Game.beautifyName(name);
         this.keywords = new ArrayList<>();
         if(keywords != null && keywords.length > 0) {
             this.keywords.addAll(Arrays.asList(keywords));
@@ -29,10 +36,7 @@ public class Game {
 
     public Game(Path path) {
         this(path, computeName(path));
-    }
-
-    public Game(String path) {
-        this(Paths.get(path));
+        System.out.println();
     }
 
     public static String computeName(Path path) {
@@ -53,6 +57,19 @@ public class Game {
 
     public void setKeywords(List<String> keywords) {
         this.keywords = keywords;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if(this == o) return true;
+        if(o == null || getClass() != o.getClass()) return false;
+        Game game = (Game) o;
+        return executablePath.equals(game.executablePath) && name.equals(game.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(executablePath, name);
     }
 
     @Override

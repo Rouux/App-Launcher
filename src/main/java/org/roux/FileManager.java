@@ -14,6 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class FileManager {
@@ -61,16 +62,30 @@ public class FileManager {
         }
     }
 
-    public static List<Path> getFilesInFolders() {
-        final List<Path> files = new ArrayList<>();
+    public static Map<String, List<Path>> getFilesInFolders(Predicate<Path> pathPredicate) {
+        final Map<String, List<Path>> files = new HashMap<>();
         getFolders().forEach(folderName -> {
             try {
-                if(Paths.get(folderName).toFile().exists()) {
-                    List<Path> list = Files.walk(Paths.get(folderName))
-                            .filter(path -> path.toFile().isFile())
-                            .filter(path -> !banned.contains(path.getFileName().toString()))
-                            .collect(Collectors.toList());
-                    files.addAll(list);
+                Path folderPath = Paths.get(folderName);
+                if(folderPath.toFile().exists()) {
+                    if(folderPath.toFile().isFile()) {
+                        String name = folderPath.getFileName().toString();
+                        files.computeIfAbsent(name, k -> new ArrayList<>());
+                        files.get(name).add(folderPath);
+                    } else {
+                        int index = folderPath.getNameCount();
+                        List<Path> list = Files.walk(folderPath)
+                                .filter(path -> path.toFile().isFile())
+                                .filter(path -> path.toFile().canExecute())
+                                .filter(path -> !banned.contains(path.getFileName().toString()))
+                                .filter(pathPredicate)
+                                .collect(Collectors.toList());
+                        for(Path p : list) {
+                            String name = p.getName(index).toString();
+                            files.computeIfAbsent(name, k -> new ArrayList<>());
+                            files.get(name).add(p);
+                        }
+                    }
                 }
             } catch(IOException e) {
                 e.printStackTrace();

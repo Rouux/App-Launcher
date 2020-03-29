@@ -10,6 +10,10 @@ import java.util.stream.Collectors;
 
 public class GameLibrary {
 
+    private static final String[] ACCEPTABLE_EXTENSIONS = {
+            ".exe", ".url", ".jar", "lnk"
+    };
+
     private final List<Game> library = new ArrayList<>();
 
     public GameLibrary() {
@@ -25,13 +29,33 @@ public class GameLibrary {
         }
     }
 
+    public Map<String, Path> gatherExecutables() {
+        Map<String, List<Path>> files = FileManager.getFilesInFolders(path -> {
+            String filename = path.getFileName().toString();
+            for(String extension : ACCEPTABLE_EXTENSIONS) {
+                if(filename.endsWith(extension)) return true;
+            }
+            return false;
+        });
+        Map<String, Path> results = new HashMap<>();
+        for(Map.Entry<String, List<Path>> entry : files.entrySet()) {
+            entry.getValue().stream()
+                    .filter(path -> !path.getFileName().toString().contains("redist"))
+                    .filter(path -> !path.getFileName().toString().contains("dxsetup"))
+                    .filter(path -> !path.toString().contains("Steamworks Shared"))
+                    .filter(path -> !path.toString().contains("Resources"))
+                    .findFirst()
+                    .ifPresent(singlePath -> results.put(entry.getKey(), singlePath));
+        }
+        return results;
+    }
+
     public List<Game> scan() {
         final Map<String, JSONObject> oldJsonGames = getJsonGames();
         final List<Game> newGames = new ArrayList<>();
-        List<Path> files = FileManager.getFilesInFolders();
-        filterToKeepGames(files);
-        for(Path path : files) {
-            Game game = new Game(path);
+        Map<String, Path> executables = gatherExecutables();
+        for(Map.Entry<String, Path> entry : executables.entrySet()) {
+            Game game = new Game(entry.getValue(), entry.getKey());
             JSONObject oldGame;
             if(oldJsonGames != null && (oldGame = oldJsonGames.get(game.getName())) != null) {
                 game.getKeywords().addAll(((JSONArray) oldGame.get("keywords")));
@@ -62,11 +86,6 @@ public class GameLibrary {
                         .collect(Collectors.toList())
         );
         return filteredEntries;
-    }
-
-    private List<Path> filterToKeepGames(List<Path> files) {
-        // @todo filtrer en fait lol
-        return files;
     }
 
     public Map<String, JSONObject> getJsonGames() {
