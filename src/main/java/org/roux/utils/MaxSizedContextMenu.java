@@ -10,7 +10,7 @@ public class MaxSizedContextMenu extends ContextMenu {
     public MaxSizedContextMenu() {
         addEventHandler(Menu.ON_SHOWING, e -> {
             Node content = getSkin().getNode();
-            if (content instanceof Region) {
+            if(content instanceof Region) {
                 ((Region) content).setMinWidth(getMinWidth());
             }
         });

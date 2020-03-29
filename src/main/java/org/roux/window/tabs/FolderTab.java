@@ -7,8 +7,9 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
-import javafx.scene.control.Tab;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import org.roux.FileManager;
@@ -21,22 +22,36 @@ import java.util.List;
 import static org.roux.utils.Utils.makeGraphicButton;
 import static org.roux.utils.Utils.makeVerticalSeparator;
 
-public class FolderTab extends Tab {
+public class FolderTab extends CustomTab {
 
     private final ObservableList<String> folders = FXCollections.observableList(new ArrayList<>());
     private final List<String> foldersLastUpdate = new ArrayList<>();
     private final DirectoryChooser directoryChooser;
 
-    private final Stage sourceWindow;
-
     private ListView<String> folderView;
     private HBox folderViewButtons;
 
-    public FolderTab(Stage sourceWindow) {
-        this.sourceWindow = sourceWindow;
+    public FolderTab(Stage sourceWindow, String name, Button confirmButton, Button cancelButton) {
+        super(sourceWindow, name, confirmButton, cancelButton);
         this.directoryChooser = new DirectoryChooser();
         this.folderView = buildFolderView();
         this.folderViewButtons = buildFolderViewButtons();
+
+        confirmButton.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+            FileManager.updateFolders(this.folders);
+            this.foldersLastUpdate.clear();
+            this.foldersLastUpdate.addAll(this.folders);
+        });
+
+        cancelButton.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+            this.folders.setAll(this.foldersLastUpdate);
+            this.foldersLastUpdate.clear();
+        });
+
+        VBox root = new VBox(folderView, folderViewButtons);
+        root.setAlignment(Pos.CENTER);
+        root.setSpacing(5);
+        setContent(root);
     }
 
     public ListView<String> buildFolderView() {

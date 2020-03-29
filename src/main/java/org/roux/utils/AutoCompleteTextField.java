@@ -5,9 +5,9 @@ import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
-import org.roux.window.MainWindow;
 import org.roux.FileManager;
 import org.roux.game.GameLibrary;
+import org.roux.window.MainWindow;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -35,7 +35,7 @@ public class AutoCompleteTextField extends TextField {
         entriesPopup.setOpacity(0.9);
         textProperty().addListener((observableValue, s, s2) -> {
             if(getText().length() == 0) {
-//                entriesPopup.hide();
+                //                entriesPopup.hide();
                 entriesPopup.getItems().clear(); // CA MARCHE JE SAIS PAS POURQUOI MAIS TU TOUCHE PAS !!!!
             } else {
                 filteredEntries = gameLibrary.filter(entries, getText());

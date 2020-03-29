@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.roux.utils.Utils.*;
-import static org.roux.utils.Utils.makeTextButton;
 
 //@todo fix cette merde pas super utile de toute façon mais bon faut fix
 public class EditKeywordsWindow extends Stage {

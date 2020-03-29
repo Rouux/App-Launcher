@@ -4,6 +4,8 @@ module org.roux {
     requires json.simple;
     requires org.jfxtras.styles.jmetro;
 
-//    exports org.roux;
+    exports org.roux;
     exports org.roux.window;
+    exports org.roux.game;
+    exports org.roux.utils;
 }

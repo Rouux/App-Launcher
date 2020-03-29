@@ -14,6 +14,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import jfxtras.styles.jmetro.JMetro;
+import jfxtras.styles.jmetro.JMetroStyleClass;
 import jfxtras.styles.jmetro.Style;
 import org.roux.FileManager;
 import org.roux.game.Game;
@@ -52,13 +53,13 @@ public class MainWindow extends Application {
         this.scene = buildScene(root);
 
         JMetro jMetro = new JMetro(scene, Style.DARK);
-        jMetro.setAutomaticallyColorPanes(true);
+        this.root.getStyleClass().add(JMetroStyleClass.BACKGROUND);
 
         stage.setScene(scene);
         stage.initStyle(StageStyle.UNDECORATED);
         stage.setAlwaysOnTop(true);
         stage.focusedProperty().addListener((observableValue, node, t1) -> {
-            System.out.println("Focus changed to -> " + t1);
+            //            System.out.println("Focus changed to -> " + t1);
         });
         this.textField.requestFocus();
         stage.show();
@@ -98,12 +99,11 @@ public class MainWindow extends Application {
     public Parent buildRoot() {
         this.textField = makeField();
         this.updateButton = makeGraphicButton("update-icon.png", MainWindow.BUTTON_SIZE, event -> {
-            System.out.println("Scanning...");
             this.scan();
+            System.out.println("Scanning done");
             event.consume();
         });
         this.optionButton = makeGraphicButton("option-icon.png", MainWindow.BUTTON_SIZE, event -> {
-            System.out.println("Option -> open");
             if(this.optionWindow == null)
                 this.optionWindow = new OptionWindow(stage, gameLibrary);
             this.optionWindow.show();
