@@ -58,7 +58,7 @@ public class GameTab extends CustomTab {
         VBox root = new VBox(gameView, gameViewButtons);
         root.setAlignment(Pos.CENTER);
         root.setSpacing(5);
-        setContent(root);
+        setRoot(sourceWindow, root);
     }
 
     public TableView<Game> buildGameView() {

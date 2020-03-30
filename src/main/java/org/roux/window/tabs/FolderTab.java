@@ -67,7 +67,7 @@ public class FolderTab extends CustomTab {
         VBox root = new VBox(folderView, folderViewButtons, fileView, fileViewButtons);
         root.setAlignment(Pos.CENTER);
         root.setSpacing(5);
-        setContent(root);
+        setRoot(sourceWindow, root);
     }
 
     public ListView<String> buildFolderView() {

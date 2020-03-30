@@ -1,12 +1,16 @@
 package org.roux.window.tabs;
 
 import javafx.event.EventHandler;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
 public abstract class CustomTab extends Tab {
+
+    private double xOffset = 0;
+    private double yOffset = 0;
 
     protected final Stage sourceWindow;
     private final Button confirmButton;
@@ -18,6 +22,18 @@ public abstract class CustomTab extends Tab {
         this.confirmButton = confirmButton;
         this.cancelButton = cancelButton;
         setClosable(false);
+    }
+
+    public void setRoot(Stage source, Parent root) {
+        root.setOnMousePressed(event -> {
+            xOffset = source.getX() - event.getScreenX();
+            yOffset = source.getY() - event.getScreenY();
+        });
+        root.setOnMouseDragged(event -> {
+            source.setX(event.getScreenX() + xOffset);
+            source.setY(event.getScreenY() + yOffset);
+        });
+        this.setContent(root);
     }
 
     protected void addConfirmButtonEvent(EventHandler<MouseEvent> event) {

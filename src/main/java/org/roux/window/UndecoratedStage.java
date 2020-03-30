@@ -13,19 +13,21 @@ public abstract class UndecoratedStage extends Stage {
     private double xOffset = 0;
     private double yOffset = 0;
 
+    protected Scene scene;
+
     public UndecoratedStage() {
         this.initStyle(StageStyle.UNDECORATED);
     }
 
     public void setRoot(Parent root) {
-        Scene scene = new Scene(root);
+        this.scene = new Scene(root);
         JMetro jMetro = new JMetro(scene, Style.DARK);
 
-        scene.setOnMousePressed(event -> {
+        root.setOnMousePressed(event -> {
             xOffset = UndecoratedStage.this.getX() - event.getScreenX();
             yOffset = UndecoratedStage.this.getY() - event.getScreenY();
         });
-        scene.setOnMouseDragged(event -> {
+        root.setOnMouseDragged(event -> {
             UndecoratedStage.this.setX(event.getScreenX() + xOffset);
             UndecoratedStage.this.setY(event.getScreenY() + yOffset);
         });

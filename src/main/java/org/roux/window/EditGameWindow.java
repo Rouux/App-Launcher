@@ -9,7 +9,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import jfxtras.styles.jmetro.JMetroStyleClass;
 import org.roux.game.Game;
 
 import java.util.List;

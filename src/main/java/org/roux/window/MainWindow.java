@@ -1,26 +1,18 @@
 package org.roux.window;
 
-import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
-import jfxtras.styles.jmetro.JMetro;
-import jfxtras.styles.jmetro.JMetroStyleClass;
-import jfxtras.styles.jmetro.Style;
 import org.roux.game.Game;
 import org.roux.game.GameLibrary;
 import org.roux.utils.AutoCompleteTextField;
-import org.roux.utils.FileManager;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -29,48 +21,38 @@ import java.util.stream.Collectors;
 import static org.roux.utils.Utils.makeGraphicButton;
 import static org.roux.utils.Utils.makeVerticalSeparator;
 
-public class MainWindow extends Application {
+public class MainWindow extends UndecoratedStage {
 
     public static final int APP_HEIGHT = 24;
     public static final int FIELD_WIDTH = 260;
     public static final int BUTTON_SIZE = APP_HEIGHT;
 
-    private final GameLibrary gameLibrary = new GameLibrary();
+    private final GameLibrary gameLibrary;
 
-    private Stage stage;
     private OptionWindow optionWindow;
-    private Scene scene;
     private Parent root;
 
     private Button updateButton;
     private AutoCompleteTextField textField;
     private Button optionButton;
 
-    @Override
-    public void start(Stage stage) {
-        this.stage = stage;
+    public MainWindow(GameLibrary gameLibrary) {
+        this.gameLibrary = gameLibrary;
         this.root = buildRoot();
-        this.scene = buildScene(root);
 
-        JMetro jMetro = new JMetro(scene, Style.DARK);
-        this.root.getStyleClass().add(JMetroStyleClass.BACKGROUND);
-        this.root.setStyle("-fx-border-color: #060606;");
-
-        stage.setScene(scene);
-        stage.initStyle(StageStyle.UNDECORATED);
-        stage.setAlwaysOnTop(true);
-        stage.focusedProperty().addListener((observableValue, node, t1) -> {
+        this.setRoot(this.root);
+        this.scene.setFill(Color.TRANSPARENT);
+        this.scene.setOnKeyPressed(ke -> {
+            if(ke.getCode() == KeyCode.ESCAPE) {
+                this.close();
+                Platform.exit();
+            }
+        });
+        this.setAlwaysOnTop(true);
+        this.focusedProperty().addListener((observableValue, node, t1) -> {
             //            System.out.println("Focus changed to -> " + t1);
         });
-        stage.setOnShowing(event -> this.textField.requestFocus());
-        stage.show();
-    }
-
-    @Override
-    public void stop() throws Exception {
-        System.out.println("Closing....");
-        FileManager.save(this.gameLibrary);
-        super.stop();
+        this.setOnShowing(event -> this.textField.requestFocus());
     }
 
     public void launchGame(String name) {
@@ -84,7 +66,7 @@ public class MainWindow extends Application {
                 } catch(IOException e) {
                     e.printStackTrace();
                 }
-                this.stage.close();
+                this.close();
             } else {
                 // error, missing executable
             }
@@ -110,9 +92,9 @@ public class MainWindow extends Application {
         });
         this.optionButton = makeGraphicButton("option-icon.png", MainWindow.BUTTON_SIZE, event -> {
             if(this.optionWindow == null)
-                this.optionWindow = new OptionWindow(stage, gameLibrary);
+                this.optionWindow = new OptionWindow(this, gameLibrary);
             this.optionWindow.show();
-            this.stage.setOpacity(0);
+            this.setOpacity(0);
             event.consume();
         });
 
@@ -122,17 +104,6 @@ public class MainWindow extends Application {
         root.setAlignment(Pos.CENTER);
 
         return root;
-    }
-
-    public Scene buildScene(Parent root) {
-        Scene scene = new Scene(root, Color.TRANSPARENT);
-        scene.setOnKeyPressed(ke -> {
-            if(ke.getCode() == KeyCode.ESCAPE) {
-                stage.close();
-                Platform.exit();
-            }
-        });
-        return scene;
     }
 
     public AutoCompleteTextField makeField() {
@@ -146,10 +117,6 @@ public class MainWindow extends Application {
                         .collect(Collectors.toList())
         );
         return textField;
-    }
-
-    public static void main(String[] args) {
-        launch(args);
     }
 
 }
