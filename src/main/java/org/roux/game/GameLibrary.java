@@ -1,5 +1,7 @@
 package org.roux.game;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.roux.utils.FileManager;
@@ -14,7 +16,7 @@ public class GameLibrary {
             ".exe", ".url", ".jar", "lnk"
     };
 
-    private final List<Game> library = new ArrayList<>();
+    private final ObservableList<Game> library = FXCollections.observableArrayList();
 
     public GameLibrary() {
         // Check if they are games already to put in library
@@ -50,7 +52,7 @@ public class GameLibrary {
         return results;
     }
 
-    public List<Game> scan() {
+    public ObservableList<Game> scan() {
         final Map<String, JSONObject> oldJsonGames = getJsonGames();
         final List<Game> newGames = new ArrayList<>();
         Map<String, Path> executables = gatherExecutables();
@@ -62,8 +64,7 @@ public class GameLibrary {
             }
             newGames.add(game);
         }
-        library.clear();
-        library.addAll(newGames);
+        library.setAll(newGames);
         return this.library;
     }
 
@@ -126,7 +127,7 @@ public class GameLibrary {
                 .orElse(null);
     }
 
-    public List<Game> getLibrary() {
+    public ObservableList<Game> getLibrary() {
         return library;
     }
 }

@@ -1,7 +1,6 @@
 package org.roux.window.tabs;
 
 import javafx.beans.property.ReadOnlyStringWrapper;
-import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -58,7 +57,7 @@ public class GameTab extends CustomTab {
     }
 
     public TableView<Game> buildGameView() {
-        TableView<Game> games = new TableView<>(FXCollections.observableList(gameLibrary.getLibrary()));
+        TableView<Game> games = new TableView<>(gameLibrary.getLibrary());
         games.setEditable(false);
         games.setStyle("-fx-font-size: 12");
 
