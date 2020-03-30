@@ -14,6 +14,7 @@ import jfxtras.styles.jmetro.Style;
 import org.roux.game.GameLibrary;
 import org.roux.window.tabs.FolderTab;
 import org.roux.window.tabs.GameTab;
+import org.roux.window.tabs.ParameterTab;
 
 import static org.roux.utils.Utils.makeTextButton;
 
@@ -33,7 +34,8 @@ public class OptionWindow extends Stage {
 
         TabPane tabPane = new TabPane(
                 new FolderTab(this, "Folders", this.confirmButton, this.cancelButton),
-                new GameTab(this, "Games", this.confirmButton, this.cancelButton, gameLibrary)
+                new GameTab(this, "Games", this.confirmButton, this.cancelButton, gameLibrary),
+                new ParameterTab(this, "Other", this.confirmButton, this.cancelButton)
         );
 
         this.root = new VBox(tabPane, confirmOrCancelButtons);

@@ -68,15 +68,17 @@ public class GameLibrary {
     }
 
     public List<String> filter(final SortedSet<String> entries, String inputText) {
-        final List<String> filteredEntries;
-        filteredEntries = entries.stream()
-                .filter(entry -> entry.toLowerCase().startsWith(inputText.toLowerCase()))
-                .collect(Collectors.toList());
+        final List<String> filteredEntries = new ArrayList<>();
         filteredEntries.addAll(
                 library.stream()
-                        .filter(entry -> !filteredEntries.contains(entry.getName()))
                         .filter(game -> game.getKeywords().contains(inputText.toLowerCase()))
                         .map(Game::getName)
+                        .collect(Collectors.toList())
+        );
+        filteredEntries.addAll(
+                entries.stream()
+                        .filter(entry -> !filteredEntries.contains(entry))
+                        .filter(entry -> entry.toLowerCase().startsWith(inputText.toLowerCase()))
                         .collect(Collectors.toList())
         );
         filteredEntries.addAll(

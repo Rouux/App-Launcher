@@ -7,7 +7,6 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
@@ -37,13 +36,13 @@ public class FolderTab extends CustomTab {
         this.folderView = buildFolderView();
         this.folderViewButtons = buildFolderViewButtons();
 
-        confirmButton.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+        addConfirmButtonEvent(event -> {
             FileManager.updateFolders(this.folders);
             this.foldersLastUpdate.clear();
             this.foldersLastUpdate.addAll(this.folders);
         });
 
-        cancelButton.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+        addCancelButtonEvent(event -> {
             this.folders.setAll(this.foldersLastUpdate);
             this.foldersLastUpdate.clear();
         });

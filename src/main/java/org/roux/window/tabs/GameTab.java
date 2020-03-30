@@ -8,7 +8,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -43,12 +42,12 @@ public class GameTab extends CustomTab {
         this.gameView = buildGameView();
         this.gameViewButtons = buildGameViewButtons();
 
-        confirmButton.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+        addConfirmButtonEvent(event -> {
             gameToKeywords.forEach(Game::setKeywords);
             gameToKeywords.clear();
         });
 
-        cancelButton.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+        addCancelButtonEvent(event -> {
             gameToKeywords.clear();
         });
 
