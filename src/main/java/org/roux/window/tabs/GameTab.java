@@ -16,7 +16,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import org.roux.game.Game;
 import org.roux.game.GameLibrary;
-import org.roux.window.EditKeywordsWindow;
+import org.roux.window.EditGameWindow;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,7 +29,7 @@ import static org.roux.utils.Utils.makeVerticalSeparator;
 public class GameTab extends CustomTab {
 
     private final GameLibrary gameLibrary;
-    private final EditKeywordsWindow editKeywordsWindow;
+    private final EditGameWindow editGameWindow;
 
     private TableView<Game> gameView;
     private HBox gameViewButtons;
@@ -40,7 +40,7 @@ public class GameTab extends CustomTab {
                    GameLibrary gameLibrary) {
         super(sourceWindow, name, confirmButton, cancelButton);
         this.gameLibrary = gameLibrary;
-        this.editKeywordsWindow = new EditKeywordsWindow(sourceWindow);
+        this.editGameWindow = new EditGameWindow(sourceWindow);
 
         this.gameView = buildGameView();
         this.gameViewButtons = buildGameViewButtons();
@@ -69,7 +69,7 @@ public class GameTab extends CustomTab {
             TableRow<Game> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
                 if(event.getClickCount() == 2 && !row.isEmpty() && row.getItem() != null) {
-                    this.editKeywordsWindow.edit(gameView, this.gameToKeywords.get(row.getItem()));
+                    this.editGameWindow.edit(gameView, row.getItem(), this.gameToKeywords.get(row.getItem()));
                 }
             });
             return row;
@@ -125,7 +125,7 @@ public class GameTab extends CustomTab {
         Button edit = makeTextButton("Edit keywords...", event -> {
             Game game = this.gameView.getSelectionModel().getSelectedItem();
             if(game != null) {
-                this.editKeywordsWindow.edit(gameView, this.gameToKeywords.get(game));
+                this.editGameWindow.edit(gameView, game, this.gameToKeywords.get(game));
             }
         });
         Button blacklist = makeTextButton("Add to blacklist", event -> {

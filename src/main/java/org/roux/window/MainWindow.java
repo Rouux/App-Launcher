@@ -54,6 +54,7 @@ public class MainWindow extends Application {
 
         JMetro jMetro = new JMetro(scene, Style.DARK);
         this.root.getStyleClass().add(JMetroStyleClass.BACKGROUND);
+        this.root.setStyle("-fx-border-color: #060606;");
 
         stage.setScene(scene);
         stage.initStyle(StageStyle.UNDECORATED);
@@ -61,7 +62,7 @@ public class MainWindow extends Application {
         stage.focusedProperty().addListener((observableValue, node, t1) -> {
             //            System.out.println("Focus changed to -> " + t1);
         });
-        this.textField.requestFocus();
+        stage.setOnShowing(event -> this.textField.requestFocus());
         stage.show();
     }
 
@@ -127,7 +128,6 @@ public class MainWindow extends Application {
         Scene scene = new Scene(root, Color.TRANSPARENT);
         scene.setOnKeyPressed(ke -> {
             if(ke.getCode() == KeyCode.ESCAPE) {
-                System.out.println("Key Pressed: " + ke.getCode());
                 stage.close();
                 Platform.exit();
             }
@@ -149,7 +149,7 @@ public class MainWindow extends Application {
     }
 
     public static void main(String[] args) {
-        launch();
+        launch(args);
     }
 
 }
