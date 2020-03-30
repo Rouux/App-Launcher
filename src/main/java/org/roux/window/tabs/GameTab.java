@@ -1,12 +1,15 @@
 package org.roux.window.tabs;
 
 import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -43,11 +46,12 @@ public class GameTab extends CustomTab {
 
         addConfirmButtonEvent(event -> {
             gameToKeywords.forEach(Game::setKeywords);
-            gameToKeywords.clear();
+            gameView.refresh();
         });
 
         addCancelButtonEvent(event -> {
-            gameToKeywords.clear();
+            gameLibrary.getLibrary().forEach(game -> gameToKeywords.put(game, new ArrayList<>(game.getKeywords())));
+            gameView.refresh();
         });
 
         VBox root = new VBox(gameView, gameViewButtons);
@@ -67,30 +71,27 @@ public class GameTab extends CustomTab {
 
         TableColumn<Game, String> keywords = new TableColumn<>("Keywords");
         keywords.setCellFactory(TextFieldTableCell.forTableColumn());
-        keywords.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getKeywords().toString()));
+        keywords.setCellValueFactory(data -> {
+            gameToKeywords.computeIfAbsent(data.getValue(), k -> new ArrayList<>(data.getValue().getKeywords()));
+            return new SimpleStringProperty(gameToKeywords.get(data.getValue()).toString());
+        });
 
-        games.getColumns().addAll(name, keywords);
+        games.getColumns().setAll(name, keywords);
         return games;
     }
 
     public HBox buildGameViewButtons() {
         Button edit = makeTextButton("Edit keywords...", event -> {
-            List<Game> games = this.gameView.getSelectionModel().getSelectedItems();
-            if(games != null && !games.isEmpty()) {
-                Game game = games.get(0);
-                // Conserve tous les mots affichés dans l'edit de keywords
-                if(this.gameToKeywords.get(game) == null) {
-                    List<String> list = new ArrayList<>(game.getKeywords());
-                    this.gameToKeywords.put(game, list);
-                }
-                this.editKeywordsWindow.edit(game.getName(), this.gameToKeywords.get(game));
+            Game game = this.gameView.getSelectionModel().getSelectedItem();
+            if(game != null) {
+                this.editKeywordsWindow.edit(gameView, this.gameToKeywords.get(game));
             }
         });
-        Button ban = makeTextButton("Ban application", event -> {
+        Button blacklist = makeTextButton("Add to blacklist", event -> {
 
         });
 
-        HBox buttons = new HBox(edit, makeVerticalSeparator(), ban);
+        HBox buttons = new HBox(edit, makeVerticalSeparator(), blacklist);
         buttons.setAlignment(Pos.CENTER);
         buttons.setSpacing(10);
         buttons.setPadding(new Insets(10));

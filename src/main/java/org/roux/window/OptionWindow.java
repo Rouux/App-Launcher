@@ -8,6 +8,7 @@ import javafx.scene.control.TabPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.JMetroStyleClass;
 import jfxtras.styles.jmetro.Style;
@@ -52,7 +53,7 @@ public class OptionWindow extends Stage {
 
         this.setScene(this.scene);
         this.initOwner(owner);
-        this.setTitle("Options");
+        this.initStyle(StageStyle.UNDECORATED);
     }
 
     public HBox buildConfirmOrCancelButtons() {

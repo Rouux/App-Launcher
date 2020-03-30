@@ -44,7 +44,6 @@ public class FolderTab extends CustomTab {
 
         addCancelButtonEvent(event -> {
             this.folders.setAll(this.foldersLastUpdate);
-            this.foldersLastUpdate.clear();
         });
 
         VBox root = new VBox(folderView, folderViewButtons);

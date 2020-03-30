@@ -2,6 +2,7 @@ package org.roux.window;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
@@ -23,7 +24,6 @@ import org.roux.utils.FileManager;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.roux.utils.Utils.makeGraphicButton;
@@ -76,19 +76,23 @@ public class MainWindow extends Application {
         Game game = this.gameLibrary.getGame(name);
         if(game != null) {
             Path path = game.getExecutablePath();
-            try {
-                ProcessBuilder processBuilder = new ProcessBuilder("cmd", "/c", path.toString());
-                processBuilder.start();
-            } catch(IOException e) {
-                e.printStackTrace();
+            if(path.toFile().canExecute()) {
+                try {
+                    ProcessBuilder processBuilder = new ProcessBuilder("cmd", "/c", path.toString());
+                    processBuilder.start();
+                } catch(IOException e) {
+                    e.printStackTrace();
+                }
+                this.stage.close();
+            } else {
+                // error, missing executable
             }
-            this.stage.close();
         }
         //@todo On verra si on met un truc ici pour dire que y'a erreur
     }
 
     public void scan() {
-        List<Game> games = this.gameLibrary.scan();
+        ObservableList<Game> games = this.gameLibrary.scan();
         this.textField.getEntries().clear();
         this.textField.getEntries().addAll(games.stream()
                                                    .map(Game::getName)

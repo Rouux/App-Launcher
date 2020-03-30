@@ -6,12 +6,15 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
+import javafx.scene.control.TableView;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
+import org.roux.game.Game;
 
 import java.util.List;
 
@@ -24,9 +27,12 @@ public class EditKeywordsWindow extends Stage {
     private Scene scene;
     private VBox root;
 
+    private TableView<Game> gameView;
     private List<String> keywords;
     private ListView<String> keywordView = new ListView<>();
     private HBox keywordButtons;
+    private Button confirmButton;
+    private Button cancelButton;
     private HBox confirmOrCancelButtons;
 
     public EditKeywordsWindow(Stage owner) {
@@ -58,12 +64,13 @@ public class EditKeywordsWindow extends Stage {
         JMetro jMetro = new JMetro(scene, Style.DARK);
         jMetro.setAutomaticallyColorPanes(true);
 
-        this.setScene(this.scene);
         this.initOwner(owner);
+        this.setScene(this.scene);
+        this.initStyle(StageStyle.UNDECORATED);
     }
 
-    public void edit(String name, List<String> keywords) {
-        this.setTitle("Editing [" + name + "] keywords");
+    public void edit(TableView<Game> gameView, List<String> keywords) {
+        this.gameView = gameView;
         this.keywords = keywords;
         this.keywordView.getItems().setAll(keywords);
         this.show();
@@ -74,8 +81,8 @@ public class EditKeywordsWindow extends Stage {
             this.keywordView.getItems().add("[Enter your value here]");
         });
         Button remove = makeGraphicButton("remove-icon.png", MainWindow.BUTTON_SIZE - 8, event -> {
-            List<String> selectedItems = this.keywordView.getSelectionModel().getSelectedItems();
-            this.keywordView.getItems().removeAll(selectedItems);
+            List<String> items = this.keywordView.getSelectionModel().getSelectedItems();
+            this.keywordView.getItems().removeAll(items);
         });
 
         HBox buttons = new HBox(add, makeVerticalSeparator(), remove);
@@ -86,18 +93,20 @@ public class EditKeywordsWindow extends Stage {
     }
 
     public HBox buildConfirmOrCancelButtons() {
-        Button confirm = makeTextButton("    OK    ", event -> {
+        this.confirmButton = makeTextButton("    OK    ", event -> {
             this.keywords.clear();
             this.keywords.addAll(this.keywordView.getItems());
+            gameView.refresh();
             this.close();
         });
 
-        Button cancel = makeTextButton(" Cancel ", event -> {
+        this.cancelButton = makeTextButton(" Cancel ", event -> {
             // Revert changes ???
+            gameView.refresh();
             this.close();
         });
 
-        HBox confirmOrCancel = new HBox(confirm, cancel);
+        HBox confirmOrCancel = new HBox(confirmButton, cancelButton);
         confirmOrCancel.setAlignment(Pos.CENTER_RIGHT);
         confirmOrCancel.setSpacing(10);
         return confirmOrCancel;
