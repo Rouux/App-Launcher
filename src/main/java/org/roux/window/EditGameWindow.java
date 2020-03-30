@@ -6,6 +6,7 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -19,7 +20,6 @@ public class EditGameWindow extends UndecoratedStage {
 
     private VBox root;
     private Stage main;
-    private TableView<Game> sourceTable;
     private Game game;
 
     // Name
@@ -36,7 +36,7 @@ public class EditGameWindow extends UndecoratedStage {
     // Confirm or cancel
     private HBox confirmOrCancelButtons;
 
-    public EditGameWindow(Stage owner) {
+    public EditGameWindow(Stage owner, Button confirmButton, Button cancelButton) {
         this.main = owner;
 
         this.gameName = buildGameNameField();
@@ -45,27 +45,39 @@ public class EditGameWindow extends UndecoratedStage {
         this.keywordButtons = buildKeywordButtons();
         this.confirmOrCancelButtons = buildConfirmOrCancelButtons();
 
-        this.root = buildRoot(gameName, gamePath, keywordView, keywordButtons, confirmOrCancelButtons);
+        confirmButton.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+        });
+        cancelButton.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+        });
+
+        this.root = buildRoot(
+                new Label("Name"),
+                gameName,
+                new Label("Path"),
+                gamePath,
+                new Label("Keywords"),
+                keywordView,
+                keywordButtons,
+                confirmOrCancelButtons);
 
         this.setOnShowing(event -> this.root.requestFocus());
         this.initOwner(owner);
         this.setRoot(this.root);
     }
 
-    public void edit(TableView<Game> gameView, Game game, List<String> keywords) {
+    public void edit(Game game, List<String> tableKeywordsRef) {
         this.game = game;
-        this.sourceTable = gameView;
 
         this.gameName.setText(game.getName());
         this.gamePath.setText(game.getExecutablePath().toString());
-        this.keywords = keywords;
-        this.keywordView.getItems().setAll(keywords);
+        this.keywords = tableKeywordsRef;
+        this.keywordView.getItems().setAll(tableKeywordsRef);
         this.show();
     }
 
     public VBox buildRoot(Node... nodes) {
         VBox root = new VBox(nodes);
-        root.setAlignment(Pos.CENTER);
+        //        root.setAlignment(Pos.CENTER);
         root.setSpacing(5);
         root.setPadding(new Insets(10));
         root.setPrefSize(480, 320);
@@ -117,7 +129,7 @@ public class EditGameWindow extends UndecoratedStage {
 
     private HBox buildKeywordButtons() {
         Button add = makeGraphicButton("add-icon.png", MainWindow.BUTTON_SIZE - 8, event -> {
-            this.keywordView.getItems().add("[Enter your value here]");
+            this.keywordView.getItems().add("keyword");
         });
         Button remove = makeGraphicButton("remove-icon.png", MainWindow.BUTTON_SIZE - 8, event -> {
             List<String> items = this.keywordView.getSelectionModel().getSelectedItems();
@@ -135,12 +147,10 @@ public class EditGameWindow extends UndecoratedStage {
         Button confirmButton = makeTextButton("    OK    ", event -> {
             this.keywords.clear();
             this.keywords.addAll(this.keywordView.getItems());
-            sourceTable.refresh();
             this.close();
         });
 
         Button cancelButton = makeTextButton(" Cancel ", event -> {
-            sourceTable.refresh();
             this.close();
         });
 

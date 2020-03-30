@@ -118,10 +118,6 @@ public class GameLibrary {
         return gameArray;
     }
 
-    public boolean addGame(Game game) {
-        return library.add(game);
-    }
-
     public Game getGame(String name) {
         return library.stream()
                 .filter(game -> game.getName().equals(name))

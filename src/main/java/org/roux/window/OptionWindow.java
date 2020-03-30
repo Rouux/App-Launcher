@@ -25,11 +25,10 @@ public class OptionWindow extends UndecoratedStage {
 
     private Button confirmButton;
     private Button cancelButton;
-    private HBox confirmOrCancelButtons;
 
     public OptionWindow(Stage owner, GameLibrary gameLibrary) {
         this.main = owner;
-        this.confirmOrCancelButtons = buildConfirmOrCancelButtons();
+        HBox confirmOrCancelButtons = buildConfirmOrCancelButtons();
 
         // AFTER buildConfirmOrCancelButtons !! VERY IMPORTANT YO !!
         TabPane tabPane = new TabPane(
@@ -38,7 +37,7 @@ public class OptionWindow extends UndecoratedStage {
                 new ParameterTab(this, "Other", this.confirmButton, this.cancelButton)
         );
 
-        this.root = buildRoot(tabPane, buildConfirmOrCancelButtons());
+        this.root = buildRoot(tabPane, confirmOrCancelButtons);
 
         this.initOwner(owner);
         this.setRoot(this.root);
@@ -49,7 +48,7 @@ public class OptionWindow extends UndecoratedStage {
         root.setAlignment(Pos.CENTER);
         root.setSpacing(5);
         root.setPadding(new Insets(10));
-        root.setPrefSize(360, 480);
+        root.setPrefSize(420, 480);
         root.getStyleClass().add(JMetroStyleClass.BACKGROUND);
 
         return root;

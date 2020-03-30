@@ -12,10 +12,10 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import org.roux.game.Game;
 import org.roux.game.GameLibrary;
+import org.roux.utils.Utils;
 import org.roux.window.EditGameWindow;
 
 import java.util.ArrayList;
@@ -40,7 +40,10 @@ public class GameTab extends CustomTab {
                    GameLibrary gameLibrary) {
         super(sourceWindow, name, confirmButton, cancelButton);
         this.gameLibrary = gameLibrary;
-        this.editGameWindow = new EditGameWindow(sourceWindow);
+        this.editGameWindow = new EditGameWindow(sourceWindow, confirmButton, cancelButton);
+        this.editGameWindow.setOnHidden(event -> {
+            gameView.refresh();
+        });
 
         this.gameView = buildGameView();
         this.gameViewButtons = buildGameViewButtons();
@@ -62,44 +65,27 @@ public class GameTab extends CustomTab {
     }
 
     public TableView<Game> buildGameView() {
-        TableView<Game> table = new TableView<>(gameLibrary.getLibrary());
+        TableView<Game> table = new TableView<>();
         table.setEditable(false);
         table.setStyle("-fx-font-size: 12");
         table.setRowFactory(tv -> {
             TableRow<Game> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
                 if(event.getClickCount() == 2 && !row.isEmpty() && row.getItem() != null) {
-                    this.editGameWindow.edit(gameView, row.getItem(), this.gameToKeywords.get(row.getItem()));
+                    this.editGameWindow.edit(row.getItem(), this.gameToKeywords.get(row.getItem()));
                 }
             });
             return row;
         });
         table.getItems().addListener((Observable observable) -> {
-            autoResizeColumns(table);
+            Utils.autoResizeColumns(table);
         });
+        table.getItems().setAll(gameLibrary.getLibrary());
 
         TableColumn<Game, String> name = buildNameColumn();
         TableColumn<Game, String> keywords = buildKeywordsColumn();
         table.getColumns().setAll(name, keywords);
         return table;
-    }
-
-    public static void autoResizeColumns(TableView<?> table) {
-        table.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
-        table.getColumns().forEach((column) -> {
-            Text t = new Text(column.getText());
-            double max = t.getLayoutBounds().getWidth();
-            for(int i = 0; i < table.getItems().size(); i++) {
-                if(column.getCellData(i) != null) {
-                    t = new Text(column.getCellData(i).toString());
-                    double calcwidth = t.getLayoutBounds().getWidth() * 1.1;
-                    if(calcwidth > max) {
-                        max = calcwidth;
-                    }
-                }
-            }
-            column.setMinWidth(max + 10.0d);
-        });
     }
 
     public TableColumn<Game, String> buildNameColumn() {
@@ -122,10 +108,10 @@ public class GameTab extends CustomTab {
     }
 
     public HBox buildGameViewButtons() {
-        Button edit = makeTextButton("Edit keywords...", event -> {
+        Button edit = makeTextButton("Edit game", event -> {
             Game game = this.gameView.getSelectionModel().getSelectedItem();
             if(game != null) {
-                this.editGameWindow.edit(gameView, game, this.gameToKeywords.get(game));
+                this.editGameWindow.edit(game, this.gameToKeywords.get(game));
             }
         });
         Button blacklist = makeTextButton("Add to blacklist", event -> {

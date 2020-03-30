@@ -5,6 +5,7 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.layout.HBox;
@@ -64,8 +65,14 @@ public class FolderTab extends CustomTab {
             this.files.setAll(this.startingFiles);
         });
 
-        VBox root = new VBox(folderView, folderViewButtons, fileView, fileViewButtons);
-        root.setAlignment(Pos.CENTER);
+        VBox root = new VBox(
+                new Label(""), // Pour ajouter un retour a la ligne
+                new Label("Folders"),
+                folderView,
+                folderViewButtons,
+                new Label("Files"),
+                fileView,
+                fileViewButtons);
         root.setSpacing(5);
         setRoot(sourceWindow, root);
     }
@@ -82,13 +89,13 @@ public class FolderTab extends CustomTab {
     }
 
     public HBox buildFolderViewButtons() {
-        Button add = makeGraphicButton("add-icon.png", MainWindow.BUTTON_SIZE - 8, event -> {
+        Button add = makeGraphicButton("add-icon.png", MainWindow.BUTTON_SIZE - 12, event -> {
             File selectedDirectory = this.directoryChooser.showDialog(this.sourceWindow);
             if(selectedDirectory != null) {
                 this.folders.add(selectedDirectory.getAbsolutePath());
             }
         });
-        Button remove = makeGraphicButton("remove-icon.png", MainWindow.BUTTON_SIZE - 8, event -> {
+        Button remove = makeGraphicButton("remove-icon.png", MainWindow.BUTTON_SIZE - 12, event -> {
             List<String> selectedItems = this.folderView.getSelectionModel().getSelectedItems();
             this.folders.removeAll(selectedItems);
         });
@@ -112,13 +119,13 @@ public class FolderTab extends CustomTab {
     }
 
     public HBox buildFileViewButtons() {
-        Button add = makeGraphicButton("add-icon.png", MainWindow.BUTTON_SIZE - 8, event -> {
+        Button add = makeGraphicButton("add-icon.png", MainWindow.BUTTON_SIZE - 12, event -> {
             File selectedExecutable = this.fileChooser.showOpenDialog(this.sourceWindow);
             if(selectedExecutable != null && selectedExecutable.canExecute()) {
                 this.files.add(selectedExecutable.getAbsolutePath());
             }
         });
-        Button remove = makeGraphicButton("remove-icon.png", MainWindow.BUTTON_SIZE - 8, event -> {
+        Button remove = makeGraphicButton("remove-icon.png", MainWindow.BUTTON_SIZE - 12, event -> {
             List<String> selectedItems = this.folderView.getSelectionModel().getSelectedItems();
             this.files.removeAll(selectedItems);
         });

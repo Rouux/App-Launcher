@@ -23,8 +23,8 @@ import static org.roux.utils.Utils.makeVerticalSeparator;
 
 public class MainWindow extends UndecoratedStage {
 
-    public static final int APP_HEIGHT = 24;
-    public static final int FIELD_WIDTH = 260;
+    public static final int FIELD_WIDTH = 280;
+    public static final int APP_HEIGHT = FIELD_WIDTH / 12;
     public static final int BUTTON_SIZE = APP_HEIGHT;
 
     private final GameLibrary gameLibrary;
