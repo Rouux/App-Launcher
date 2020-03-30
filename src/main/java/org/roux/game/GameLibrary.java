@@ -7,6 +7,7 @@ import org.json.simple.JSONObject;
 import org.roux.utils.FileManager;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -49,6 +50,7 @@ public class GameLibrary {
                     .findFirst()
                     .ifPresent(singlePath -> results.put(entry.getKey(), singlePath));
         }
+        FileManager.getExecutables().forEach(executable -> results.put(executable, Paths.get(executable)));
         return results;
     }
 

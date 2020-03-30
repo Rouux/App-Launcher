@@ -21,6 +21,7 @@ public class FileManager {
 
     private static final List<String> BLACKLIST = new ArrayList<>();
     private static final List<String> FOLDERS = new ArrayList<>();
+    private static final List<String> EXECUTABLES = new ArrayList<>();
 
     public static Integer DEFAULT_MAX_ENTRIES = 10;
     public static Integer MAX_ENTRIES;
@@ -57,6 +58,11 @@ public class FileManager {
             if(folders != null) {
                 folders.forEach(folder -> FileManager.FOLDERS.add(folder.toString()));
             }
+
+            JSONArray executables = getJsonArray("executables");
+            if(executables != null) {
+                executables.forEach(executable -> FileManager.EXECUTABLES.add(executable.toString()));
+            }
         } catch(IOException | ParseException e) {
             e.printStackTrace();
         }
@@ -68,23 +74,17 @@ public class FileManager {
             try {
                 Path folderPath = Paths.get(folderName);
                 if(folderPath.toFile().exists()) {
-                    if(folderPath.toFile().isFile()) {
-                        String name = folderPath.getFileName().toString();
+                    int index = folderPath.getNameCount();
+                    List<Path> list = Files.walk(folderPath)
+                            .filter(path -> path.toFile().isFile())
+                            .filter(path -> path.toFile().canExecute())
+                            .filter(path -> !BLACKLIST.contains(path.getFileName().toString()))
+                            .filter(pathPredicate)
+                            .collect(Collectors.toList());
+                    for(Path p : list) {
+                        String name = p.getName(index).toString();
                         files.computeIfAbsent(name, k -> new ArrayList<>());
-                        files.get(name).add(folderPath);
-                    } else {
-                        int index = folderPath.getNameCount();
-                        List<Path> list = Files.walk(folderPath)
-                                .filter(path -> path.toFile().isFile())
-                                .filter(path -> path.toFile().canExecute())
-                                .filter(path -> !BLACKLIST.contains(path.getFileName().toString()))
-                                .filter(pathPredicate)
-                                .collect(Collectors.toList());
-                        for(Path p : list) {
-                            String name = p.getName(index).toString();
-                            files.computeIfAbsent(name, k -> new ArrayList<>());
-                            files.get(name).add(p);
-                        }
+                        files.get(name).add(p);
                     }
                 }
             } catch(IOException e) {
@@ -98,6 +98,7 @@ public class FileManager {
         Map<String, Object> data = new HashMap<>();
         data.put("maxEntries", MAX_ENTRIES);
         data.put("folders", FOLDERS);
+        data.put("executables", EXECUTABLES);
         data.put("blacklist", BLACKLIST);
         data.put("games", gameLibrary.getLibraryAsJsonArray());
         JSONObject jsonObject = new JSONObject(data);
@@ -109,21 +110,26 @@ public class FileManager {
         }
     }
 
-    public static List<String> getFolders() {
-        return FileManager.FOLDERS;
+    public static List<String> getFolders() { return FileManager.FOLDERS; }
+
+    public static void setFolders(Collection<String> folders) {
+        FileManager.FOLDERS.clear();
+        FileManager.FOLDERS.addAll(folders);
     }
 
-    public static void updateFolders(Collection<String> newFolders) {
-        FileManager.FOLDERS.clear();
-        FileManager.FOLDERS.addAll(newFolders);
+    public static List<String> getExecutables() { return FileManager.EXECUTABLES; }
+
+    public static void setExecutables(Collection<String> executables) {
+        FileManager.EXECUTABLES.clear();
+        FileManager.EXECUTABLES.addAll(executables);
     }
 
     public static List<String> getBlacklist() {
         return FileManager.BLACKLIST;
     }
 
-    public static void updateBanned(Collection<String> newBanned) {
+    public static void setBlacklist(Collection<String> blacklist) {
         FileManager.BLACKLIST.clear();
-        FileManager.BLACKLIST.addAll(newBanned);
+        FileManager.BLACKLIST.addAll(blacklist);
     }
 }
