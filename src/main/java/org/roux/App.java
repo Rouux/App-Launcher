@@ -28,9 +28,6 @@ public class App extends Application {
 
         this.mainWindow = new MainWindow(this.gameLibrary);
         this.mainWindow.show();
-
-        new ErrorWindow("Executable introuvable. Le chemin d'accès est peut être erroné ?");
-        new ErrorWindow(new Exception());
     }
 
     private static void showError(Thread t, Throwable e) {
