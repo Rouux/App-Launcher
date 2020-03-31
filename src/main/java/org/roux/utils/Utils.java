@@ -50,7 +50,8 @@ public class Utils {
         return button;
     }
 
-    public static Button makeGraphicButton(final String name, final int size, final EventHandler<MouseEvent> event) {
+    public static Button makeGraphicButton(final String name, final int size,
+                                           final EventHandler<MouseEvent> event) {
         final Button button = new Button();
         final Image optionIcon = new Image(name);
         final ImageView imageView = new ImageView(optionIcon);

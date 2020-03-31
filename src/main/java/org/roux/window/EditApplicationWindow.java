@@ -43,7 +43,8 @@ public class EditApplicationWindow extends UndecoratedStage {
     private final ListView<String> keywordView;
     private List<String> keywords;
 
-    public EditApplicationWindow(final Stage owner, final Button confirmButton, final Button cancelButton) {
+    public EditApplicationWindow(final Stage owner, final Button confirmButton,
+                                 final Button cancelButton) {
         applicationToPath = new HashMap<>();
 
         applicationName = buildNameField();
@@ -54,21 +55,17 @@ public class EditApplicationWindow extends UndecoratedStage {
         final HBox confirmOrCancelButtons = buildConfirmOrCancelButtons();
 
         confirmButton.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
-            applicationToPath.forEach((application, path) -> application.setExecutablePath(Paths.get(path)));
+            applicationToPath.forEach(
+                    (application, path) -> application.setExecutablePath(Paths.get(path)));
             applicationToPath.clear();
         });
 
         cancelButton.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> applicationToPath.clear());
 
-        root = buildRoot(
-                new Label("Name"),
-                applicationName,
-                new Label("Path"),
-                pathOptions,
-                new Label("Keywords"),
-                keywordView,
-                keywordButtons,
-                confirmOrCancelButtons);
+        root = buildRoot(new Label("Name"), applicationName,
+                         new Label("Path"), pathOptions,
+                         new Label("Keywords"), keywordView, keywordButtons,
+                         confirmOrCancelButtons);
 
         setOnShowing(event -> root.requestFocus());
         initOwner(owner);
@@ -82,7 +79,8 @@ public class EditApplicationWindow extends UndecoratedStage {
         initialApplicationName = nameProperty.get();
         applicationName.setText(nameProperty.get());
 
-        applicationToPath.computeIfAbsent(application, value -> application.getExecutablePath().toString());
+        applicationToPath.computeIfAbsent(application,
+                                          value -> application.getExecutablePath().toString());
         applicationPath.setText(applicationToPath.get(application));
 
         keywords = tableKeywordsRef;
@@ -108,7 +106,8 @@ public class EditApplicationWindow extends UndecoratedStage {
                 t.consume();
             }
         });
-        textField.textProperty().addListener((observable, oldValue, newValue) -> applicationNameProperty.set(newValue));
+        textField.textProperty().addListener(
+                (observable, oldValue, newValue) -> applicationNameProperty.set(newValue));
 
         return textField;
     }
@@ -162,12 +161,14 @@ public class EditApplicationWindow extends UndecoratedStage {
     }
 
     private HBox buildKeywordButtons() {
-        final Button add = makeGraphicButton("add-icon.png", MainWindow.BUTTON_SIZE - 8,
-                                             event -> keywordView.getItems().add("keyword"));
-        final Button remove = makeGraphicButton("remove-icon.png", MainWindow.BUTTON_SIZE - 8, event -> {
-            final List<String> items = keywordView.getSelectionModel().getSelectedItems();
-            keywordView.getItems().removeAll(items);
-        });
+        final Button add =
+                makeGraphicButton("add-icon.png", MainWindow.BUTTON_SIZE - 8,
+                                  event -> keywordView.getItems().add("keyword"));
+        final Button remove =
+                makeGraphicButton("remove-icon.png", MainWindow.BUTTON_SIZE - 8, event -> {
+                    final List<String> items = keywordView.getSelectionModel().getSelectedItems();
+                    keywordView.getItems().removeAll(items);
+                });
 
         final HBox buttons = new HBox(add, makeVerticalSeparator(), remove);
         buttons.setAlignment(Pos.CENTER);

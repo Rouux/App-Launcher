@@ -41,7 +41,8 @@ public class ApplicationTab extends CustomTab {
                           final ApplicationLibrary applicationLibrary) {
         super(sourceWindow, name, confirmButton, cancelButton);
         this.applicationLibrary = applicationLibrary;
-        editApplicationWindow = new EditApplicationWindow(sourceWindow, confirmButton, cancelButton);
+        editApplicationWindow =
+                new EditApplicationWindow(sourceWindow, confirmButton, cancelButton);
         editApplicationWindow.setOnHidden(event -> applicationView.refresh());
 
         applicationView = buildApplicationView();
@@ -49,15 +50,18 @@ public class ApplicationTab extends CustomTab {
 
         addConfirmButtonEvent(event -> {
             appToKeywords.forEach(Application::setKeywords);
-            appToName.forEach((application, stringPropertyBase) -> application.setName(stringPropertyBase.get()));
+            appToName.forEach((application, stringPropertyBase)
+                                      -> application.setName(stringPropertyBase.get()));
             applicationView.refresh();
         });
 
         addCancelButtonEvent(event -> {
             applicationLibrary.getLibrary().forEach(
-                    application -> appToName.put(application, new SimpleStringProperty(application.getName())));
+                    application -> appToName.put(application,
+                                                 new SimpleStringProperty(application.getName())));
             applicationLibrary.getLibrary().forEach(
-                    application -> appToKeywords.put(application, new ArrayList<>(application.getKeywords())));
+                    application -> appToKeywords.put(application,
+                                                     new ArrayList<>(application.getKeywords())));
             applicationView.refresh();
         });
 
@@ -84,7 +88,8 @@ public class ApplicationTab extends CustomTab {
             return row;
         });
         table.getItems().addListener((Observable observable) -> Utils.autoResizeColumns(table));
-        applicationLibrary.getLibrary().addListener((Observable observable) -> Utils.autoResizeColumns(table));
+        applicationLibrary.getLibrary()
+                .addListener((Observable observable) -> Utils.autoResizeColumns(table));
 
         final TableColumn<Application, String> name = buildNameColumn();
         final TableColumn<Application, String> keywords = buildKeywordsColumn();
@@ -97,7 +102,8 @@ public class ApplicationTab extends CustomTab {
         final TableColumn<Application, String> column = new TableColumn<>("Name");
         column.setCellFactory(TextFieldTableCell.forTableColumn());
         column.setCellValueFactory(data -> {
-            appToName.computeIfAbsent(data.getValue(), k -> new SimpleStringProperty(data.getValue().getName()));
+            appToName.computeIfAbsent(data.getValue(),
+                                      k -> new SimpleStringProperty(data.getValue().getName()));
             return new SimpleStringProperty(appToName.get(data.getValue()).get());
         });
 
@@ -108,7 +114,8 @@ public class ApplicationTab extends CustomTab {
         final TableColumn<Application, String> column = new TableColumn<>("Keywords");
         column.setCellFactory(TextFieldTableCell.forTableColumn());
         column.setCellValueFactory(data -> {
-            appToKeywords.computeIfAbsent(data.getValue(), k -> new ArrayList<>(data.getValue().getKeywords()));
+            appToKeywords.computeIfAbsent(data.getValue(),
+                                          k -> new ArrayList<>(data.getValue().getKeywords()));
             return new SimpleStringProperty(appToKeywords.get(data.getValue()).toString());
         });
 
@@ -133,7 +140,9 @@ public class ApplicationTab extends CustomTab {
 
         });
 
-        final HBox buttons = new HBox(edit, makeVerticalSeparator(), remove, makeVerticalSeparator(), blacklist);
+        final HBox buttons = new HBox(edit, makeVerticalSeparator(),
+                                      remove, makeVerticalSeparator(),
+                                      blacklist);
         buttons.setAlignment(Pos.CENTER);
         buttons.setSpacing(10);
         buttons.setPadding(new Insets(10));

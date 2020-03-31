@@ -14,20 +14,19 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 /**
- * This class is a TextField which implements an "autocomplete" functionality, based on a supplied list of entries.
+ * This class is a TextField which implements an "autocomplete" functionality, based on a supplied
+ * list of entries.
  *
  * @author Caleb Brinkman
  */
 public class AutoCompleteTextField extends TextField {
-    /** The existing autocomplete entries. */
-    private final SortedSet<String> entries;
 
+    private final SortedSet<String> entries;
     private List<String> filteredEntries;
-    /** The popup used to select an entry. */
     private final MaxSizedContextMenu entriesPopup;
 
-    /** Construct a new AutoCompleteTextField. */
-    public AutoCompleteTextField(final MainWindow mainWindow, final ApplicationLibrary applicationLibrary) {
+    public AutoCompleteTextField(final MainWindow mainWindow,
+                                 final ApplicationLibrary applicationLibrary) {
         super();
         entries = new TreeSet<>();
         entriesPopup = new MaxSizedContextMenu();
@@ -35,7 +34,8 @@ public class AutoCompleteTextField extends TextField {
         textProperty().addListener((observableValue, s, s2) -> {
             if(getText().length() == 0) {
                 //                entriesPopup.hide();
-                entriesPopup.getItems().clear(); // CA MARCHE JE SAIS PAS POURQUOI MAIS TU TOUCHE PAS !!!!
+                // !! CA MARCHE JE SAIS PAS POURQUOI MAIS TU TOUCHE PAS !!!
+                entriesPopup.getItems().clear();
             } else {
                 filteredEntries = applicationLibrary.filter(entries, getText());
                 if(entries.size() > 0) {
@@ -62,25 +62,13 @@ public class AutoCompleteTextField extends TextField {
                 }
             }
         });
-
-        focusedProperty().addListener((observableValue, aBoolean, aBoolean2) -> entriesPopup.hide());
-
+        focusedProperty().addListener((observable) -> entriesPopup.hide());
     }
 
-    /**
-     * Get the existing set of autocomplete entries.
-     *
-     * @return The existing autocomplete entries.
-     */
     public SortedSet<String> getEntries() { return entries; }
 
     public List<String> getFilteredEntries() { return filteredEntries; }
 
-    /**
-     * Populate the entry set with the given search results.  Display is limited to 10 entries, for performance.
-     *
-     * @param searchResult The set of matching strings.
-     */
     private void populatePopup(final List<String> searchResult) {
         final List<CustomMenuItem> menuItems = new LinkedList<>();
         // If you'd like more entries, modify this line.

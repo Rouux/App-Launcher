@@ -99,7 +99,8 @@ public class ErrorWindow extends UndecoratedStage {
         final Button saveButton = new Button("Save as file");
         saveButton.setOnAction(event -> {
             final FileChooser fileChooser = new FileChooser();
-            final FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
+            final FileChooser.ExtensionFilter extFilter =
+                    new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
             fileChooser.getExtensionFilters().add(extFilter);
 
             final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy_HH-mm-ss");

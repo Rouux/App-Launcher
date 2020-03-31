@@ -46,9 +46,6 @@ public class MainWindow extends UndecoratedStage {
             }
         });
         setAlwaysOnTop(true);
-        focusedProperty().addListener((observableValue, node, t1) -> {
-            //            System.out.println("Focus changed to -> " + t1);
-        });
         setOnShowing(event -> textField.requestFocus());
     }
 
@@ -58,7 +55,8 @@ public class MainWindow extends UndecoratedStage {
             final Path path = application.getExecutablePath();
             if(path.toFile().canExecute()) {
                 try {
-                    final ProcessBuilder processBuilder = new ProcessBuilder("cmd", "/c", path.toString());
+                    final ProcessBuilder processBuilder =
+                            new ProcessBuilder("cmd", "/c", path.toString());
                     processBuilder.start();
                 } catch(final IOException e) {
                     e.printStackTrace();
@@ -82,23 +80,22 @@ public class MainWindow extends UndecoratedStage {
 
     public Parent buildRoot() {
         textField = makeField();
-        final Button updateButton = makeGraphicButton("update-icon.png", MainWindow.BUTTON_SIZE,
-                                                      event -> {
-                                                          scan();
-                                                          System.out.println("Scanning done");
-                                                          event.consume();
-                                                      });
-        final Button optionButton = makeGraphicButton("option-icon.png", MainWindow.BUTTON_SIZE,
-                                                      event -> {
-                                                          if(optionWindow == null)
-                                                              optionWindow = new OptionWindow(this,
-                                                                                              applicationLibrary);
-                                                          optionWindow.show();
-                                                          setOpacity(0);
-                                                          event.consume();
-                                                      });
+        final Button updateButton =
+                makeGraphicButton("update-icon.png", MainWindow.BUTTON_SIZE, event -> {
+                    scan();
+                    event.consume();
+                });
+        final Button optionButton =
+                makeGraphicButton("option-icon.png", MainWindow.BUTTON_SIZE, event -> {
+                    if(optionWindow == null)
+                        optionWindow = new OptionWindow(this, applicationLibrary);
+                    optionWindow.show();
+                    setOpacity(0);
+                    event.consume();
+                });
 
-        final HBox root = new HBox(updateButton, makeVerticalSeparator(), textField, makeVerticalSeparator(),
+        final HBox root = new HBox(updateButton, makeVerticalSeparator(),
+                                   textField, makeVerticalSeparator(),
                                    optionButton);
         root.setPadding(new Insets(2));
         root.setBorder(Border.EMPTY);
@@ -108,14 +105,14 @@ public class MainWindow extends UndecoratedStage {
     }
 
     public AutoCompleteTextField makeField() {
-        final AutoCompleteTextField textField = new AutoCompleteTextField(this, applicationLibrary);
+        final AutoCompleteTextField textField =
+                new AutoCompleteTextField(this, applicationLibrary);
         textField.setPromptText("Find an app");
         textField.setPrefSize(FIELD_WIDTH, APP_HEIGHT);
-        textField.getEntries().addAll(
-                applicationLibrary.getLibrary()
-                        .stream()
-                        .map(Application::getName)
-                        .collect(Collectors.toList())
+        textField.getEntries().addAll(applicationLibrary.getLibrary()
+                                              .stream()
+                                              .map(Application::getName)
+                                              .collect(Collectors.toList())
         );
         return textField;
     }

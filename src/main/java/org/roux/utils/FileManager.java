@@ -41,7 +41,8 @@ public class FileManager {
             return file;
         }
         System.out.println("Premier lancement !");
-        final InputStream inputStream = FileManager.class.getClassLoader().getResourceAsStream("preset.json");
+        final InputStream inputStream =
+                FileManager.class.getClassLoader().getResourceAsStream("preset.json");
         if(inputStream == null) {
             throw new IllegalArgumentException("Preset file not found !");
         }
@@ -68,7 +69,8 @@ public class FileManager {
 
             final JSONArray executables = getJsonArray("executables");
             if(executables != null)
-                executables.forEach(executable -> FileManager.EXECUTABLES.add(executable.toString()));
+                executables.forEach(
+                        executable -> FileManager.EXECUTABLES.add(executable.toString()));
 
         } catch(final IOException | ParseException e) {
             e.printStackTrace();
@@ -85,8 +87,6 @@ public class FileManager {
                     final List<Path> list = Files.walk(folderPath)
                             .filter(path -> path.toFile().isFile())
                             .filter(path -> path.toFile().canExecute())
-                            //                            .filter(path -> !BLACKLIST.contains(path.getFileName()
-                            //                            .toString()))
                             .filter(pathPredicate)
                             .collect(Collectors.toList());
                     for(final Path p : list) {

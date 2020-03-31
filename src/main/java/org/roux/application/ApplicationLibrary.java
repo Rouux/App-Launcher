@@ -25,7 +25,8 @@ public class ApplicationLibrary {
         if(applicationsJson != null && !applicationsJson.isEmpty()) {
             applicationsJson.forEach((name, jsonObject) -> {
                 final String path = jsonObject.get("path").toString();
-                final String[] keywords = (String[]) ((JSONArray) jsonObject.get("keywords")).toArray(new String[0]);
+                final JSONArray jsonArray = (JSONArray) jsonObject.get("keywords");
+                final String[] keywords = (String[]) jsonArray.toArray(new String[0]);
                 final Application application = new Application(path, name, keywords);
                 library.add(application);
             });
@@ -50,7 +51,8 @@ public class ApplicationLibrary {
                     .findFirst()
                     .ifPresent(singlePath -> results.put(entry.getKey(), singlePath));
         }
-        FileManager.getExecutables().forEach(executable -> results.put(executable, Paths.get(executable)));
+        FileManager.getExecutables().forEach(
+                executable -> results.put(executable, Paths.get(executable)));
         return results;
     }
 
@@ -61,8 +63,8 @@ public class ApplicationLibrary {
         final Map<String, Path> executables = gatherExecutables();
         for(final Map.Entry<String, Path> entry : executables.entrySet()) {
             final Application application = new Application(entry.getValue(), entry.getKey());
-            final JSONObject oldApplication;
-            if(applicationsJson != null && (oldApplication = applicationsJson.get(application.getName())) != null) {
+            final JSONObject oldApplication = applicationsJson.get(application.getName());
+            if(oldApplication != null) {
                 application.getKeywords().addAll(((JSONArray) oldApplication.get("keywords")));
             }
             newApplications.add(application);
@@ -75,7 +77,7 @@ public class ApplicationLibrary {
         final List<String> filteredEntries = new ArrayList<>();
         filteredEntries.addAll(
                 library.stream()
-                        .filter(application -> application.getKeywords().contains(inputText.toLowerCase()))
+                        .filter(application -> application.getKeywords().contains(inputText))
                         .map(Application::getName)
                         .collect(Collectors.toList())
         );
@@ -99,10 +101,11 @@ public class ApplicationLibrary {
         final JSONArray jsonArray = FileManager.getJsonArray("applications");
         if(jsonArray != null) {
             final Iterator<JSONObject> iterator = jsonArray.iterator();
-            iterator.forEachRemaining(jsonObject -> nameToObjectMap.put(jsonObject.get("name").toString(), jsonObject));
-            return nameToObjectMap;
+            iterator.forEachRemaining(
+                    jsonObject -> nameToObjectMap.put(jsonObject.get("name").toString(),
+                                                      jsonObject));
         }
-        return null;
+        return nameToObjectMap;
     }
 
     public JSONArray getLibraryAsJsonArray() {
