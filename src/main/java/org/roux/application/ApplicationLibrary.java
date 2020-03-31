@@ -62,12 +62,23 @@ public class ApplicationLibrary {
         final List<Application> newApplications = new ArrayList<>();
         final Map<String, Path> executables = gatherExecutables();
         for(final Map.Entry<String, Path> entry : executables.entrySet()) {
-            final Application application = new Application(entry.getValue(), entry.getKey());
+            final String name = entry.getKey();
+            final Path path = entry.getValue();
+            final Application application = new Application(path, name);
             final JSONObject oldApplication = applicationsJson.get(application.getName());
             if(oldApplication != null) {
                 application.getKeywords().addAll(((JSONArray) oldApplication.get("keywords")));
             }
-            newApplications.add(application);
+            for(final String filePath : FileManager.getBlacklist()) {
+                if(path.startsWith(filePath)) {
+                    application.setBlacklisted(true);
+                    break;
+                }
+            }
+            //@todo actuellement j'affiche juste pas
+            // a retravailler pour afficher qqpart quand même ?
+            // Histoire d'eviter que le mec se demande pourquoi son app s'affiche pas
+            if(!application.isBlacklisted()) newApplications.add(application);
         }
         library.setAll(newApplications);
         return library;

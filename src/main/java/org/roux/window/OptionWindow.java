@@ -11,6 +11,7 @@ import javafx.stage.Stage;
 import jfxtras.styles.jmetro.JMetroStyleClass;
 import org.roux.application.ApplicationLibrary;
 import org.roux.window.tabs.ApplicationTab;
+import org.roux.window.tabs.BlacklistTab;
 import org.roux.window.tabs.FolderTab;
 import org.roux.window.tabs.ParameterTab;
 
@@ -30,6 +31,8 @@ public class OptionWindow extends UndecoratedStage {
         final TabPane tabPane = new TabPane(
                 new FolderTab(this, "Sources", confirmButton, cancelButton),
                 new ApplicationTab(this, "Apps", confirmButton, cancelButton, applicationLibrary),
+                new BlacklistTab(this, "Blacklist", confirmButton, cancelButton,
+                                 applicationLibrary),
                 new ParameterTab(this, "Other", confirmButton, cancelButton)
         );
 

@@ -12,8 +12,7 @@ public class Application {
     private Path executablePath;
     private String name;
     private List<String> keywords;
-
-    public Application() {}
+    private boolean isBlacklisted;
 
     public static void main(final String[] args) {
         System.out.println(beautifyName("DOOM Eternal"));
@@ -73,21 +72,32 @@ public class Application {
         this.keywords = keywords;
     }
 
+    public boolean isBlacklisted() {
+        return isBlacklisted;
+    }
+
+    public void setBlacklisted(final boolean blacklisted) {
+        isBlacklisted = blacklisted;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if(this == o) return true;
         if(o == null || getClass() != o.getClass()) return false;
         final Application application = (Application) o;
-        return executablePath.equals(application.executablePath) && name.equals(application.name);
+        return executablePath.equals(application.executablePath)
+                && name.equals(application.name)
+                && isBlacklisted == application.isBlacklisted;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(executablePath, name);
+        return Objects.hash(executablePath, name, isBlacklisted);
     }
 
     @Override
     public String toString() {
-        return "[" + name + "] -> " + executablePath + ", keywords = " + keywords;
+        final String blacklisted = isBlacklisted ? "[BLACKLISTED] " : "";
+        return blacklisted + "'" + name + "' -> '" + executablePath + "' : keywords = " + keywords;
     }
 }
