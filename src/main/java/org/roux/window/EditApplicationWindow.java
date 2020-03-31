@@ -12,7 +12,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import org.roux.game.Game;
+import org.roux.application.Application;
 
 import java.io.File;
 import java.nio.file.Paths;
@@ -22,23 +22,24 @@ import java.util.Map;
 
 import static org.roux.utils.Utils.*;
 
-public class EditGameWindow extends UndecoratedStage {
+public class EditApplicationWindow extends UndecoratedStage {
 
     private final static int WINDOW_WIDTH = 480;
     private final static int WINDOW_HEIGHT = 320;
 
     private VBox root;
     private Stage main;
-    private Game game;
+    private Application application;
 
     // Name
-    private final TextField gameName;
-    private StringPropertyBase gameNameProperty;
+    private final TextField applicationName;
+    private String initialApplicationName;
+    private StringPropertyBase applicationNameProperty;
 
     // Path
-    private final Map<Game, String> gameToPath;
-    private TextField gamePath;
-    private Button gameSelectFile;
+    private final Map<Application, String> applicationToPath;
+    private TextField applicationPath;
+    private Button applicationSelectFile;
 
     // Keywords
     private ListView<String> keywordView;
@@ -48,30 +49,30 @@ public class EditGameWindow extends UndecoratedStage {
     // Confirm or cancel
     private HBox confirmOrCancelButtons;
 
-    public EditGameWindow(Stage owner, Button confirmButton, Button cancelButton) {
+    public EditApplicationWindow(Stage owner, Button confirmButton, Button cancelButton) {
         this.main = owner;
-        this.gameToPath = new HashMap<>();
+        this.applicationToPath = new HashMap<>();
 
-        this.gameName = buildGameNameField();
-        HBox pathOptions = buildGamePathOptions();
+        this.applicationName = buildNameField();
+        HBox pathOptions = buildPathOptions();
         this.keywordView = buildKeywordView();
         this.keywordButtons = buildKeywordButtons();
         this.confirmOrCancelButtons = buildConfirmOrCancelButtons();
 
         confirmButton.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
-            this.gameToPath.forEach((game, path) -> {
-                game.setExecutablePath(Paths.get(path));
+            this.applicationToPath.forEach((application, path) -> {
+                application.setExecutablePath(Paths.get(path));
             });
-            this.gameToPath.clear();
+            this.applicationToPath.clear();
         });
 
         cancelButton.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
-            this.gameToPath.clear();
+            this.applicationToPath.clear();
         });
 
         this.root = buildRoot(
                 new Label("Name"),
-                gameName,
+                applicationName,
                 new Label("Path"),
                 pathOptions,
                 new Label("Keywords"),
@@ -84,13 +85,14 @@ public class EditGameWindow extends UndecoratedStage {
         this.setRoot(this.root);
     }
 
-    public void edit(Game game, StringPropertyBase nameProperty, List<String> tableKeywordsRef) {
-        this.game = game;
-        this.gameNameProperty = nameProperty;
-        this.gameName.setText(nameProperty.get());
+    public void edit(Application application, StringPropertyBase nameProperty, List<String> tableKeywordsRef) {
+        this.application = application;
+        this.applicationNameProperty = nameProperty;
+        this.initialApplicationName = nameProperty.get();
+        this.applicationName.setText(nameProperty.get());
 
-        this.gameToPath.computeIfAbsent(game, value -> game.getExecutablePath().toString());
-        this.gamePath.setText(this.gameToPath.get(game));
+        this.applicationToPath.computeIfAbsent(application, value -> application.getExecutablePath().toString());
+        this.applicationPath.setText(this.applicationToPath.get(application));
 
         this.keywords = tableKeywordsRef;
         this.keywordView.getItems().setAll(tableKeywordsRef);
@@ -99,7 +101,6 @@ public class EditGameWindow extends UndecoratedStage {
 
     public VBox buildRoot(Node... nodes) {
         VBox root = new VBox(nodes);
-        //        root.setAlignment(Pos.CENTER);
         root.setSpacing(5);
         root.setPadding(new Insets(10));
         root.setPrefSize(WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -107,9 +108,9 @@ public class EditGameWindow extends UndecoratedStage {
         return root;
     }
 
-    private TextField buildGameNameField() {
+    private TextField buildNameField() {
         TextField textField = new TextField();
-        textField.setPromptText("Enter the game name");
+        textField.setPromptText("Enter the application name");
         textField.setOnKeyReleased(t -> {
             if(t.getCode() == KeyCode.ENTER) {
                 this.root.requestFocus();
@@ -117,39 +118,39 @@ public class EditGameWindow extends UndecoratedStage {
             }
         });
         textField.textProperty().addListener((observable, oldValue, newValue) -> {
-            this.gameNameProperty.set(newValue);
+            this.applicationNameProperty.set(newValue);
         });
 
         return textField;
     }
 
-    private HBox buildGamePathOptions() {
-        this.gamePath = new TextField();
-        this.gamePath.setPromptText("Select a valid path for the application's executable");
-        this.gamePath.setPrefWidth(WINDOW_WIDTH);
-        this.gamePath.setOnKeyReleased(t -> {
+    private HBox buildPathOptions() {
+        this.applicationPath = new TextField();
+        this.applicationPath.setPromptText("Select a valid path for the application's executable");
+        this.applicationPath.setPrefWidth(WINDOW_WIDTH);
+        this.applicationPath.setOnKeyReleased(t -> {
             if(t.getCode() == KeyCode.ENTER) {
                 this.root.requestFocus();
                 t.consume();
             }
         });
-        this.gamePath.textProperty().addListener((observable, oldValue, newValue) -> {
-            if(game != null)
-                this.gameToPath.put(game, newValue);
+        this.applicationPath.textProperty().addListener((observable, oldValue, newValue) -> {
+            if(application != null)
+                this.applicationToPath.put(application, newValue);
         });
 
         FileChooser fileChooser = new FileChooser();
-        this.gameSelectFile = makeTextButton("...", event -> {
-            File currentFile = new File(this.gamePath.getText());
+        this.applicationSelectFile = makeTextButton("...", event -> {
+            File currentFile = new File(this.applicationPath.getText());
             if(currentFile.isFile()) {
                 fileChooser.setInitialDirectory(currentFile.getParentFile());
                 File chosenFile = fileChooser.showOpenDialog(this);
                 if(chosenFile != null && chosenFile.exists())
-                    this.gamePath.setText(chosenFile.getAbsolutePath());
+                    this.applicationPath.setText(chosenFile.getAbsolutePath());
             }
         });
 
-        HBox hBox = new HBox(this.gamePath, this.gameSelectFile);
+        HBox hBox = new HBox(this.applicationPath, this.applicationSelectFile);
         hBox.setSpacing(10);
         hBox.setAlignment(Pos.CENTER);
         return hBox;
@@ -195,6 +196,7 @@ public class EditGameWindow extends UndecoratedStage {
         });
 
         Button cancelButton = makeTextButton(" Cancel ", event -> {
+            this.applicationNameProperty.set(this.initialApplicationName);
             this.close();
         });
 

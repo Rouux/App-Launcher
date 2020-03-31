@@ -8,6 +8,6 @@ module org.roux {
 
     exports org.roux;
     exports org.roux.window;
-    exports org.roux.game;
+    exports org.roux.application;
     exports org.roux.utils;
 }

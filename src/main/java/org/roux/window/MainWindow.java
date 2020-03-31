@@ -10,8 +10,8 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
-import org.roux.game.Game;
-import org.roux.game.GameLibrary;
+import org.roux.application.Application;
+import org.roux.application.ApplicationLibrary;
 import org.roux.utils.AutoCompleteTextField;
 
 import java.io.IOException;
@@ -27,7 +27,7 @@ public class MainWindow extends UndecoratedStage {
     public static final int APP_HEIGHT = FIELD_WIDTH / 12;
     public static final int BUTTON_SIZE = APP_HEIGHT;
 
-    private final GameLibrary gameLibrary;
+    private final ApplicationLibrary applicationLibrary;
 
     private OptionWindow optionWindow;
     private Parent root;
@@ -36,8 +36,8 @@ public class MainWindow extends UndecoratedStage {
     private AutoCompleteTextField textField;
     private Button optionButton;
 
-    public MainWindow(GameLibrary gameLibrary) {
-        this.gameLibrary = gameLibrary;
+    public MainWindow(ApplicationLibrary applicationLibrary) {
+        this.applicationLibrary = applicationLibrary;
         this.root = buildRoot();
 
         this.setRoot(this.root);
@@ -55,10 +55,10 @@ public class MainWindow extends UndecoratedStage {
         this.setOnShowing(event -> this.textField.requestFocus());
     }
 
-    public void launchGame(String name) {
-        Game game = this.gameLibrary.getGame(name);
-        if(game != null) {
-            Path path = game.getExecutablePath();
+    public void launchApplication(String name) {
+        Application application = this.applicationLibrary.getApplication(name);
+        if(application != null) {
+            Path path = application.getExecutablePath();
             if(path.toFile().canExecute()) {
                 try {
                     ProcessBuilder processBuilder = new ProcessBuilder("cmd", "/c", path.toString());
@@ -75,10 +75,10 @@ public class MainWindow extends UndecoratedStage {
     }
 
     public void scan() {
-        ObservableList<Game> games = this.gameLibrary.scan();
+        ObservableList<Application> applications = this.applicationLibrary.scan();
         this.textField.getEntries().clear();
-        this.textField.getEntries().addAll(games.stream()
-                                                   .map(Game::getName)
+        this.textField.getEntries().addAll(applications.stream()
+                                                   .map(Application::getName)
                                                    .collect(Collectors.toList())
         );
     }
@@ -92,7 +92,7 @@ public class MainWindow extends UndecoratedStage {
         });
         this.optionButton = makeGraphicButton("option-icon.png", MainWindow.BUTTON_SIZE, event -> {
             if(this.optionWindow == null)
-                this.optionWindow = new OptionWindow(this, gameLibrary);
+                this.optionWindow = new OptionWindow(this, applicationLibrary);
             this.optionWindow.show();
             this.setOpacity(0);
             event.consume();
@@ -107,13 +107,13 @@ public class MainWindow extends UndecoratedStage {
     }
 
     public AutoCompleteTextField makeField() {
-        AutoCompleteTextField textField = new AutoCompleteTextField(this, gameLibrary);
-        textField.setPromptText("Find my game");
+        AutoCompleteTextField textField = new AutoCompleteTextField(this, applicationLibrary);
+        textField.setPromptText("Find an app");
         textField.setPrefSize(FIELD_WIDTH, APP_HEIGHT);
         textField.getEntries().addAll(
-                gameLibrary.getLibrary()
+                applicationLibrary.getLibrary()
                         .stream()
-                        .map(Game::getName)
+                        .map(Application::getName)
                         .collect(Collectors.toList())
         );
         return textField;

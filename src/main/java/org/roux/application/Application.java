@@ -1,4 +1,4 @@
-package org.roux.game;
+package org.roux.application;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -7,13 +7,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-public class Game {
+public class Application {
 
     private Path executablePath;
     private String name;
     private List<String> keywords;
 
-    public Game() {}
+    public Application() {}
 
     public static void main(String[] args) {
         System.out.println(beautifyName("DOOM Eternal"));
@@ -25,9 +25,6 @@ public class Game {
 
     private static String beautifyName(String name) {
         return name.replaceAll(".exe$", "")
-                .replaceAll(".jar$", "")
-                .replaceAll(".lnk$", "")
-                .replaceAll(".url$", "")
                 .replaceAll("(.*)(\\\\)(.*)", "$3")
                 .replaceAll("([^A-Z])(\\.)([a-zA-Z])", "$1 $3")
                 .replaceAll("([0-9a-z])([A-Z])", "$1 $2")
@@ -35,16 +32,16 @@ public class Game {
                 .replaceAll("_", " ");
     }
 
-    public Game(Path path, String name, String... keywords) {
+    public Application(Path path, String name, String... keywords) {
         this.executablePath = path;
-        this.name = Game.beautifyName(name);
+        this.name = Application.beautifyName(name);
         this.keywords = new ArrayList<>();
         if(keywords != null && keywords.length > 0) {
             this.keywords.addAll(Arrays.asList(keywords));
         }
     }
 
-    public Game(String path, String name, String... keywords) {
+    public Application(String path, String name, String... keywords) {
         this(Paths.get(path), name, keywords);
     }
 
@@ -80,8 +77,8 @@ public class Game {
     public boolean equals(Object o) {
         if(this == o) return true;
         if(o == null || getClass() != o.getClass()) return false;
-        Game game = (Game) o;
-        return executablePath.equals(game.executablePath) && name.equals(game.name);
+        Application application = (Application) o;
+        return executablePath.equals(application.executablePath) && name.equals(application.name);
     }
 
     @Override

@@ -3,16 +3,15 @@ package org.roux.window;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import jfxtras.styles.jmetro.JMetroStyleClass;
-import org.roux.game.GameLibrary;
+import org.roux.application.ApplicationLibrary;
+import org.roux.window.tabs.ApplicationTab;
 import org.roux.window.tabs.FolderTab;
-import org.roux.window.tabs.GameTab;
 import org.roux.window.tabs.ParameterTab;
 
 import static org.roux.utils.Utils.makeTextButton;
@@ -20,27 +19,24 @@ import static org.roux.utils.Utils.makeTextButton;
 public class OptionWindow extends UndecoratedStage {
 
     private Stage main;
-    private Scene scene;
-    private VBox root;
-
     private Button confirmButton;
     private Button cancelButton;
 
-    public OptionWindow(Stage owner, GameLibrary gameLibrary) {
+    public OptionWindow(Stage owner, ApplicationLibrary applicationLibrary) {
         this.main = owner;
         HBox confirmOrCancelButtons = buildConfirmOrCancelButtons();
 
         // AFTER buildConfirmOrCancelButtons !! VERY IMPORTANT YO !!
         TabPane tabPane = new TabPane(
                 new FolderTab(this, "Sources", this.confirmButton, this.cancelButton),
-                new GameTab(this, "Games", this.confirmButton, this.cancelButton, gameLibrary),
+                new ApplicationTab(this, "Apps", this.confirmButton, this.cancelButton, applicationLibrary),
                 new ParameterTab(this, "Other", this.confirmButton, this.cancelButton)
         );
 
-        this.root = buildRoot(tabPane, confirmOrCancelButtons);
+        VBox root = buildRoot(tabPane, confirmOrCancelButtons);
 
         this.initOwner(owner);
-        this.setRoot(this.root);
+        this.setRoot(root);
     }
 
     private VBox buildRoot(Node... nodes) {
@@ -55,13 +51,9 @@ public class OptionWindow extends UndecoratedStage {
     }
 
     public HBox buildConfirmOrCancelButtons() {
-        this.confirmButton = makeTextButton("    OK    ", event -> {
-            this.close();
-        });
+        this.confirmButton = makeTextButton("    OK    ", event -> this.close());
 
-        this.cancelButton = makeTextButton(" Cancel ", event -> {
-            this.close();
-        });
+        this.cancelButton = makeTextButton(" Cancel ", event -> this.close());
 
         HBox confirmOrCancel = new HBox(confirmButton, cancelButton);
         confirmOrCancel.setAlignment(Pos.CENTER_RIGHT);

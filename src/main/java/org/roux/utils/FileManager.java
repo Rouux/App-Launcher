@@ -5,7 +5,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.roux.game.GameLibrary;
+import org.roux.application.ApplicationLibrary;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -40,6 +40,7 @@ public class FileManager {
         if(file.exists()) {
             return file;
         }
+        System.out.println("Premier lancement !");
         InputStream inputStream = FileManager.class.getClassLoader().getResourceAsStream("preset.json");
         if(inputStream == null) {
             throw new IllegalArgumentException("Preset file not found !");
@@ -101,14 +102,14 @@ public class FileManager {
         return files;
     }
 
-    public static void save(GameLibrary gameLibrary) {
+    public static void save(ApplicationLibrary applicationLibrary) {
         System.out.println("Saving...");
         Map<String, Object> data = new HashMap<>();
         data.put("maxEntries", MAX_ENTRIES);
         data.put("folders", FOLDERS);
         data.put("executables", EXECUTABLES);
         data.put("blacklist", BLACKLIST);
-        data.put("games", gameLibrary.getLibraryAsJsonArray());
+        data.put("applications", applicationLibrary.getLibraryAsJsonArray());
         JSONObject jsonObject = new JSONObject(data);
         try(PrintWriter writer = new PrintWriter(new File("data.json"))) {
             writer.print(jsonObject.toJSONString());

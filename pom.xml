@@ -2,7 +2,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.roux</groupId>
-    <artifactId>game-launcher</artifactId>
+    <artifactId>application-launcher</artifactId>
     <version>1.0</version>
     <packaging>jar</packaging>
 
@@ -66,7 +66,7 @@
                 <configuration>
                     <release>${maven.compiler.release}</release>
                     <compress>0</compress>
-                    <jlinkImageName>game-launcher</jlinkImageName>
+                    <jlinkImageName>application-launcher</jlinkImageName>
                     <launcher>launcher</launcher>
                     <mainClass>org.roux.Launcher</mainClass>
                 </configuration>

@@ -1,9 +1,8 @@
 {
-  "blacklist": [],
   "folders": [
     "C:\\Program Files\\Epic Games",
     "C:\\Program Files (x86)\\Steam\\steamapps\\common"
   ],
-  "executables": [],
+  "blacklist": [],
   "maxEntries": 10
 }

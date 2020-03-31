@@ -5,7 +5,7 @@ import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
-import org.roux.game.GameLibrary;
+import org.roux.application.ApplicationLibrary;
 import org.roux.window.MainWindow;
 
 import java.util.LinkedList;
@@ -27,7 +27,7 @@ public class AutoCompleteTextField extends TextField {
     private MaxSizedContextMenu entriesPopup;
 
     /** Construct a new AutoCompleteTextField. */
-    public AutoCompleteTextField(MainWindow mainWindow, GameLibrary gameLibrary) {
+    public AutoCompleteTextField(MainWindow mainWindow, ApplicationLibrary applicationLibrary) {
         super();
         entries = new TreeSet<>();
         entriesPopup = new MaxSizedContextMenu();
@@ -37,7 +37,7 @@ public class AutoCompleteTextField extends TextField {
                 //                entriesPopup.hide();
                 entriesPopup.getItems().clear(); // CA MARCHE JE SAIS PAS POURQUOI MAIS TU TOUCHE PAS !!!!
             } else {
-                filteredEntries = gameLibrary.filter(entries, getText());
+                filteredEntries = applicationLibrary.filter(entries, getText());
                 if(entries.size() > 0) {
                     populatePopup(filteredEntries);
                     if(!entriesPopup.isShowing()) {
@@ -50,12 +50,16 @@ public class AutoCompleteTextField extends TextField {
             }
         });
         setOnKeyPressed(ke -> {
+            List<String> list = getFilteredEntries();
+            System.out.println(list);
             if(ke.getCode() == KeyCode.ENTER) {
-                List<String> list = getFilteredEntries();
                 if(list != null && !list.isEmpty()) {
-                    mainWindow.launchGame(list.get(0));
+                    mainWindow.launchApplication(list.get(0));
                 }
-                System.out.println(list);
+            } else if(ke.getCode() == KeyCode.TAB) {
+                if(list != null && !list.isEmpty()) {
+                    setText(list.get(0));
+                }
             }
         });
 

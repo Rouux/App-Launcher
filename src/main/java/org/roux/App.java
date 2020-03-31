@@ -3,14 +3,14 @@ package org.roux;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.stage.Stage;
-import org.roux.game.GameLibrary;
+import org.roux.application.ApplicationLibrary;
 import org.roux.utils.FileManager;
 import org.roux.window.ErrorWindow;
 import org.roux.window.MainWindow;
 
 public class App extends Application {
 
-    private final GameLibrary gameLibrary = new GameLibrary();
+    private final ApplicationLibrary applicationLibrary = new ApplicationLibrary();
     private MainWindow mainWindow;
 
     public static void main(String[] args) {
@@ -26,7 +26,7 @@ public class App extends Application {
     public void start(Stage stage) {
         Thread.setDefaultUncaughtExceptionHandler(App::showError);
 
-        this.mainWindow = new MainWindow(this.gameLibrary);
+        this.mainWindow = new MainWindow(this.applicationLibrary);
         this.mainWindow.show();
     }
 
@@ -41,7 +41,7 @@ public class App extends Application {
 
     @Override
     public void stop() throws Exception {
-        FileManager.save(this.gameLibrary);
+        FileManager.save(this.applicationLibrary);
         super.stop();
     }
 }

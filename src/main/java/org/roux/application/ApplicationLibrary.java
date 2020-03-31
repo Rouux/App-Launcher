@@ -1,4 +1,4 @@
-package org.roux.game;
+package org.roux.application;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -11,23 +11,23 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class GameLibrary {
+public class ApplicationLibrary {
 
-    private static final String[] ACCEPTABLE_EXTENSIONS = {
-            ".exe", ".url", ".jar", "lnk"
+    private static final String[] EXTENSIONS = {
+            ".exe"
     };
 
-    private final ObservableList<Game> library = FXCollections.observableArrayList();
+    private final ObservableList<Application> library = FXCollections.observableArrayList();
 
-    public GameLibrary() {
-        // Check if they are games already to put in library
-        Map<String, JSONObject> jsonGames = getJsonGames();
-        if(jsonGames != null && !jsonGames.isEmpty()) {
-            jsonGames.forEach((name, jsonObject) -> {
+    public ApplicationLibrary() {
+        // Check if they are applications already to put in library
+        Map<String, JSONObject> applicationsJson = getApplicationsJson();
+        if(applicationsJson != null && !applicationsJson.isEmpty()) {
+            applicationsJson.forEach((name, jsonObject) -> {
                 String path = jsonObject.get("path").toString();
                 String[] keywords = (String[]) ((JSONArray) jsonObject.get("keywords")).toArray(new String[0]);
-                Game game = new Game(path, name, keywords);
-                library.add(game);
+                Application application = new Application(path, name, keywords);
+                library.add(application);
             });
         }
     }
@@ -35,7 +35,7 @@ public class GameLibrary {
     public Map<String, Path> gatherExecutables() {
         Map<String, List<Path>> files = FileManager.getFilesInFolders(path -> {
             String filename = path.getFileName().toString();
-            for(String extension : ACCEPTABLE_EXTENSIONS) {
+            for(String extension : EXTENSIONS) {
                 if(filename.endsWith(extension)) return true;
             }
             return false;
@@ -54,19 +54,20 @@ public class GameLibrary {
         return results;
     }
 
-    public ObservableList<Game> scan() {
-        final Map<String, JSONObject> oldJsonGames = getJsonGames();
-        final List<Game> newGames = new ArrayList<>();
+    //@Todo rework, obviously
+    public ObservableList<Application> scan() {
+        final Map<String, JSONObject> applicationsJson = getApplicationsJson();
+        final List<Application> newApplications = new ArrayList<>();
         Map<String, Path> executables = gatherExecutables();
         for(Map.Entry<String, Path> entry : executables.entrySet()) {
-            Game game = new Game(entry.getValue(), entry.getKey());
-            JSONObject oldGame;
-            if(oldJsonGames != null && (oldGame = oldJsonGames.get(game.getName())) != null) {
-                game.getKeywords().addAll(((JSONArray) oldGame.get("keywords")));
+            Application application = new Application(entry.getValue(), entry.getKey());
+            JSONObject oldApplication;
+            if(applicationsJson != null && (oldApplication = applicationsJson.get(application.getName())) != null) {
+                application.getKeywords().addAll(((JSONArray) oldApplication.get("keywords")));
             }
-            newGames.add(game);
+            newApplications.add(application);
         }
-        library.setAll(newGames);
+        this.library.setAll(newApplications);
         return this.library;
     }
 
@@ -74,8 +75,8 @@ public class GameLibrary {
         final List<String> filteredEntries = new ArrayList<>();
         filteredEntries.addAll(
                 library.stream()
-                        .filter(game -> game.getKeywords().contains(inputText.toLowerCase()))
-                        .map(Game::getName)
+                        .filter(application -> application.getKeywords().contains(inputText.toLowerCase()))
+                        .map(Application::getName)
                         .collect(Collectors.toList())
         );
         filteredEntries.addAll(
@@ -93,9 +94,9 @@ public class GameLibrary {
         return filteredEntries;
     }
 
-    public Map<String, JSONObject> getJsonGames() {
+    public Map<String, JSONObject> getApplicationsJson() {
         final Map<String, JSONObject> nameToObjectMap = new HashMap<>();
-        JSONArray jsonArray = FileManager.getJsonArray("games");
+        JSONArray jsonArray = FileManager.getJsonArray("applications");
         if(jsonArray != null) {
             Iterator<JSONObject> iterator = jsonArray.iterator();
             iterator.forEachRemaining(jsonObject -> nameToObjectMap.put(jsonObject.get("name").toString(), jsonObject));
@@ -105,27 +106,27 @@ public class GameLibrary {
     }
 
     public JSONArray getLibraryAsJsonArray() {
-        JSONArray gameArray = new JSONArray();
-        for(Game game : library) {
-            JSONObject jsonGame = new JSONObject();
-            jsonGame.put("path", game.getExecutablePath().toString());
-            jsonGame.put("name", game.getName());
+        JSONArray applicationArray = new JSONArray();
+        for(Application application : library) {
+            JSONObject appJson = new JSONObject();
+            appJson.put("path", application.getExecutablePath().toString());
+            appJson.put("name", application.getName());
             JSONArray jsonArray = new JSONArray();
-            jsonArray.addAll(game.getKeywords());
-            jsonGame.put("keywords", jsonArray);
-            gameArray.add(jsonGame);
+            jsonArray.addAll(application.getKeywords());
+            appJson.put("keywords", jsonArray);
+            applicationArray.add(appJson);
         }
-        return gameArray;
+        return applicationArray;
     }
 
-    public Game getGame(String name) {
+    public Application getApplication(String name) {
         return library.stream()
-                .filter(game -> game.getName().equals(name))
+                .filter(application -> application.getName().equals(name))
                 .findFirst()
                 .orElse(null);
     }
 
-    public ObservableList<Game> getLibrary() {
+    public ObservableList<Application> getLibrary() {
         return library;
     }
 }
