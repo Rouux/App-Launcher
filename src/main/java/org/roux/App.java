@@ -1,14 +1,17 @@
 package org.roux;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.stage.Stage;
 import org.roux.game.GameLibrary;
 import org.roux.utils.FileManager;
+import org.roux.window.ErrorWindow;
 import org.roux.window.MainWindow;
 
 public class App extends Application {
 
     private final GameLibrary gameLibrary = new GameLibrary();
+    private MainWindow mainWindow;
 
     public static void main(String[] args) {
         launch(args);
@@ -21,8 +24,22 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) {
-        MainWindow mainWindow = new MainWindow(this.gameLibrary);
-        mainWindow.show();
+        Thread.setDefaultUncaughtExceptionHandler(App::showError);
+
+        this.mainWindow = new MainWindow(this.gameLibrary);
+        this.mainWindow.show();
+
+        new ErrorWindow("Executable introuvable. Le chemin d'accès est peut être erroné ?");
+        new ErrorWindow(new Exception());
+    }
+
+    private static void showError(Thread t, Throwable e) {
+        System.err.println("***Default exception handler***");
+        if(Platform.isFxApplicationThread()) {
+            new ErrorWindow(e);
+        } else {
+            System.err.println("An unexpected error occurred in " + t);
+        }
     }
 
     @Override
