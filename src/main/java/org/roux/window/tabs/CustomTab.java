@@ -37,11 +37,11 @@ public abstract class CustomTab extends Tab {
         setContent(root);
     }
 
-    protected void addConfirmButtonEvent(final EventHandler<MouseEvent> event) {
+    protected void onOptionConfirm(final EventHandler<MouseEvent> event) {
         confirmButton.addEventHandler(MouseEvent.MOUSE_CLICKED, event);
     }
 
-    protected void addCancelButtonEvent(final EventHandler<MouseEvent> event) {
+    protected void onOptionCancel(final EventHandler<MouseEvent> event) {
         cancelButton.addEventHandler(MouseEvent.MOUSE_CLICKED, event);
     }
 

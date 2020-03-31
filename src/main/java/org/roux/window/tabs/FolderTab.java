@@ -52,7 +52,7 @@ public class FolderTab extends CustomTab {
         fileView = buildFileView();
         final HBox fileViewButtons = buildFileViewButtons();
 
-        addConfirmButtonEvent(event -> {
+        onOptionConfirm(event -> {
             FileManager.setFolders(folders);
             startingFolders.clear();
             startingFolders.addAll(folders);
@@ -62,7 +62,7 @@ public class FolderTab extends CustomTab {
             startingFiles.addAll(files);
         });
 
-        addCancelButtonEvent(event -> {
+        onOptionCancel(event -> {
             folders.setAll(startingFolders);
             files.setAll(startingFiles);
         });

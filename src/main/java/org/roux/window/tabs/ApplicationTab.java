@@ -35,6 +35,7 @@ public class ApplicationTab extends CustomTab {
 
     private final Map<Application, StringPropertyBase> appToName = new HashMap<>();
     private final Map<Application, List<String>> appToKeywords = new HashMap<>();
+    private final List<Application> appToRemove = new ArrayList<>();
 
     public ApplicationTab(final Stage sourceWindow, final String name, final Button confirmButton,
                           final Button cancelButton,
@@ -48,20 +49,22 @@ public class ApplicationTab extends CustomTab {
         applicationView = buildApplicationView();
         final HBox applicationButtons = buildApplicationButtons();
 
-        addConfirmButtonEvent(event -> {
+        onOptionConfirm(event -> {
             appToKeywords.forEach(Application::setKeywords);
             appToName.forEach((application, stringPropertyBase)
                                       -> application.setName(stringPropertyBase.get()));
+            appToRemove.forEach(application -> applicationLibrary.getLibrary().remove(application));
+            appToRemove.clear();
             applicationView.refresh();
         });
 
-        addCancelButtonEvent(event -> {
-            applicationLibrary.getLibrary().forEach(
-                    application -> appToName.put(application,
-                                                 new SimpleStringProperty(application.getName())));
-            applicationLibrary.getLibrary().forEach(
-                    application -> appToKeywords.put(application,
-                                                     new ArrayList<>(application.getKeywords())));
+        onOptionCancel(event -> {
+            applicationLibrary.getLibrary().forEach(application -> {
+                appToName.put(application, new SimpleStringProperty(application.getName()));
+                appToKeywords.put(application, new ArrayList<>(application.getKeywords()));
+            });
+            appToRemove.forEach(application -> applicationLibrary.getLibrary().add(application));
+            appToRemove.clear();
             applicationView.refresh();
         });
 
@@ -133,7 +136,11 @@ public class ApplicationTab extends CustomTab {
         });
 
         final Button remove = makeTextButton("Remove", event -> {
-
+            final Application application = applicationView.getSelectionModel().getSelectedItem();
+            if(application != null) {
+                appToRemove.add(application);
+                applicationView.getItems().remove(application);
+            }
         });
 
         final Button blacklist = makeTextButton("Add to blacklist", event -> {
