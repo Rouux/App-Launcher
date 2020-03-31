@@ -1,5 +1,6 @@
 package org.roux.window;
 
+import javafx.beans.property.StringPropertyBase;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -9,14 +10,22 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.roux.game.Game;
 
+import java.io.File;
+import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.roux.utils.Utils.*;
 
 public class EditGameWindow extends UndecoratedStage {
+
+    private final static int WINDOW_WIDTH = 480;
+    private final static int WINDOW_HEIGHT = 320;
 
     private VBox root;
     private Stage main;
@@ -24,9 +33,12 @@ public class EditGameWindow extends UndecoratedStage {
 
     // Name
     private final TextField gameName;
+    private StringPropertyBase gameNameProperty;
 
     // Path
-    private final TextField gamePath;
+    private final Map<Game, String> gameToPath;
+    private TextField gamePath;
+    private Button gameSelectFile;
 
     // Keywords
     private ListView<String> keywordView;
@@ -38,23 +50,30 @@ public class EditGameWindow extends UndecoratedStage {
 
     public EditGameWindow(Stage owner, Button confirmButton, Button cancelButton) {
         this.main = owner;
+        this.gameToPath = new HashMap<>();
 
         this.gameName = buildGameNameField();
-        this.gamePath = buildGamePathField();
+        HBox pathOptions = buildGamePathOptions();
         this.keywordView = buildKeywordView();
         this.keywordButtons = buildKeywordButtons();
         this.confirmOrCancelButtons = buildConfirmOrCancelButtons();
 
         confirmButton.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+            this.gameToPath.forEach((game, path) -> {
+                game.setExecutablePath(Paths.get(path));
+            });
+            this.gameToPath.clear();
         });
+
         cancelButton.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+            this.gameToPath.clear();
         });
 
         this.root = buildRoot(
                 new Label("Name"),
                 gameName,
                 new Label("Path"),
-                gamePath,
+                pathOptions,
                 new Label("Keywords"),
                 keywordView,
                 keywordButtons,
@@ -65,11 +84,14 @@ public class EditGameWindow extends UndecoratedStage {
         this.setRoot(this.root);
     }
 
-    public void edit(Game game, List<String> tableKeywordsRef) {
+    public void edit(Game game, StringPropertyBase nameProperty, List<String> tableKeywordsRef) {
         this.game = game;
+        this.gameNameProperty = nameProperty;
+        this.gameName.setText(nameProperty.get());
 
-        this.gameName.setText(game.getName());
-        this.gamePath.setText(game.getExecutablePath().toString());
+        this.gameToPath.computeIfAbsent(game, value -> game.getExecutablePath().toString());
+        this.gamePath.setText(this.gameToPath.get(game));
+
         this.keywords = tableKeywordsRef;
         this.keywordView.getItems().setAll(tableKeywordsRef);
         this.show();
@@ -80,7 +102,7 @@ public class EditGameWindow extends UndecoratedStage {
         //        root.setAlignment(Pos.CENTER);
         root.setSpacing(5);
         root.setPadding(new Insets(10));
-        root.setPrefSize(480, 320);
+        root.setPrefSize(WINDOW_WIDTH, WINDOW_HEIGHT);
 
         return root;
     }
@@ -94,21 +116,43 @@ public class EditGameWindow extends UndecoratedStage {
                 t.consume();
             }
         });
+        textField.textProperty().addListener((observable, oldValue, newValue) -> {
+            this.gameNameProperty.set(newValue);
+        });
 
         return textField;
     }
 
-    private TextField buildGamePathField() {
-        TextField textField = new TextField();
-        textField.setPromptText("Select a valid path for the executable");
-        textField.setOnKeyReleased(t -> {
+    private HBox buildGamePathOptions() {
+        this.gamePath = new TextField();
+        this.gamePath.setPromptText("Select a valid path for the application's executable");
+        this.gamePath.setPrefWidth(WINDOW_WIDTH);
+        this.gamePath.setOnKeyReleased(t -> {
             if(t.getCode() == KeyCode.ENTER) {
                 this.root.requestFocus();
                 t.consume();
             }
         });
+        this.gamePath.textProperty().addListener((observable, oldValue, newValue) -> {
+            if(game != null)
+                this.gameToPath.put(game, newValue);
+        });
 
-        return textField;
+        FileChooser fileChooser = new FileChooser();
+        this.gameSelectFile = makeTextButton("...", event -> {
+            File currentFile = new File(this.gamePath.getText());
+            if(currentFile.isFile()) {
+                fileChooser.setInitialDirectory(currentFile.getParentFile());
+                File chosenFile = fileChooser.showOpenDialog(this);
+                if(chosenFile != null && chosenFile.exists())
+                    this.gamePath.setText(chosenFile.getAbsolutePath());
+            }
+        });
+
+        HBox hBox = new HBox(this.gamePath, this.gameSelectFile);
+        hBox.setSpacing(10);
+        hBox.setAlignment(Pos.CENTER);
+        return hBox;
     }
 
     private ListView<String> buildKeywordView() {

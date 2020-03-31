@@ -1,8 +1,8 @@
 package org.roux.window.tabs;
 
 import javafx.beans.Observable;
-import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringPropertyBase;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -34,6 +34,7 @@ public class GameTab extends CustomTab {
     private TableView<Game> gameView;
     private HBox gameViewButtons;
 
+    private final Map<Game, StringPropertyBase> gameToName = new HashMap<>();
     private final Map<Game, List<String>> gameToKeywords = new HashMap<>();
 
     public GameTab(Stage sourceWindow, String name, Button confirmButton, Button cancelButton,
@@ -50,10 +51,12 @@ public class GameTab extends CustomTab {
 
         addConfirmButtonEvent(event -> {
             gameToKeywords.forEach(Game::setKeywords);
+            gameToName.forEach((game, stringPropertyBase) -> game.setName(stringPropertyBase.get()));
             gameView.refresh();
         });
 
         addCancelButtonEvent(event -> {
+            gameLibrary.getLibrary().forEach(game -> gameToName.put(game, new SimpleStringProperty(game.getName())));
             gameLibrary.getLibrary().forEach(game -> gameToKeywords.put(game, new ArrayList<>(game.getKeywords())));
             gameView.refresh();
         });
@@ -72,7 +75,8 @@ public class GameTab extends CustomTab {
             TableRow<Game> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
                 if(event.getClickCount() == 2 && !row.isEmpty() && row.getItem() != null) {
-                    this.editGameWindow.edit(row.getItem(), this.gameToKeywords.get(row.getItem()));
+                    Game game = row.getItem();
+                    this.editGameWindow.edit(game, this.gameToName.get(game), this.gameToKeywords.get(game));
                 }
             });
             return row;
@@ -91,7 +95,10 @@ public class GameTab extends CustomTab {
     public TableColumn<Game, String> buildNameColumn() {
         TableColumn<Game, String> column = new TableColumn<>("Name");
         column.setCellFactory(TextFieldTableCell.forTableColumn());
-        column.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getName()));
+        column.setCellValueFactory(data -> {
+            gameToName.computeIfAbsent(data.getValue(), k -> new SimpleStringProperty(data.getValue().getName()));
+            return new SimpleStringProperty(gameToName.get(data.getValue()).get());
+        });
 
         return column;
     }
@@ -111,14 +118,18 @@ public class GameTab extends CustomTab {
         Button edit = makeTextButton("Edit game", event -> {
             Game game = this.gameView.getSelectionModel().getSelectedItem();
             if(game != null) {
-                this.editGameWindow.edit(game, this.gameToKeywords.get(game));
+                this.editGameWindow.edit(game, this.gameToName.get(game), this.gameToKeywords.get(game));
             }
         });
+        Button remove = makeTextButton("Delete game", event -> {
+
+        });
+
         Button blacklist = makeTextButton("Add to blacklist", event -> {
 
         });
 
-        HBox buttons = new HBox(edit, makeVerticalSeparator(), blacklist);
+        HBox buttons = new HBox(edit, makeVerticalSeparator(), remove, makeVerticalSeparator(), blacklist);
         buttons.setAlignment(Pos.CENTER);
         buttons.setSpacing(10);
         buttons.setPadding(new Insets(10));
