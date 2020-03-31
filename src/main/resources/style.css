@@ -1,5 +1,5 @@
 .scroll-pane > .viewport {
-    -fx-background-color: #4b4b4b;
+    -fx-background-color: rgba(69, 69, 69, 0.8);
 }
 
 .scroll-pane {
