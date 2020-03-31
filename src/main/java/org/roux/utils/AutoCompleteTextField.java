@@ -60,6 +60,9 @@ public class AutoCompleteTextField extends TextField {
                 if(list != null && !list.isEmpty()) {
                     setText(list.get(0));
                 }
+                requestFocus();
+                positionCaret(getText().length());
+                entriesPopup.hide();
             }
         });
         focusedProperty().addListener((observable) -> entriesPopup.hide());
