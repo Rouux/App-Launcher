@@ -14,21 +14,21 @@ import javafx.scene.text.Text;
 public class Utils {
 
     public static Separator makeVerticalSeparator() {
-        Separator separator = new Separator();
+        final Separator separator = new Separator();
         separator.setOrientation(Orientation.VERTICAL);
         separator.setPadding(new Insets(0, 0, 0, 3));
         return separator;
     }
 
-    public static void autoResizeColumns(TableView<?> table) {
+    public static void autoResizeColumns(final TableView<?> table) {
         table.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
         table.getColumns().forEach((column) -> {
-            Text title = new Text(column.getText().toUpperCase());
+            final Text title = new Text(column.getText().toUpperCase());
             double max = title.getLayoutBounds().getWidth() * 1;
             for(int i = 0; i < table.getItems().size(); i++) {
                 if(column.getCellData(i) != null) {
-                    Text content = new Text(column.getCellData(i).toString());
-                    double layoutWidth = content.getLayoutBounds().getWidth() * 1;
+                    final Text content = new Text(column.getCellData(i).toString());
+                    final double layoutWidth = content.getLayoutBounds().getWidth() * 1;
                     if(layoutWidth > max) max = layoutWidth;
                 }
             }
@@ -37,23 +37,23 @@ public class Utils {
     }
 
     public static Separator makeHorizontalSeparator() {
-        Separator separator = new Separator();
+        final Separator separator = new Separator();
         separator.setOrientation(Orientation.HORIZONTAL);
         separator.setPadding(new Insets(0, 0, 3, 0));
         return separator;
     }
 
-    public static Button makeTextButton(String text, EventHandler<MouseEvent> event) {
-        Button button = new Button(text);
+    public static Button makeTextButton(final String text, final EventHandler<MouseEvent> event) {
+        final Button button = new Button(text);
         button.addEventHandler(MouseEvent.MOUSE_CLICKED, event);
 
         return button;
     }
 
-    public static Button makeGraphicButton(String name, int size, EventHandler<MouseEvent> event) {
-        Button button = new Button();
-        Image optionIcon = new Image(name);
-        ImageView imageView = new ImageView(optionIcon);
+    public static Button makeGraphicButton(final String name, final int size, final EventHandler<MouseEvent> event) {
+        final Button button = new Button();
+        final Image optionIcon = new Image(name);
+        final ImageView imageView = new ImageView(optionIcon);
         imageView.setFitWidth(size);
         imageView.setFitHeight(size);
         imageView.setPreserveRatio(true);

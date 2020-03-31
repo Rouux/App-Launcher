@@ -15,7 +15,7 @@ public class Application {
 
     public Application() {}
 
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         System.out.println(beautifyName("DOOM Eternal"));
         System.out.println(beautifyName("Worms.W.M.D"));
         System.out.println(beautifyName("WorldWarZ"));
@@ -23,7 +23,7 @@ public class Application {
         System.out.println(beautifyName("C:\\Games\\DOOM Eternal\\DOOMEternalx64vk.exe"));
     }
 
-    private static String beautifyName(String name) {
+    private static String beautifyName(final String name) {
         return name.replaceAll(".exe$", "")
                 .replaceAll("(.*)(\\\\)(.*)", "$3")
                 .replaceAll("([^A-Z])(\\.)([a-zA-Z])", "$1 $3")
@@ -32,8 +32,8 @@ public class Application {
                 .replaceAll("_", " ");
     }
 
-    public Application(Path path, String name, String... keywords) {
-        this.executablePath = path;
+    public Application(final Path path, final String name, final String... keywords) {
+        executablePath = path;
         this.name = Application.beautifyName(name);
         this.keywords = new ArrayList<>();
         if(keywords != null && keywords.length > 0) {
@@ -41,11 +41,11 @@ public class Application {
         }
     }
 
-    public Application(String path, String name, String... keywords) {
+    public Application(final String path, final String name, final String... keywords) {
         this(Paths.get(path), name, keywords);
     }
 
-    public static String computeName(Path path) {
+    public static String computeName(final Path path) {
         return path.getFileName().toString().split("\\.")[0];
     }
 
@@ -53,7 +53,7 @@ public class Application {
         return executablePath;
     }
 
-    public void setExecutablePath(Path executablePath) {
+    public void setExecutablePath(final Path executablePath) {
         this.executablePath = executablePath;
     }
 
@@ -61,7 +61,7 @@ public class Application {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
@@ -69,15 +69,15 @@ public class Application {
         return keywords;
     }
 
-    public void setKeywords(List<String> keywords) {
+    public void setKeywords(final List<String> keywords) {
         this.keywords = keywords;
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if(this == o) return true;
         if(o == null || getClass() != o.getClass()) return false;
-        Application application = (Application) o;
+        final Application application = (Application) o;
         return executablePath.equals(application.executablePath) && name.equals(application.name);
     }
 

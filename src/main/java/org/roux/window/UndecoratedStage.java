@@ -16,25 +16,25 @@ public abstract class UndecoratedStage extends Stage {
     protected Scene scene;
 
     public UndecoratedStage() {
-        this.initStyle(StageStyle.UNDECORATED);
+        initStyle(StageStyle.UNDECORATED);
     }
 
-    public void setRoot(Parent root) {
-        this.scene = new Scene(root);
-        JMetro jMetro = new JMetro(scene, Style.DARK);
+    public void setRoot(final Parent root) {
+        scene = new Scene(root);
+        final JMetro jMetro = new JMetro(scene, Style.DARK);
 
         root.setOnMousePressed(event -> {
-            xOffset = UndecoratedStage.this.getX() - event.getScreenX();
-            yOffset = UndecoratedStage.this.getY() - event.getScreenY();
+            xOffset = getX() - event.getScreenX();
+            yOffset = getY() - event.getScreenY();
         });
         root.setOnMouseDragged(event -> {
-            UndecoratedStage.this.setX(event.getScreenX() + xOffset);
-            UndecoratedStage.this.setY(event.getScreenY() + yOffset);
+            setX(event.getScreenX() + xOffset);
+            setY(event.getScreenY() + yOffset);
         });
         root.getStyleClass().add(JMetroStyleClass.BACKGROUND);
         root.setStyle("-fx-border-color: #060606;");
 
-        this.setScene(scene);
+        setScene(scene);
     }
 
 }

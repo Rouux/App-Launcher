@@ -11,9 +11,8 @@ import org.roux.window.MainWindow;
 public class App extends Application {
 
     private final ApplicationLibrary applicationLibrary = new ApplicationLibrary();
-    private MainWindow mainWindow;
 
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         launch(args);
     }
 
@@ -23,14 +22,14 @@ public class App extends Application {
     }
 
     @Override
-    public void start(Stage stage) {
+    public void start(final Stage stage) {
         Thread.setDefaultUncaughtExceptionHandler(App::showError);
 
-        this.mainWindow = new MainWindow(this.applicationLibrary);
-        this.mainWindow.show();
+        final MainWindow mainWindow = new MainWindow(applicationLibrary);
+        mainWindow.show();
     }
 
-    private static void showError(Thread t, Throwable e) {
+    private static void showError(final Thread t, final Throwable e) {
         System.err.println("***Default exception handler***");
         if(Platform.isFxApplicationThread()) {
             new ErrorWindow(e);
@@ -41,7 +40,7 @@ public class App extends Application {
 
     @Override
     public void stop() throws Exception {
-        FileManager.save(this.applicationLibrary);
+        FileManager.save(applicationLibrary);
         super.stop();
     }
 }

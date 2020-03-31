@@ -30,43 +30,40 @@ public class MainWindow extends UndecoratedStage {
     private final ApplicationLibrary applicationLibrary;
 
     private OptionWindow optionWindow;
-    private Parent root;
 
-    private Button updateButton;
     private AutoCompleteTextField textField;
-    private Button optionButton;
 
-    public MainWindow(ApplicationLibrary applicationLibrary) {
+    public MainWindow(final ApplicationLibrary applicationLibrary) {
         this.applicationLibrary = applicationLibrary;
-        this.root = buildRoot();
+        final Parent root = buildRoot();
 
-        this.setRoot(this.root);
-        this.scene.setFill(Color.TRANSPARENT);
-        this.scene.setOnKeyPressed(ke -> {
+        setRoot(root);
+        scene.setFill(Color.TRANSPARENT);
+        scene.setOnKeyPressed(ke -> {
             if(ke.getCode() == KeyCode.ESCAPE) {
-                this.close();
+                close();
                 Platform.exit();
             }
         });
-        this.setAlwaysOnTop(true);
-        this.focusedProperty().addListener((observableValue, node, t1) -> {
+        setAlwaysOnTop(true);
+        focusedProperty().addListener((observableValue, node, t1) -> {
             //            System.out.println("Focus changed to -> " + t1);
         });
-        this.setOnShowing(event -> this.textField.requestFocus());
+        setOnShowing(event -> textField.requestFocus());
     }
 
-    public void launchApplication(String name) {
-        Application application = this.applicationLibrary.getApplication(name);
+    public void launchApplication(final String name) {
+        final Application application = applicationLibrary.getApplication(name);
         if(application != null) {
-            Path path = application.getExecutablePath();
+            final Path path = application.getExecutablePath();
             if(path.toFile().canExecute()) {
                 try {
-                    ProcessBuilder processBuilder = new ProcessBuilder("cmd", "/c", path.toString());
+                    final ProcessBuilder processBuilder = new ProcessBuilder("cmd", "/c", path.toString());
                     processBuilder.start();
-                } catch(IOException e) {
+                } catch(final IOException e) {
                     e.printStackTrace();
                 }
-                this.close();
+                close();
             } else {
                 // error, missing executable
             }
@@ -75,30 +72,34 @@ public class MainWindow extends UndecoratedStage {
     }
 
     public void scan() {
-        ObservableList<Application> applications = this.applicationLibrary.scan();
-        this.textField.getEntries().clear();
-        this.textField.getEntries().addAll(applications.stream()
-                                                   .map(Application::getName)
-                                                   .collect(Collectors.toList())
+        final ObservableList<Application> applications = applicationLibrary.scan();
+        textField.getEntries().clear();
+        textField.getEntries().addAll(applications.stream()
+                                              .map(Application::getName)
+                                              .collect(Collectors.toList())
         );
     }
 
     public Parent buildRoot() {
-        this.textField = makeField();
-        this.updateButton = makeGraphicButton("update-icon.png", MainWindow.BUTTON_SIZE, event -> {
-            this.scan();
-            System.out.println("Scanning done");
-            event.consume();
-        });
-        this.optionButton = makeGraphicButton("option-icon.png", MainWindow.BUTTON_SIZE, event -> {
-            if(this.optionWindow == null)
-                this.optionWindow = new OptionWindow(this, applicationLibrary);
-            this.optionWindow.show();
-            this.setOpacity(0);
-            event.consume();
-        });
+        textField = makeField();
+        final Button updateButton = makeGraphicButton("update-icon.png", MainWindow.BUTTON_SIZE,
+                                                      event -> {
+                                                          scan();
+                                                          System.out.println("Scanning done");
+                                                          event.consume();
+                                                      });
+        final Button optionButton = makeGraphicButton("option-icon.png", MainWindow.BUTTON_SIZE,
+                                                      event -> {
+                                                          if(optionWindow == null)
+                                                              optionWindow = new OptionWindow(this,
+                                                                                              applicationLibrary);
+                                                          optionWindow.show();
+                                                          setOpacity(0);
+                                                          event.consume();
+                                                      });
 
-        HBox root = new HBox(updateButton, makeVerticalSeparator(), textField, makeVerticalSeparator(), optionButton);
+        final HBox root = new HBox(updateButton, makeVerticalSeparator(), textField, makeVerticalSeparator(),
+                                   optionButton);
         root.setPadding(new Insets(2));
         root.setBorder(Border.EMPTY);
         root.setAlignment(Pos.CENTER);
@@ -107,7 +108,7 @@ public class MainWindow extends UndecoratedStage {
     }
 
     public AutoCompleteTextField makeField() {
-        AutoCompleteTextField textField = new AutoCompleteTextField(this, applicationLibrary);
+        final AutoCompleteTextField textField = new AutoCompleteTextField(this, applicationLibrary);
         textField.setPromptText("Find an app");
         textField.setPrefSize(FIELD_WIDTH, APP_HEIGHT);
         textField.getEntries().addAll(

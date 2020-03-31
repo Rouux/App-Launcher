@@ -21,7 +21,7 @@ public class FileManager {
     private static final List<String> FOLDERS = new ArrayList<>();
     private static final List<String> EXECUTABLES = new ArrayList<>();
 
-    public static Integer DEFAULT_MAX_ENTRIES = 10;
+    public static final Integer DEFAULT_MAX_ENTRIES = 10;
     public static Integer MAX_ENTRIES;
 
     private static JSONObject root;
@@ -30,18 +30,18 @@ public class FileManager {
         parse();
     }
 
-    public static JSONArray getJsonArray(String key) {
-        Object result = root.get(key);
+    public static JSONArray getJsonArray(final String key) {
+        final Object result = root.get(key);
         return result == null ? null : (JSONArray) result;
     }
 
     private static File loadData() throws IllegalArgumentException, IOException {
-        File file = new File("data.json");
+        final File file = new File("data.json");
         if(file.exists()) {
             return file;
         }
         System.out.println("Premier lancement !");
-        InputStream inputStream = FileManager.class.getClassLoader().getResourceAsStream("preset.json");
+        final InputStream inputStream = FileManager.class.getClassLoader().getResourceAsStream("preset.json");
         if(inputStream == null) {
             throw new IllegalArgumentException("Preset file not found !");
         }
@@ -51,84 +51,84 @@ public class FileManager {
 
     public static void parse() {
         System.out.println("Parse...");
-        try(BufferedReader reader = new BufferedReader(new FileReader(loadData()))) {
-            JSONParser parser = new JSONParser();
+        try(final BufferedReader reader = new BufferedReader(new FileReader(loadData()))) {
+            final JSONParser parser = new JSONParser();
             root = (JSONObject) parser.parse(reader);
 
-            Object maxEntries = root.get("maxEntries");
+            final Object maxEntries = root.get("maxEntries");
             MAX_ENTRIES = maxEntries != null ? ((Long) maxEntries).intValue() : DEFAULT_MAX_ENTRIES;
 
-            JSONArray blacklist = getJsonArray("blacklist");
+            final JSONArray blacklist = getJsonArray("blacklist");
             if(blacklist != null)
                 blacklist.forEach(filename -> FileManager.BLACKLIST.add(filename.toString()));
 
-            JSONArray folders = getJsonArray("folders");
+            final JSONArray folders = getJsonArray("folders");
             if(folders != null)
                 folders.forEach(folder -> FileManager.FOLDERS.add(folder.toString()));
 
-            JSONArray executables = getJsonArray("executables");
+            final JSONArray executables = getJsonArray("executables");
             if(executables != null)
                 executables.forEach(executable -> FileManager.EXECUTABLES.add(executable.toString()));
 
-        } catch(IOException | ParseException e) {
+        } catch(final IOException | ParseException e) {
             e.printStackTrace();
         }
     }
 
-    public static Map<String, List<Path>> getFilesInFolders(Predicate<Path> pathPredicate) {
+    public static Map<String, List<Path>> getFilesInFolders(final Predicate<Path> pathPredicate) {
         final Map<String, List<Path>> files = new HashMap<>();
         getFolders().forEach(folderName -> {
             try {
-                Path folderPath = Paths.get(folderName);
+                final Path folderPath = Paths.get(folderName);
                 if(folderPath.toFile().exists()) {
-                    int index = folderPath.getNameCount();
-                    List<Path> list = Files.walk(folderPath)
+                    final int index = folderPath.getNameCount();
+                    final List<Path> list = Files.walk(folderPath)
                             .filter(path -> path.toFile().isFile())
                             .filter(path -> path.toFile().canExecute())
                             //                            .filter(path -> !BLACKLIST.contains(path.getFileName()
                             //                            .toString()))
                             .filter(pathPredicate)
                             .collect(Collectors.toList());
-                    for(Path p : list) {
-                        String name = p.getName(index).toString();
+                    for(final Path p : list) {
+                        final String name = p.getName(index).toString();
                         files.computeIfAbsent(name, k -> new ArrayList<>());
                         files.get(name).add(p);
                     }
                 }
-            } catch(IOException e) {
+            } catch(final IOException e) {
                 e.printStackTrace();
             }
         });
         return files;
     }
 
-    public static void save(ApplicationLibrary applicationLibrary) {
+    public static void save(final ApplicationLibrary applicationLibrary) {
         System.out.println("Saving...");
-        Map<String, Object> data = new HashMap<>();
+        final Map<String, Object> data = new HashMap<>();
         data.put("maxEntries", MAX_ENTRIES);
         data.put("folders", FOLDERS);
         data.put("executables", EXECUTABLES);
         data.put("blacklist", BLACKLIST);
         data.put("applications", applicationLibrary.getLibraryAsJsonArray());
-        JSONObject jsonObject = new JSONObject(data);
-        try(PrintWriter writer = new PrintWriter(new File("data.json"))) {
+        final JSONObject jsonObject = new JSONObject(data);
+        try(final PrintWriter writer = new PrintWriter(new File("data.json"))) {
             writer.print(jsonObject.toJSONString());
             writer.flush();
-        } catch(IOException e) {
+        } catch(final IOException e) {
             e.printStackTrace();
         }
     }
 
     public static List<String> getFolders() { return FileManager.FOLDERS; }
 
-    public static void setFolders(Collection<String> folders) {
+    public static void setFolders(final Collection<String> folders) {
         FileManager.FOLDERS.clear();
         FileManager.FOLDERS.addAll(folders);
     }
 
     public static List<String> getExecutables() { return FileManager.EXECUTABLES; }
 
-    public static void setExecutables(Collection<String> executables) {
+    public static void setExecutables(final Collection<String> executables) {
         FileManager.EXECUTABLES.clear();
         FileManager.EXECUTABLES.addAll(executables);
     }
@@ -137,7 +137,7 @@ public class FileManager {
         return FileManager.BLACKLIST;
     }
 
-    public static void setBlacklist(Collection<String> blacklist) {
+    public static void setBlacklist(final Collection<String> blacklist) {
         FileManager.BLACKLIST.clear();
         FileManager.BLACKLIST.addAll(blacklist);
     }

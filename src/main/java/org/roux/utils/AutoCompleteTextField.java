@@ -24,10 +24,10 @@ public class AutoCompleteTextField extends TextField {
 
     private List<String> filteredEntries;
     /** The popup used to select an entry. */
-    private MaxSizedContextMenu entriesPopup;
+    private final MaxSizedContextMenu entriesPopup;
 
     /** Construct a new AutoCompleteTextField. */
-    public AutoCompleteTextField(MainWindow mainWindow, ApplicationLibrary applicationLibrary) {
+    public AutoCompleteTextField(final MainWindow mainWindow, final ApplicationLibrary applicationLibrary) {
         super();
         entries = new TreeSet<>();
         entriesPopup = new MaxSizedContextMenu();
@@ -41,7 +41,7 @@ public class AutoCompleteTextField extends TextField {
                 if(entries.size() > 0) {
                     populatePopup(filteredEntries);
                     if(!entriesPopup.isShowing()) {
-                        entriesPopup.setMinWidth(AutoCompleteTextField.this.getPrefWidth());
+                        entriesPopup.setMinWidth(getPrefWidth());
                         entriesPopup.show(AutoCompleteTextField.this, Side.BOTTOM, 0, 0);
                     }
                 } else {
@@ -50,7 +50,7 @@ public class AutoCompleteTextField extends TextField {
             }
         });
         setOnKeyPressed(ke -> {
-            List<String> list = getFilteredEntries();
+            final List<String> list = getFilteredEntries();
             System.out.println(list);
             if(ke.getCode() == KeyCode.ENTER) {
                 if(list != null && !list.isEmpty()) {
@@ -81,14 +81,14 @@ public class AutoCompleteTextField extends TextField {
      *
      * @param searchResult The set of matching strings.
      */
-    private void populatePopup(List<String> searchResult) {
-        List<CustomMenuItem> menuItems = new LinkedList<>();
+    private void populatePopup(final List<String> searchResult) {
+        final List<CustomMenuItem> menuItems = new LinkedList<>();
         // If you'd like more entries, modify this line.
-        int count = Math.min(searchResult.size(), FileManager.MAX_ENTRIES);
+        final int count = Math.min(searchResult.size(), FileManager.MAX_ENTRIES);
         for(int i = 0; i < count; i++) {
             final String result = searchResult.get(i);
-            Label entryLabel = new Label(result);
-            CustomMenuItem item = new CustomMenuItem(entryLabel, true);
+            final Label entryLabel = new Label(result);
+            final CustomMenuItem item = new CustomMenuItem(entryLabel, true);
             item.setOnAction(actionEvent -> {
                 setText(result);
                 entriesPopup.hide();

@@ -27,8 +27,7 @@ public class EditApplicationWindow extends UndecoratedStage {
     private final static int WINDOW_WIDTH = 480;
     private final static int WINDOW_HEIGHT = 320;
 
-    private VBox root;
-    private Stage main;
+    private final VBox root;
     private Application application;
 
     // Name
@@ -39,38 +38,29 @@ public class EditApplicationWindow extends UndecoratedStage {
     // Path
     private final Map<Application, String> applicationToPath;
     private TextField applicationPath;
-    private Button applicationSelectFile;
 
     // Keywords
-    private ListView<String> keywordView;
+    private final ListView<String> keywordView;
     private List<String> keywords;
-    private HBox keywordButtons;
 
-    // Confirm or cancel
-    private HBox confirmOrCancelButtons;
+    public EditApplicationWindow(final Stage owner, final Button confirmButton, final Button cancelButton) {
+        applicationToPath = new HashMap<>();
 
-    public EditApplicationWindow(Stage owner, Button confirmButton, Button cancelButton) {
-        this.main = owner;
-        this.applicationToPath = new HashMap<>();
-
-        this.applicationName = buildNameField();
-        HBox pathOptions = buildPathOptions();
-        this.keywordView = buildKeywordView();
-        this.keywordButtons = buildKeywordButtons();
-        this.confirmOrCancelButtons = buildConfirmOrCancelButtons();
+        applicationName = buildNameField();
+        final HBox pathOptions = buildPathOptions();
+        keywordView = buildKeywordView();
+        final HBox keywordButtons = buildKeywordButtons();
+        // Confirm or cancel
+        final HBox confirmOrCancelButtons = buildConfirmOrCancelButtons();
 
         confirmButton.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
-            this.applicationToPath.forEach((application, path) -> {
-                application.setExecutablePath(Paths.get(path));
-            });
-            this.applicationToPath.clear();
+            applicationToPath.forEach((application, path) -> application.setExecutablePath(Paths.get(path)));
+            applicationToPath.clear();
         });
 
-        cancelButton.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
-            this.applicationToPath.clear();
-        });
+        cancelButton.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> applicationToPath.clear());
 
-        this.root = buildRoot(
+        root = buildRoot(
                 new Label("Name"),
                 applicationName,
                 new Label("Path"),
@@ -80,27 +70,28 @@ public class EditApplicationWindow extends UndecoratedStage {
                 keywordButtons,
                 confirmOrCancelButtons);
 
-        this.setOnShowing(event -> this.root.requestFocus());
-        this.initOwner(owner);
-        this.setRoot(this.root);
+        setOnShowing(event -> root.requestFocus());
+        initOwner(owner);
+        setRoot(root);
     }
 
-    public void edit(Application application, StringPropertyBase nameProperty, List<String> tableKeywordsRef) {
+    public void edit(final Application application, final StringPropertyBase nameProperty,
+                     final List<String> tableKeywordsRef) {
         this.application = application;
-        this.applicationNameProperty = nameProperty;
-        this.initialApplicationName = nameProperty.get();
-        this.applicationName.setText(nameProperty.get());
+        applicationNameProperty = nameProperty;
+        initialApplicationName = nameProperty.get();
+        applicationName.setText(nameProperty.get());
 
-        this.applicationToPath.computeIfAbsent(application, value -> application.getExecutablePath().toString());
-        this.applicationPath.setText(this.applicationToPath.get(application));
+        applicationToPath.computeIfAbsent(application, value -> application.getExecutablePath().toString());
+        applicationPath.setText(applicationToPath.get(application));
 
-        this.keywords = tableKeywordsRef;
-        this.keywordView.getItems().setAll(tableKeywordsRef);
-        this.show();
+        keywords = tableKeywordsRef;
+        keywordView.getItems().setAll(tableKeywordsRef);
+        show();
     }
 
-    public VBox buildRoot(Node... nodes) {
-        VBox root = new VBox(nodes);
+    public VBox buildRoot(final Node... nodes) {
+        final VBox root = new VBox(nodes);
         root.setSpacing(5);
         root.setPadding(new Insets(10));
         root.setPrefSize(WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -109,55 +100,53 @@ public class EditApplicationWindow extends UndecoratedStage {
     }
 
     private TextField buildNameField() {
-        TextField textField = new TextField();
+        final TextField textField = new TextField();
         textField.setPromptText("Enter the application name");
         textField.setOnKeyReleased(t -> {
             if(t.getCode() == KeyCode.ENTER) {
-                this.root.requestFocus();
+                root.requestFocus();
                 t.consume();
             }
         });
-        textField.textProperty().addListener((observable, oldValue, newValue) -> {
-            this.applicationNameProperty.set(newValue);
-        });
+        textField.textProperty().addListener((observable, oldValue, newValue) -> applicationNameProperty.set(newValue));
 
         return textField;
     }
 
     private HBox buildPathOptions() {
-        this.applicationPath = new TextField();
-        this.applicationPath.setPromptText("Select a valid path for the application's executable");
-        this.applicationPath.setPrefWidth(WINDOW_WIDTH);
-        this.applicationPath.setOnKeyReleased(t -> {
+        applicationPath = new TextField();
+        applicationPath.setPromptText("Select a valid path for the application's executable");
+        applicationPath.setPrefWidth(WINDOW_WIDTH);
+        applicationPath.setOnKeyReleased(t -> {
             if(t.getCode() == KeyCode.ENTER) {
-                this.root.requestFocus();
+                root.requestFocus();
                 t.consume();
             }
         });
-        this.applicationPath.textProperty().addListener((observable, oldValue, newValue) -> {
+        applicationPath.textProperty().addListener((observable, oldValue, newValue) -> {
             if(application != null)
-                this.applicationToPath.put(application, newValue);
+                applicationToPath.put(application, newValue);
         });
 
-        FileChooser fileChooser = new FileChooser();
-        this.applicationSelectFile = makeTextButton("...", event -> {
-            File currentFile = new File(this.applicationPath.getText());
+        final FileChooser fileChooser = new FileChooser();
+        final Button applicationSelectFile = makeTextButton("...", event -> {
+            final File currentFile = new File(applicationPath.getText());
             if(currentFile.isFile()) {
                 fileChooser.setInitialDirectory(currentFile.getParentFile());
-                File chosenFile = fileChooser.showOpenDialog(this);
+                final File chosenFile = fileChooser.showOpenDialog(this);
                 if(chosenFile != null && chosenFile.exists())
-                    this.applicationPath.setText(chosenFile.getAbsolutePath());
+                    applicationPath.setText(chosenFile.getAbsolutePath());
             }
         });
 
-        HBox hBox = new HBox(this.applicationPath, this.applicationSelectFile);
+        final HBox hBox = new HBox(applicationPath, applicationSelectFile);
         hBox.setSpacing(10);
         hBox.setAlignment(Pos.CENTER);
         return hBox;
     }
 
     private ListView<String> buildKeywordView() {
-        ListView<String> keywordView = new ListView<>();
+        final ListView<String> keywordView = new ListView<>();
         keywordView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         keywordView.setEditable(true);
         keywordView.setCellFactory(TextFieldListCell.forListView());
@@ -173,15 +162,14 @@ public class EditApplicationWindow extends UndecoratedStage {
     }
 
     private HBox buildKeywordButtons() {
-        Button add = makeGraphicButton("add-icon.png", MainWindow.BUTTON_SIZE - 8, event -> {
-            this.keywordView.getItems().add("keyword");
-        });
-        Button remove = makeGraphicButton("remove-icon.png", MainWindow.BUTTON_SIZE - 8, event -> {
-            List<String> items = this.keywordView.getSelectionModel().getSelectedItems();
-            this.keywordView.getItems().removeAll(items);
+        final Button add = makeGraphicButton("add-icon.png", MainWindow.BUTTON_SIZE - 8,
+                                             event -> keywordView.getItems().add("keyword"));
+        final Button remove = makeGraphicButton("remove-icon.png", MainWindow.BUTTON_SIZE - 8, event -> {
+            final List<String> items = keywordView.getSelectionModel().getSelectedItems();
+            keywordView.getItems().removeAll(items);
         });
 
-        HBox buttons = new HBox(add, makeVerticalSeparator(), remove);
+        final HBox buttons = new HBox(add, makeVerticalSeparator(), remove);
         buttons.setAlignment(Pos.CENTER);
         buttons.setSpacing(10);
         buttons.setPadding(new Insets(10));
@@ -189,18 +177,18 @@ public class EditApplicationWindow extends UndecoratedStage {
     }
 
     private HBox buildConfirmOrCancelButtons() {
-        Button confirmButton = makeTextButton("    OK    ", event -> {
-            this.keywords.clear();
-            this.keywords.addAll(this.keywordView.getItems());
-            this.close();
+        final Button confirmButton = makeTextButton("    OK    ", event -> {
+            keywords.clear();
+            keywords.addAll(keywordView.getItems());
+            close();
         });
 
-        Button cancelButton = makeTextButton(" Cancel ", event -> {
-            this.applicationNameProperty.set(this.initialApplicationName);
-            this.close();
+        final Button cancelButton = makeTextButton(" Cancel ", event -> {
+            applicationNameProperty.set(initialApplicationName);
+            close();
         });
 
-        HBox confirmOrCancel = new HBox(confirmButton, cancelButton);
+        final HBox confirmOrCancel = new HBox(confirmButton, cancelButton);
         confirmOrCancel.setAlignment(Pos.CENTER_RIGHT);
         confirmOrCancel.setSpacing(10);
         return confirmOrCancel;

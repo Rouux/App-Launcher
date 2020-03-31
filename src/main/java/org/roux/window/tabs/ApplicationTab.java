@@ -32,22 +32,20 @@ public class ApplicationTab extends CustomTab {
     private final EditApplicationWindow editApplicationWindow;
 
     private TableView<Application> applicationView;
-    private HBox applicationButtons;
 
     private final Map<Application, StringPropertyBase> appToName = new HashMap<>();
     private final Map<Application, List<String>> appToKeywords = new HashMap<>();
 
-    public ApplicationTab(Stage sourceWindow, String name, Button confirmButton, Button cancelButton,
-                          ApplicationLibrary applicationLibrary) {
+    public ApplicationTab(final Stage sourceWindow, final String name, final Button confirmButton,
+                          final Button cancelButton,
+                          final ApplicationLibrary applicationLibrary) {
         super(sourceWindow, name, confirmButton, cancelButton);
         this.applicationLibrary = applicationLibrary;
-        this.editApplicationWindow = new EditApplicationWindow(sourceWindow, confirmButton, cancelButton);
-        this.editApplicationWindow.setOnHidden(event -> {
-            applicationView.refresh();
-        });
+        editApplicationWindow = new EditApplicationWindow(sourceWindow, confirmButton, cancelButton);
+        editApplicationWindow.setOnHidden(event -> applicationView.refresh());
 
-        this.applicationView = buildApplicationView();
-        this.applicationButtons = buildApplicationButtons();
+        applicationView = buildApplicationView();
+        final HBox applicationButtons = buildApplicationButtons();
 
         addConfirmButtonEvent(event -> {
             appToKeywords.forEach(Application::setKeywords);
@@ -63,44 +61,40 @@ public class ApplicationTab extends CustomTab {
             applicationView.refresh();
         });
 
-        VBox root = new VBox(applicationView, applicationButtons);
+        final VBox root = new VBox(applicationView, applicationButtons);
         root.setAlignment(Pos.CENTER);
         root.setSpacing(5);
         setRoot(sourceWindow, root);
     }
 
     public TableView<Application> buildApplicationView() {
-        TableView<Application> table = new TableView<>(applicationLibrary.getLibrary());
+        final TableView<Application> table = new TableView<>(applicationLibrary.getLibrary());
         table.setEditable(false);
         table.setStyle("-fx-font-size: 12");
         table.setRowFactory(tv -> {
-            TableRow<Application> row = new TableRow<>();
+            final TableRow<Application> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
                 if(event.getClickCount() == 2 && !row.isEmpty() && row.getItem() != null) {
-                    Application application = row.getItem();
-                    this.editApplicationWindow.edit(application,
-                                                    this.appToName.get(application),
-                                                    this.appToKeywords.get(application));
+                    final Application application = row.getItem();
+                    editApplicationWindow.edit(application,
+                                               appToName.get(application),
+                                               appToKeywords.get(application));
                 }
             });
             return row;
         });
-        table.getItems().addListener((Observable observable) -> {
-            Utils.autoResizeColumns(table);
-        });
-        applicationLibrary.getLibrary().addListener((Observable observable) -> {
-            Utils.autoResizeColumns(table);
-        });
+        table.getItems().addListener((Observable observable) -> Utils.autoResizeColumns(table));
+        applicationLibrary.getLibrary().addListener((Observable observable) -> Utils.autoResizeColumns(table));
 
-        TableColumn<Application, String> name = buildNameColumn();
-        TableColumn<Application, String> keywords = buildKeywordsColumn();
+        final TableColumn<Application, String> name = buildNameColumn();
+        final TableColumn<Application, String> keywords = buildKeywordsColumn();
         table.getColumns().setAll(name, keywords);
         Utils.autoResizeColumns(table);
         return table;
     }
 
     public TableColumn<Application, String> buildNameColumn() {
-        TableColumn<Application, String> column = new TableColumn<>("Name");
+        final TableColumn<Application, String> column = new TableColumn<>("Name");
         column.setCellFactory(TextFieldTableCell.forTableColumn());
         column.setCellValueFactory(data -> {
             appToName.computeIfAbsent(data.getValue(), k -> new SimpleStringProperty(data.getValue().getName()));
@@ -111,7 +105,7 @@ public class ApplicationTab extends CustomTab {
     }
 
     public TableColumn<Application, String> buildKeywordsColumn() {
-        TableColumn<Application, String> column = new TableColumn<>("Keywords");
+        final TableColumn<Application, String> column = new TableColumn<>("Keywords");
         column.setCellFactory(TextFieldTableCell.forTableColumn());
         column.setCellValueFactory(data -> {
             appToKeywords.computeIfAbsent(data.getValue(), k -> new ArrayList<>(data.getValue().getKeywords()));
@@ -122,24 +116,24 @@ public class ApplicationTab extends CustomTab {
     }
 
     public HBox buildApplicationButtons() {
-        Button edit = makeTextButton("Edit", event -> {
-            Application application = this.applicationView.getSelectionModel().getSelectedItem();
+        final Button edit = makeTextButton("Edit", event -> {
+            final Application application = applicationView.getSelectionModel().getSelectedItem();
             if(application != null) {
-                this.editApplicationWindow.edit(application,
-                                                this.appToName.get(application),
-                                                this.appToKeywords.get(application));
+                editApplicationWindow.edit(application,
+                                           appToName.get(application),
+                                           appToKeywords.get(application));
             }
         });
 
-        Button remove = makeTextButton("Remove", event -> {
+        final Button remove = makeTextButton("Remove", event -> {
 
         });
 
-        Button blacklist = makeTextButton("Add to blacklist", event -> {
+        final Button blacklist = makeTextButton("Add to blacklist", event -> {
 
         });
 
-        HBox buttons = new HBox(edit, makeVerticalSeparator(), remove, makeVerticalSeparator(), blacklist);
+        final HBox buttons = new HBox(edit, makeVerticalSeparator(), remove, makeVerticalSeparator(), blacklist);
         buttons.setAlignment(Pos.CENTER);
         buttons.setSpacing(10);
         buttons.setPadding(new Insets(10));

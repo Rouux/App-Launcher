@@ -18,29 +18,29 @@ import static org.roux.utils.Utils.makeTextButton;
 
 public class OptionWindow extends UndecoratedStage {
 
-    private Stage main;
+    private final Stage main;
     private Button confirmButton;
     private Button cancelButton;
 
-    public OptionWindow(Stage owner, ApplicationLibrary applicationLibrary) {
-        this.main = owner;
-        HBox confirmOrCancelButtons = buildConfirmOrCancelButtons();
+    public OptionWindow(final Stage owner, final ApplicationLibrary applicationLibrary) {
+        main = owner;
+        final HBox confirmOrCancelButtons = buildConfirmOrCancelButtons();
 
         // AFTER buildConfirmOrCancelButtons !! VERY IMPORTANT YO !!
-        TabPane tabPane = new TabPane(
-                new FolderTab(this, "Sources", this.confirmButton, this.cancelButton),
-                new ApplicationTab(this, "Apps", this.confirmButton, this.cancelButton, applicationLibrary),
-                new ParameterTab(this, "Other", this.confirmButton, this.cancelButton)
+        final TabPane tabPane = new TabPane(
+                new FolderTab(this, "Sources", confirmButton, cancelButton),
+                new ApplicationTab(this, "Apps", confirmButton, cancelButton, applicationLibrary),
+                new ParameterTab(this, "Other", confirmButton, cancelButton)
         );
 
-        VBox root = buildRoot(tabPane, confirmOrCancelButtons);
+        final VBox root = buildRoot(tabPane, confirmOrCancelButtons);
 
-        this.initOwner(owner);
-        this.setRoot(root);
+        initOwner(owner);
+        setRoot(root);
     }
 
-    private VBox buildRoot(Node... nodes) {
-        VBox root = new VBox(nodes);
+    private VBox buildRoot(final Node... nodes) {
+        final VBox root = new VBox(nodes);
         root.setAlignment(Pos.CENTER);
         root.setSpacing(5);
         root.setPadding(new Insets(10));
@@ -51,11 +51,11 @@ public class OptionWindow extends UndecoratedStage {
     }
 
     public HBox buildConfirmOrCancelButtons() {
-        this.confirmButton = makeTextButton("    OK    ", event -> this.close());
+        confirmButton = makeTextButton("    OK    ", event -> close());
 
-        this.cancelButton = makeTextButton(" Cancel ", event -> this.close());
+        cancelButton = makeTextButton(" Cancel ", event -> close());
 
-        HBox confirmOrCancel = new HBox(confirmButton, cancelButton);
+        final HBox confirmOrCancel = new HBox(confirmButton, cancelButton);
         confirmOrCancel.setAlignment(Pos.CENTER_RIGHT);
         confirmOrCancel.setSpacing(10);
         return confirmOrCancel;
@@ -64,6 +64,6 @@ public class OptionWindow extends UndecoratedStage {
     @Override
     public void hide() {
         super.hide();
-        this.main.setOpacity(1);
+        main.setOpacity(1);
     }
 }

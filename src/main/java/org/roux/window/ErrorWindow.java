@@ -22,72 +22,68 @@ import java.time.format.DateTimeFormatter;
 
 public class ErrorWindow extends UndecoratedStage {
 
-    public ErrorWindow(String message) {
+    public ErrorWindow(final String message) {
         super();
-        Label label = new Label(message);
+        final Label label = new Label(message);
         label.setWrapText(true);
         label.setPrefWidth(360);
         label.setPadding(new Insets(10, 5, 5, 10));
         label.setFont(Font.font(14));
 
-        Button copyButton = buildCopyButton(message);
+        final Button copyButton = buildCopyButton(message);
 
-        Button confirm = new Button("   Ok   ");
-        confirm.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
-            this.close();
-        });
-        HBox buttons = new HBox(copyButton, confirm);
+        final Button confirm = new Button("   Ok   ");
+        confirm.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> close());
+        final HBox buttons = new HBox(copyButton, confirm);
         buttons.setAlignment(Pos.CENTER_RIGHT);
         buttons.setSpacing(10);
 
-        VBox vBox = new VBox(label, buttons);
+        final VBox vBox = new VBox(label, buttons);
         vBox.setPadding(new Insets(10));
         vBox.setMaxSize(360, 240);
         vBox.setSpacing(20);
 
-        this.setRoot(vBox);
-        this.setAlwaysOnTop(true);
+        setRoot(vBox);
+        setAlwaysOnTop(true);
         getScene().getStylesheets().add("style.css");
-        this.show();
+        show();
     }
 
-    public ErrorWindow(Throwable throwable) {
-        StringWriter errorMsg = new StringWriter();
+    public ErrorWindow(final Throwable throwable) {
+        final StringWriter errorMsg = new StringWriter();
         throwable.printStackTrace(new PrintWriter(errorMsg));
-        Label label = new Label(errorMsg.toString());
+        final Label label = new Label(errorMsg.toString());
 
-        Label text = new Label("An error has occurred");
+        final Label text = new Label("An error has occurred");
         text.setFont(Font.font(14));
 
         label.setWrapText(true);
         label.setPadding(new Insets(5, 5, 5, 10));
-        ScrollPane scrollPane = new ScrollPane(label);
+        final ScrollPane scrollPane = new ScrollPane(label);
         scrollPane.setPrefViewportHeight(400);
 
-        Button saveButton = buildSaveButton(errorMsg.toString());
-        Button copyButton = buildCopyButton(errorMsg.toString());
+        final Button saveButton = buildSaveButton(errorMsg.toString());
+        final Button copyButton = buildCopyButton(errorMsg.toString());
 
-        Button confirm = new Button("   Ok   ");
-        confirm.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
-            this.close();
-        });
-        HBox buttons = new HBox(saveButton, copyButton, confirm);
+        final Button confirm = new Button("   Ok   ");
+        confirm.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> close());
+        final HBox buttons = new HBox(saveButton, copyButton, confirm);
         buttons.setAlignment(Pos.CENTER_RIGHT);
         buttons.setSpacing(10);
 
-        VBox vBox = new VBox(text, scrollPane, buttons);
+        final VBox vBox = new VBox(text, scrollPane, buttons);
         vBox.setPadding(new Insets(10));
         vBox.setPrefSize(360, 320);
         vBox.setSpacing(20);
 
-        this.setRoot(vBox);
-        this.setAlwaysOnTop(true);
+        setRoot(vBox);
+        setAlwaysOnTop(true);
         getScene().getStylesheets().add("style.css");
-        this.show();
+        show();
     }
 
-    private Button buildCopyButton(String error) {
-        Button copyButton = new Button("Copy to clipboard");
+    private Button buildCopyButton(final String error) {
+        final Button copyButton = new Button("Copy to clipboard");
         copyButton.setOnAction(event -> {
             final Clipboard clipboard = Clipboard.getSystemClipboard();
             final ClipboardContent content = new ClipboardContent();
@@ -99,31 +95,31 @@ public class ErrorWindow extends UndecoratedStage {
         return copyButton;
     }
 
-    private Button buildSaveButton(String error) {
-        Button saveButton = new Button("Save as file");
+    private Button buildSaveButton(final String error) {
+        final Button saveButton = new Button("Save as file");
         saveButton.setOnAction(event -> {
-            FileChooser fileChooser = new FileChooser();
-            FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
+            final FileChooser fileChooser = new FileChooser();
+            final FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
             fileChooser.getExtensionFilters().add(extFilter);
 
-            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy_HH-mm-ss");
-            LocalDateTime now = LocalDateTime.now();
+            final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy_HH-mm-ss");
+            final LocalDateTime now = LocalDateTime.now();
             fileChooser.setInitialFileName("log_" + dtf.format(now));
 
             //Show save file dialog
-            File file = fileChooser.showSaveDialog(this);
+            final File file = fileChooser.showSaveDialog(this);
             if(file != null) {
                 saveErrorToFile(error, file);
-                this.close();
+                close();
             }
         });
         return saveButton;
     }
 
-    private static void saveErrorToFile(String content, File file) {
-        try(PrintWriter writer = new PrintWriter(file)) {
+    private static void saveErrorToFile(final String content, final File file) {
+        try(final PrintWriter writer = new PrintWriter(file)) {
             writer.println(content);
-        } catch(IOException ex) {
+        } catch(final IOException ex) {
             ex.printStackTrace();
         }
     }

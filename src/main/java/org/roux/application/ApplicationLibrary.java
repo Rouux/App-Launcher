@@ -21,27 +21,27 @@ public class ApplicationLibrary {
 
     public ApplicationLibrary() {
         // Check if they are applications already to put in library
-        Map<String, JSONObject> applicationsJson = getApplicationsJson();
+        final Map<String, JSONObject> applicationsJson = getApplicationsJson();
         if(applicationsJson != null && !applicationsJson.isEmpty()) {
             applicationsJson.forEach((name, jsonObject) -> {
-                String path = jsonObject.get("path").toString();
-                String[] keywords = (String[]) ((JSONArray) jsonObject.get("keywords")).toArray(new String[0]);
-                Application application = new Application(path, name, keywords);
+                final String path = jsonObject.get("path").toString();
+                final String[] keywords = (String[]) ((JSONArray) jsonObject.get("keywords")).toArray(new String[0]);
+                final Application application = new Application(path, name, keywords);
                 library.add(application);
             });
         }
     }
 
     public Map<String, Path> gatherExecutables() {
-        Map<String, List<Path>> files = FileManager.getFilesInFolders(path -> {
-            String filename = path.getFileName().toString();
-            for(String extension : EXTENSIONS) {
+        final Map<String, List<Path>> files = FileManager.getFilesInFolders(path -> {
+            final String filename = path.getFileName().toString();
+            for(final String extension : EXTENSIONS) {
                 if(filename.endsWith(extension)) return true;
             }
             return false;
         });
-        Map<String, Path> results = new HashMap<>();
-        for(Map.Entry<String, List<Path>> entry : files.entrySet()) {
+        final Map<String, Path> results = new HashMap<>();
+        for(final Map.Entry<String, List<Path>> entry : files.entrySet()) {
             entry.getValue().stream()
                     .filter(path -> !path.getFileName().toString().contains("redist"))
                     .filter(path -> !path.getFileName().toString().contains("dxsetup"))
@@ -58,20 +58,20 @@ public class ApplicationLibrary {
     public ObservableList<Application> scan() {
         final Map<String, JSONObject> applicationsJson = getApplicationsJson();
         final List<Application> newApplications = new ArrayList<>();
-        Map<String, Path> executables = gatherExecutables();
-        for(Map.Entry<String, Path> entry : executables.entrySet()) {
-            Application application = new Application(entry.getValue(), entry.getKey());
-            JSONObject oldApplication;
+        final Map<String, Path> executables = gatherExecutables();
+        for(final Map.Entry<String, Path> entry : executables.entrySet()) {
+            final Application application = new Application(entry.getValue(), entry.getKey());
+            final JSONObject oldApplication;
             if(applicationsJson != null && (oldApplication = applicationsJson.get(application.getName())) != null) {
                 application.getKeywords().addAll(((JSONArray) oldApplication.get("keywords")));
             }
             newApplications.add(application);
         }
-        this.library.setAll(newApplications);
-        return this.library;
+        library.setAll(newApplications);
+        return library;
     }
 
-    public List<String> filter(final SortedSet<String> entries, String inputText) {
+    public List<String> filter(final SortedSet<String> entries, final String inputText) {
         final List<String> filteredEntries = new ArrayList<>();
         filteredEntries.addAll(
                 library.stream()
@@ -96,9 +96,9 @@ public class ApplicationLibrary {
 
     public Map<String, JSONObject> getApplicationsJson() {
         final Map<String, JSONObject> nameToObjectMap = new HashMap<>();
-        JSONArray jsonArray = FileManager.getJsonArray("applications");
+        final JSONArray jsonArray = FileManager.getJsonArray("applications");
         if(jsonArray != null) {
-            Iterator<JSONObject> iterator = jsonArray.iterator();
+            final Iterator<JSONObject> iterator = jsonArray.iterator();
             iterator.forEachRemaining(jsonObject -> nameToObjectMap.put(jsonObject.get("name").toString(), jsonObject));
             return nameToObjectMap;
         }
@@ -106,12 +106,12 @@ public class ApplicationLibrary {
     }
 
     public JSONArray getLibraryAsJsonArray() {
-        JSONArray applicationArray = new JSONArray();
-        for(Application application : library) {
-            JSONObject appJson = new JSONObject();
+        final JSONArray applicationArray = new JSONArray();
+        for(final Application application : library) {
+            final JSONObject appJson = new JSONObject();
             appJson.put("path", application.getExecutablePath().toString());
             appJson.put("name", application.getName());
-            JSONArray jsonArray = new JSONArray();
+            final JSONArray jsonArray = new JSONArray();
             jsonArray.addAll(application.getKeywords());
             appJson.put("keywords", jsonArray);
             applicationArray.add(appJson);
@@ -119,7 +119,7 @@ public class ApplicationLibrary {
         return applicationArray;
     }
 
-    public Application getApplication(String name) {
+    public Application getApplication(final String name) {
         return library.stream()
                 .filter(application -> application.getName().equals(name))
                 .findFirst()

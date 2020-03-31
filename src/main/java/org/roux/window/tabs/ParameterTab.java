@@ -8,12 +8,13 @@ import javafx.stage.Stage;
 
 public class ParameterTab extends CustomTab {
 
-    public ParameterTab(Stage sourceWindow, String name, Button confirmButton, Button cancelButton) {
+    public ParameterTab(final Stage sourceWindow, final String name, final Button confirmButton,
+                        final Button cancelButton) {
         super(sourceWindow, name, confirmButton, cancelButton);
 
-        Slider searchMaxDisplaySlider = new Slider(5, 20, 10);
+        final Slider searchMaxDisplaySlider = new Slider(5, 20, 10);
 
-        VBox root = new VBox(searchMaxDisplaySlider);
+        final VBox root = new VBox(searchMaxDisplaySlider);
         root.setAlignment(Pos.CENTER);
         root.setSpacing(5);
         setRoot(sourceWindow, root);

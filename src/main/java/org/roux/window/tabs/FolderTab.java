@@ -2,12 +2,15 @@ package org.roux.window.tabs;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
@@ -30,42 +33,41 @@ public class FolderTab extends CustomTab {
     private final ObservableList<String> folders = FXCollections.observableList(new ArrayList<>());
     private final List<String> startingFolders = new ArrayList<>();
 
-    private ListView<String> folderView;
-    private HBox folderViewButtons;
+    private final ListView<String> folderView;
 
     private final ObservableList<String> files = FXCollections.observableList(new ArrayList<>());
     private final List<String> startingFiles = new ArrayList<>();
 
-    private ListView<String> fileView;
-    private HBox fileViewButtons;
+    private final ListView<String> fileView;
 
-    public FolderTab(Stage sourceWindow, String name, Button confirmButton, Button cancelButton) {
+    public FolderTab(final Stage sourceWindow, final String name, final Button confirmButton,
+                     final Button cancelButton) {
         super(sourceWindow, name, confirmButton, cancelButton);
-        this.directoryChooser = new DirectoryChooser();
-        this.fileChooser = new FileChooser();
+        directoryChooser = new DirectoryChooser();
+        fileChooser = new FileChooser();
 
-        this.folderView = buildFolderView();
-        this.folderViewButtons = buildFolderViewButtons();
+        folderView = buildFolderView();
+        final HBox folderViewButtons = buildFolderViewButtons();
 
-        this.fileView = buildFileView();
-        this.fileViewButtons = buildFileViewButtons();
+        fileView = buildFileView();
+        final HBox fileViewButtons = buildFileViewButtons();
 
         addConfirmButtonEvent(event -> {
-            FileManager.setFolders(this.folders);
-            this.startingFolders.clear();
-            this.startingFolders.addAll(this.folders);
+            FileManager.setFolders(folders);
+            startingFolders.clear();
+            startingFolders.addAll(folders);
 
-            FileManager.setExecutables(this.files);
-            this.startingFiles.clear();
-            this.startingFiles.addAll(this.files);
+            FileManager.setExecutables(files);
+            startingFiles.clear();
+            startingFiles.addAll(files);
         });
 
         addCancelButtonEvent(event -> {
-            this.folders.setAll(this.startingFolders);
-            this.files.setAll(this.startingFiles);
+            folders.setAll(startingFolders);
+            files.setAll(startingFiles);
         });
 
-        VBox root = new VBox(
+        final VBox root = new VBox(
                 new Label(""), // Pour ajouter un retour a la ligne
                 new Label("Folders"),
                 folderView,
@@ -77,63 +79,68 @@ public class FolderTab extends CustomTab {
         setRoot(sourceWindow, root);
     }
 
-    public ListView<String> buildFolderView() {
-        ListView<String> listView = new ListView<>();
+    private static ListView<String> buildView(final List<String> source,
+                                              final List<String> initialList,
+                                              final ObservableList<String> currentList) {
+        final ListView<String> listView = new ListView<>();
         listView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        List<String> strings = FileManager.getFolders();
-        this.startingFolders.addAll(strings);
-        this.folders.addAll(strings);
-        listView.setItems(this.folders);
+        initialList.addAll(source);
+        currentList.addAll(source);
+        listView.setItems(currentList);
 
         return listView;
+    }
+
+    public ListView<String> buildFolderView() {
+        return buildView(FileManager.getFolders(), startingFolders, folders);
+    }
+
+    private static Button buildAddButton(final EventHandler<MouseEvent> event) {
+        return makeGraphicButton("add-icon.png", MainWindow.BUTTON_SIZE - 12, event);
+    }
+
+    private static Button buildRemoveButton(final ListView<String> listView,
+                                            final ObservableList<String> observableList) {
+        return makeGraphicButton("remove-icon.png", MainWindow.BUTTON_SIZE - 12, event -> {
+            final List<String> selectedItems = listView.getSelectionModel().getSelectedItems();
+            observableList.removeAll(selectedItems);
+        });
+    }
+
+    private static HBox buildButtonBox(final Node... nodes) {
+        final HBox buttons = new HBox(nodes);
+        buttons.setAlignment(Pos.CENTER);
+        buttons.setSpacing(10);
+        buttons.setPadding(new Insets(10));
+        return buttons;
     }
 
     public HBox buildFolderViewButtons() {
-        Button add = makeGraphicButton("add-icon.png", MainWindow.BUTTON_SIZE - 12, event -> {
-            File selectedDirectory = this.directoryChooser.showDialog(this.sourceWindow);
+        final Button add = buildAddButton(event -> {
+            final File selectedDirectory = directoryChooser.showDialog(sourceWindow);
             if(selectedDirectory != null) {
-                this.folders.add(selectedDirectory.getAbsolutePath());
+                folders.add(selectedDirectory.getAbsolutePath());
             }
         });
-        Button remove = makeGraphicButton("remove-icon.png", MainWindow.BUTTON_SIZE - 12, event -> {
-            List<String> selectedItems = this.folderView.getSelectionModel().getSelectedItems();
-            this.folders.removeAll(selectedItems);
-        });
+        final Button remove = buildRemoveButton(folderView, folders);
 
-        HBox buttons = new HBox(add, makeVerticalSeparator(), remove);
-        buttons.setAlignment(Pos.CENTER);
-        buttons.setSpacing(10);
-        buttons.setPadding(new Insets(10));
-        return buttons;
+        return buildButtonBox(add, makeVerticalSeparator(), remove);
     }
 
     public ListView<String> buildFileView() {
-        ListView<String> listView = new ListView<>();
-        listView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        List<String> strings = FileManager.getExecutables();
-        this.startingFiles.addAll(strings);
-        this.files.addAll(strings);
-        listView.setItems(this.files);
-
-        return listView;
+        return buildView(FileManager.getExecutables(), startingFiles, files);
     }
 
     public HBox buildFileViewButtons() {
-        Button add = makeGraphicButton("add-icon.png", MainWindow.BUTTON_SIZE - 12, event -> {
-            File selectedExecutable = this.fileChooser.showOpenDialog(this.sourceWindow);
+        final Button add = buildAddButton(event -> {
+            final File selectedExecutable = fileChooser.showOpenDialog(sourceWindow);
             if(selectedExecutable != null && selectedExecutable.canExecute()) {
-                this.files.add(selectedExecutable.getAbsolutePath());
+                files.add(selectedExecutable.getAbsolutePath());
             }
         });
-        Button remove = makeGraphicButton("remove-icon.png", MainWindow.BUTTON_SIZE - 12, event -> {
-            List<String> selectedItems = this.fileView.getSelectionModel().getSelectedItems();
-            this.files.removeAll(selectedItems);
-        });
+        final Button remove = buildRemoveButton(fileView, files);
 
-        HBox buttons = new HBox(add, makeVerticalSeparator(), remove);
-        buttons.setAlignment(Pos.CENTER);
-        buttons.setSpacing(10);
-        buttons.setPadding(new Insets(10));
-        return buttons;
+        return buildButtonBox(add, makeVerticalSeparator(), remove);
+
     }
 }

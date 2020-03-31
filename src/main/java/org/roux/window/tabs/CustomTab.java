@@ -16,7 +16,8 @@ public abstract class CustomTab extends Tab {
     private final Button confirmButton;
     private final Button cancelButton;
 
-    public CustomTab(Stage sourceWindow, String name, Button confirmButton, Button cancelButton) {
+    public CustomTab(final Stage sourceWindow, final String name, final Button confirmButton,
+                     final Button cancelButton) {
         super(name);
         this.sourceWindow = sourceWindow;
         this.confirmButton = confirmButton;
@@ -24,7 +25,7 @@ public abstract class CustomTab extends Tab {
         setClosable(false);
     }
 
-    public void setRoot(Stage source, Parent root) {
+    public void setRoot(final Stage source, final Parent root) {
         root.setOnMousePressed(event -> {
             xOffset = source.getX() - event.getScreenX();
             yOffset = source.getY() - event.getScreenY();
@@ -33,14 +34,14 @@ public abstract class CustomTab extends Tab {
             source.setX(event.getScreenX() + xOffset);
             source.setY(event.getScreenY() + yOffset);
         });
-        this.setContent(root);
+        setContent(root);
     }
 
-    protected void addConfirmButtonEvent(EventHandler<MouseEvent> event) {
+    protected void addConfirmButtonEvent(final EventHandler<MouseEvent> event) {
         confirmButton.addEventHandler(MouseEvent.MOUSE_CLICKED, event);
     }
 
-    protected void addCancelButtonEvent(EventHandler<MouseEvent> event) {
+    protected void addCancelButtonEvent(final EventHandler<MouseEvent> event) {
         cancelButton.addEventHandler(MouseEvent.MOUSE_CLICKED, event);
     }
 
