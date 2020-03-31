@@ -75,9 +75,9 @@ public class BlacklistTab extends CustomTab {
                                    new Label("Blacklist"),
                                    blacklistView,
                                    blacklistButtons
-                //                                   ,new Label("Banned"),
-                //                                   banView,
-                //                                   fileViewButtons
+                                   //                                   ,new Label("Banned"),
+                                   //                                   banView,
+                                   //                                   fileViewButtons
         );
         root.setSpacing(5);
         setRoot(sourceWindow, root);
