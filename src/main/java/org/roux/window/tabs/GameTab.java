@@ -84,7 +84,11 @@ public class GameTab extends CustomTab {
         table.getItems().addListener((Observable observable) -> {
             Utils.autoResizeColumns(table);
         });
-        table.getItems().setAll(gameLibrary.getLibrary());
+        gameLibrary.getLibrary().addListener((Observable observable) -> {
+            Utils.autoResizeColumns(table);
+        });
+        table.setItems(gameLibrary.getLibrary());
+        Utils.autoResizeColumns(table);
 
         TableColumn<Game, String> name = buildNameColumn();
         TableColumn<Game, String> keywords = buildKeywordsColumn();
@@ -121,7 +125,7 @@ public class GameTab extends CustomTab {
                 this.editGameWindow.edit(game, this.gameToName.get(game), this.gameToKeywords.get(game));
             }
         });
-        Button remove = makeTextButton("Delete game", event -> {
+        Button remove = makeTextButton("Remove game", event -> {
 
         });
 

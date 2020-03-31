@@ -1,15 +1,13 @@
 package org.roux.utils;
 
+import org.apache.commons.io.FileUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.roux.game.GameLibrary;
 
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Reader;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -37,32 +35,40 @@ public class FileManager {
         return result == null ? null : (JSONArray) result;
     }
 
+    private static File loadData() throws IllegalArgumentException, IOException {
+        File file = new File("data.json");
+        if(file.exists()) {
+            return file;
+        }
+        InputStream inputStream = FileManager.class.getClassLoader().getResourceAsStream("preset.json");
+        if(inputStream == null) {
+            throw new IllegalArgumentException("Preset file not found !");
+        }
+        FileUtils.copyInputStreamToFile(inputStream, file);
+        return file;
+    }
+
     public static void parse() {
-        try(Reader reader = new FileReader("config.json")) {
+        System.out.println("Parse...");
+        try(BufferedReader reader = new BufferedReader(new FileReader(loadData()))) {
             JSONParser parser = new JSONParser();
             root = (JSONObject) parser.parse(reader);
 
             Object maxEntries = root.get("maxEntries");
-            if(maxEntries != null) {
-                MAX_ENTRIES = ((Long) maxEntries).intValue();
-            } else {
-                MAX_ENTRIES = DEFAULT_MAX_ENTRIES;
-            }
+            MAX_ENTRIES = maxEntries != null ? ((Long) maxEntries).intValue() : DEFAULT_MAX_ENTRIES;
 
-            JSONArray banned = getJsonArray("blacklist");
-            if(banned != null) {
-                banned.forEach(filename -> FileManager.BLACKLIST.add(filename.toString()));
-            }
+            JSONArray blacklist = getJsonArray("blacklist");
+            if(blacklist != null)
+                blacklist.forEach(filename -> FileManager.BLACKLIST.add(filename.toString()));
 
             JSONArray folders = getJsonArray("folders");
-            if(folders != null) {
+            if(folders != null)
                 folders.forEach(folder -> FileManager.FOLDERS.add(folder.toString()));
-            }
 
             JSONArray executables = getJsonArray("executables");
-            if(executables != null) {
+            if(executables != null)
                 executables.forEach(executable -> FileManager.EXECUTABLES.add(executable.toString()));
-            }
+
         } catch(IOException | ParseException e) {
             e.printStackTrace();
         }
@@ -78,7 +84,8 @@ public class FileManager {
                     List<Path> list = Files.walk(folderPath)
                             .filter(path -> path.toFile().isFile())
                             .filter(path -> path.toFile().canExecute())
-                            .filter(path -> !BLACKLIST.contains(path.getFileName().toString()))
+                            //                            .filter(path -> !BLACKLIST.contains(path.getFileName()
+                            //                            .toString()))
                             .filter(pathPredicate)
                             .collect(Collectors.toList());
                     for(Path p : list) {
@@ -95,6 +102,7 @@ public class FileManager {
     }
 
     public static void save(GameLibrary gameLibrary) {
+        System.out.println("Saving...");
         Map<String, Object> data = new HashMap<>();
         data.put("maxEntries", MAX_ENTRIES);
         data.put("folders", FOLDERS);
@@ -102,9 +110,9 @@ public class FileManager {
         data.put("blacklist", BLACKLIST);
         data.put("games", gameLibrary.getLibraryAsJsonArray());
         JSONObject jsonObject = new JSONObject(data);
-        try(FileWriter file = new FileWriter("config.json")) {
-            file.write(jsonObject.toJSONString());
-            file.flush();
+        try(PrintWriter writer = new PrintWriter(new File("data.json"))) {
+            writer.print(jsonObject.toJSONString());
+            writer.flush();
         } catch(IOException e) {
             e.printStackTrace();
         }

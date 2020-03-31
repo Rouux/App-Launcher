@@ -23,15 +23,13 @@ public class Utils {
     public static void autoResizeColumns(TableView<?> table) {
         table.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
         table.getColumns().forEach((column) -> {
-            Text t = new Text(column.getText());
-            double max = t.getLayoutBounds().getWidth() * 1.2;
+            Text title = new Text(column.getText());
+            double max = title.getLayoutBounds().getWidth() * 1.1;
             for(int i = 0; i < table.getItems().size(); i++) {
                 if(column.getCellData(i) != null) {
-                    t = new Text(column.getCellData(i).toString());
-                    double calcwidth = t.getLayoutBounds().getWidth() * 1.2;
-                    if(calcwidth > max) {
-                        max = calcwidth;
-                    }
+                    Text content = new Text(column.getCellData(i).toString());
+                    double layoutWidth = content.getLayoutBounds().getWidth() * 1;
+                    if(layoutWidth > max) max = layoutWidth;
                 }
             }
             column.setMinWidth(max + 50.0d);

@@ -35,7 +35,7 @@ public class App extends Application {
         if(Platform.isFxApplicationThread()) {
             new ErrorWindow(e);
         } else {
-            System.err.println("An unexpected error occurred in " + t);
+            e.printStackTrace();
         }
     }
 
