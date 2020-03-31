@@ -126,7 +126,7 @@ public class FolderTab extends CustomTab {
             }
         });
         Button remove = makeGraphicButton("remove-icon.png", MainWindow.BUTTON_SIZE - 12, event -> {
-            List<String> selectedItems = this.folderView.getSelectionModel().getSelectedItems();
+            List<String> selectedItems = this.fileView.getSelectionModel().getSelectedItems();
             this.files.removeAll(selectedItems);
         });
 
