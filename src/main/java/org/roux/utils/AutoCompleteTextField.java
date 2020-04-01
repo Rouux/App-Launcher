@@ -51,7 +51,6 @@ public class AutoCompleteTextField extends TextField {
         });
         setOnKeyPressed(ke -> {
             final List<String> list = getFilteredEntries();
-            System.out.println(list);
             if(ke.getCode() == KeyCode.ENTER) {
                 if(list != null && !list.isEmpty()) {
                     mainWindow.launchApplication(list.get(0));

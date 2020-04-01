@@ -31,13 +31,10 @@ public class ApplicationLibrary {
                 library.add(application);
             });
         }
-        library.addListener((Observable observable) -> {
-            System.out.println(library);
-        });
     }
 
     public Map<Path, String> getExecutables() {
-        final List<Path> files = FileManager.getFiles();
+        final List<Path> files = FileManager.getFilesFromFolders();
         final Map<Path, String> results = new HashMap<>();
         files.stream() //@todo remplacer par des banwords btw
                 .filter(path -> !path.getFileName().toString().contains("redist"))

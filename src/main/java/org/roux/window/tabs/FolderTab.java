@@ -77,7 +77,8 @@ public class FolderTab extends CustomTab {
     private static Button buildRemoveButton(final ListView<String> listView,
                                             final ObservableList<String> observableList) {
         return makeGraphicButton("remove-icon.png", MainWindow.BUTTON_SIZE - 12, event -> {
-            final List<String> selectedItems = listView.getSelectionModel().getSelectedItems();
+            final List<String> selectedItems =
+                    listView.getSelectionModel().getSelectedItems();
             observableList.removeAll(selectedItems);
         });
     }

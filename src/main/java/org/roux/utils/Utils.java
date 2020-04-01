@@ -32,7 +32,7 @@ public class Utils {
                     if(layoutWidth > max) max = layoutWidth;
                 }
             }
-            column.setPrefWidth(max + 45.0d);
+            column.setPrefWidth(max + 50.0d);
         });
     }
 

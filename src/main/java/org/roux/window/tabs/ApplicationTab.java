@@ -77,10 +77,9 @@ public class ApplicationTab extends CustomTab {
         });
         table.getItems().setAll(applications);
         table.getItems().addListener((Observable observable) -> Utils.autoResizeColumns(table));
-        applications.addListener((Observable observable) -> {
-            Utils.autoResizeColumns(table);
-            table.refresh();
-        });
+//        applications.addListener((Observable observable) -> {
+//            table.refresh();
+//        });
         blacklist.addListener(this::invalidated);
         seeBlacklistedProperty.addListener(this::invalidated);
 
@@ -122,6 +121,7 @@ public class ApplicationTab extends CustomTab {
             final Application application = applicationView.getSelectionModel().getSelectedItem();
             if(application != null) {
                 applications.remove(application);
+                System.out.println("remove");
             }
         });
 

@@ -39,7 +39,6 @@ public class OptionWindow extends UndecoratedStage {
 
     private final EventHandler<ActionEvent> confirmationButtonEvent = event -> {
         // Don't forget to fill when action has to occur on tabs
-        System.out.println("OK!");
         FileManager.setFolders(sourceFolders);
         FileManager.setExecutables(sourceFiles);
         FileManager.setBlacklist(blacklist);
@@ -48,7 +47,6 @@ public class OptionWindow extends UndecoratedStage {
     };
 
     private final EventHandler<ActionEvent> cancelButtonEvent = event -> {
-        System.out.println("Cancel!");
         // Don't forget to fill when action has to occur on tabs
         setAll();
         close();
@@ -76,7 +74,6 @@ public class OptionWindow extends UndecoratedStage {
 
     @Override
     protected void onOpenWindow() {
-        System.out.println("OPENING OPTION WINDOW !!");
         setAll();
     }
 

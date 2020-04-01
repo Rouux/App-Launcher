@@ -68,7 +68,7 @@ public class FileManager {
      * Files ? Which one ? All of them. Well, all the executable one. Mucho timo & memory consumo so
      * !! WARNING !!
      */
-    public static List<Path> getFiles(final Predicate<Path> customPredicate) {
+    public static List<Path> getFilesFromFolders(final Predicate<Path> customPredicate) {
         final List<Path> folders = FileManager.getFolders().stream()
                 .map(folder -> Paths.get(folder))
                 .filter(path -> path.toFile().isDirectory())
@@ -91,8 +91,8 @@ public class FileManager {
         return files;
     }
 
-    public static List<Path> getFiles() {
-        return getFiles(path -> true);
+    public static List<Path> getFilesFromFolders() {
+        return getFilesFromFolders(path -> true);
     }
 
     public static void save(final ApplicationLibrary applicationLibrary) {
@@ -114,8 +114,9 @@ public class FileManager {
 
     public static List<String> getFolders() {
         if(FileManager.FOLDERS == null) {
+            FileManager.FOLDERS = new ArrayList<>();
             final List<String> folders = (List<String>) root.get("folders");
-            if(folders != null) FileManager.FOLDERS = new ArrayList<>(folders);
+            if(folders != null) FileManager.FOLDERS.addAll(folders);
         }
         return FileManager.FOLDERS;
     }
@@ -128,8 +129,9 @@ public class FileManager {
 
     public static List<String> getExecutables() {
         if(FileManager.EXECUTABLES == null) {
+            FileManager.EXECUTABLES = new ArrayList<>();
             final List<String> executables = (List<String>) root.get("executables");
-            if(executables != null) FileManager.EXECUTABLES = new ArrayList<>(executables);
+            if(executables != null) FileManager.EXECUTABLES.addAll(executables);
         }
         return FileManager.EXECUTABLES;
     }
@@ -142,8 +144,9 @@ public class FileManager {
 
     public static List<String> getBlacklist() {
         if(FileManager.BLACKLIST == null) {
+            FileManager.BLACKLIST = new ArrayList<>();
             final List<String> blacklist = (List<String>) root.get("blacklist");
-            if(blacklist != null) FileManager.BLACKLIST = new ArrayList<>(blacklist);
+            if(blacklist != null) FileManager.BLACKLIST.addAll(blacklist);
         }
         return FileManager.BLACKLIST;
     }
