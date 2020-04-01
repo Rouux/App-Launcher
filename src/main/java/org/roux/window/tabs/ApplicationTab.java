@@ -36,6 +36,7 @@ public class ApplicationTab extends CustomTab {
     private final Map<Application, StringPropertyBase> appToName = new HashMap<>();
     private final Map<Application, List<String>> appToKeywords = new HashMap<>();
     private final List<Application> appToRemove = new ArrayList<>();
+    private final List<Application> addToBlacklist = new ArrayList<>();
 
     public ApplicationTab(final Stage sourceWindow, final String name, final Button confirmButton,
                           final Button cancelButton,
@@ -54,6 +55,7 @@ public class ApplicationTab extends CustomTab {
             appToName.forEach((application, stringPropertyBase)
                                       -> application.setName(stringPropertyBase.get()));
             appToRemove.forEach(application -> applicationLibrary.getLibrary().remove(application));
+            addToBlacklist.forEach(application -> application.setBlacklisted(true));
             appToRemove.clear();
             applicationView.refresh();
         });
@@ -65,6 +67,8 @@ public class ApplicationTab extends CustomTab {
             });
             appToRemove.forEach(application -> applicationLibrary.getLibrary().add(application));
             appToRemove.clear();
+            addToBlacklist.forEach(application -> application.setBlacklisted(false));
+            addToBlacklist.clear();
             applicationView.refresh();
         });
 
@@ -91,8 +95,9 @@ public class ApplicationTab extends CustomTab {
             return row;
         });
         table.getItems().addListener((Observable observable) -> Utils.autoResizeColumns(table));
-        applicationLibrary.getLibrary()
-                .addListener((Observable observable) -> Utils.autoResizeColumns(table));
+        applicationLibrary.getLibrary().addListener((Observable observable) -> {
+            Utils.autoResizeColumns(table);
+        });
 
         final TableColumn<Application, String> name = buildNameColumn();
         final TableColumn<Application, String> keywords = buildKeywordsColumn();
@@ -144,7 +149,12 @@ public class ApplicationTab extends CustomTab {
         });
 
         final Button blacklist = makeTextButton("Add to blacklist", event -> {
-
+            final Application application = applicationView.getSelectionModel().getSelectedItem();
+            if(application != null) {
+                application.setBlacklisted(true);
+                addToBlacklist.add(application);
+                applicationView.getItems().remove(application);
+            }
         });
 
         final HBox buttons = new HBox(edit, makeVerticalSeparator(),

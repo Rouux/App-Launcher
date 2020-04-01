@@ -76,10 +76,10 @@ public class ApplicationLibrary {
             Application application;
             if((application = findSamePathApplication(path)) == null) {
                 application = new Application(path, name);
-                application.setBlacklisted(isBlacklisted(application.getExecutablePath()));
             }
             //@todo actuellement j'affiche juste pas, retravailler pour afficher quand même ?
             // Histoire d'eviter que le mec se demande pourquoi son app s'affiche pas
+            application.setBlacklisted(isBlacklisted(application.getExecutablePath()));
             if(!application.isBlacklisted()) newApplications.add(application);
         }
         // Coucou moi du futur, si je veux plus tard ouvrir une fenetre après scan

@@ -1,5 +1,6 @@
 package org.roux.window.tabs;
 
+import javafx.beans.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -31,22 +32,20 @@ public class BlacklistTab extends CustomTab {
     private final DirectoryChooser directoryChooser;
     private final FileChooser fileChooser;
 
+    private final ListView<String> blacklistView;
     private final ObservableList<String> blacklistedFiles =
-            FXCollections.observableList(new ArrayList<>());
+            FXCollections.observableArrayList();
     private final List<String> initialFiles = new ArrayList<>();
 
-    private final ListView<String> blacklistView;
-
-    private final ObservableList<String> bannedFiles = FXCollections.observableList(
-            new ArrayList<>());
-    private final List<String> startingFiles = new ArrayList<>();
-
     private final ListView<String> banView;
+    private final ObservableList<String> bannedFiles = FXCollections.observableArrayList();
+    private final List<String> startingFiles = new ArrayList<>();
 
     public BlacklistTab(final Stage sourceWindow, final String name, final Button confirmButton,
                         final Button cancelButton, final ApplicationLibrary applicationLibrary) {
         super(sourceWindow, name, confirmButton, cancelButton);
         this.applicationLibrary = applicationLibrary;
+        listenLibraryContent();
         directoryChooser = new DirectoryChooser();
         fileChooser = new FileChooser();
 
@@ -81,6 +80,28 @@ public class BlacklistTab extends CustomTab {
         );
         root.setSpacing(5);
         setRoot(sourceWindow, root);
+    }
+
+    private void listenLibraryContent() {
+        applicationLibrary.getLibrary().forEach(application -> {
+            application.isBlacklistedProperty().addListener((observable, oldValue, newValue) -> {
+                if(newValue != null && newValue) {
+                    blacklistedFiles.add(application.getExecutablePath().toString());
+                }
+            });
+        });
+
+        applicationLibrary.getLibrary().addListener((Observable o) -> {
+            applicationLibrary.getLibrary().forEach(application -> {
+                application.isBlacklistedProperty().addListener(
+                        (observable, oldValue, newValue) -> {
+                            if(newValue != null && newValue) {
+                                final String path = application.getExecutablePath().toString();
+                                if(!blacklistedFiles.contains(path)) blacklistedFiles.add(path);
+                            }
+                        });
+            });
+        });
     }
 
     private static ListView<String> buildView(final List<String> source,

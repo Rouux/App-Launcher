@@ -1,5 +1,9 @@
 package org.roux.application;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleObjectProperty;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -7,12 +11,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-public class Application {
+public class Application extends SimpleObjectProperty<Application> {
 
     private Path executablePath;
     private String name;
     private List<String> keywords;
-    private boolean isBlacklisted;
+    private final BooleanProperty isBlacklisted = new SimpleBooleanProperty(false);
 
     public static void main(final String[] args) {
         System.out.println(beautifyName("DOOM Eternal"));
@@ -44,10 +48,6 @@ public class Application {
         this(Paths.get(path), name, keywords);
     }
 
-    public static String computeName(final Path path) {
-        return path.getFileName().toString().split("\\.")[0];
-    }
-
     public Path getExecutablePath() {
         return executablePath;
     }
@@ -72,12 +72,16 @@ public class Application {
         this.keywords = keywords;
     }
 
-    public boolean isBlacklisted() {
+    public BooleanProperty isBlacklistedProperty() {
         return isBlacklisted;
     }
 
+    public boolean isBlacklisted() {
+        return isBlacklisted.get();
+    }
+
     public void setBlacklisted(final boolean blacklisted) {
-        isBlacklisted = blacklisted;
+        isBlacklisted.set(blacklisted);
     }
 
     @Override
@@ -97,7 +101,7 @@ public class Application {
 
     @Override
     public String toString() {
-        final String blacklisted = isBlacklisted ? "[BLACKLISTED] " : "";
+        final String blacklisted = isBlacklisted() ? "[BLACKLISTED] " : "";
         return blacklisted + "'" + name + "' -> '" + executablePath + "' : keywords = " + keywords;
     }
 }
