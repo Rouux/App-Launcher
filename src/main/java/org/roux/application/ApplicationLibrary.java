@@ -1,6 +1,8 @@
 package org.roux.application;
 
+import javafx.beans.Observable;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import org.apache.commons.io.FilenameUtils;
 import org.roux.utils.FileManager;
@@ -14,11 +16,11 @@ public class ApplicationLibrary {
 
     private static final String[] EXTENSIONS = {"exe"};
 
+    private final ObservableList<Application> library = FXCollections.observableArrayList();
+
     public static boolean isExtensionAllowed(final String file) {
         return FilenameUtils.isExtension(file, ApplicationLibrary.EXTENSIONS);
     }
-
-    private final ObservableList<Application> library = FXCollections.observableArrayList();
 
     public ApplicationLibrary() {
         // Check if they are applications in the data file
@@ -29,6 +31,9 @@ public class ApplicationLibrary {
                 library.add(application);
             });
         }
+        library.addListener((Observable observable) -> {
+            System.out.println(library);
+        });
     }
 
     public Map<Path, String> getExecutables() {
@@ -155,7 +160,28 @@ public class ApplicationLibrary {
                 .orElse(null);
     }
 
-    public ObservableList<Application> getLibrary() {
-        return library;
+    public List<String> getNames() {
+        return library.stream()
+                .map(Application::getName)
+                .collect(Collectors.toList());
+    }
+
+    public void addListener(final ListChangeListener<Application> listener) {
+        library.addListener(listener);
+    }
+
+    /**
+     * A way to make the application safer
+     *
+     * @return a list made of copies of the application !
+     */
+    public List<Application> getLibraryCopies() {
+        return library.stream()
+                .map(Application::copy)
+                .collect(Collectors.toList());
+    }
+
+    public void setLibrary(final ObservableList<Application> library) {
+        this.library.setAll(library);
     }
 }

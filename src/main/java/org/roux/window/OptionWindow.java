@@ -1,5 +1,9 @@
 package org.roux.window;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -9,7 +13,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import jfxtras.styles.jmetro.JMetroStyleClass;
+import org.roux.application.Application;
 import org.roux.application.ApplicationLibrary;
+import org.roux.utils.FileManager;
 import org.roux.window.tabs.ApplicationTab;
 import org.roux.window.tabs.BlacklistTab;
 import org.roux.window.tabs.FolderTab;
@@ -19,27 +25,59 @@ import static org.roux.utils.Utils.makeTextButton;
 
 public class OptionWindow extends UndecoratedStage {
 
-    private final Stage main;
-    private Button confirmButton;
-    private Button cancelButton;
+    private final Stage owner;
+    private ApplicationLibrary applicationLibrary;
+
+    // Kinda local thingy
+    /**
+     * 'applications' ne manipule que des copies ! Pas les originaux !
+     */
+    private final ObservableList<Application> applications = FXCollections.observableArrayList();
+    private final ObservableList<String> sourceFolders = FXCollections.observableArrayList();
+    private final ObservableList<String> sourceFiles = FXCollections.observableArrayList();
+    private final ObservableList<String> blacklist = FXCollections.observableArrayList();
+
+    private final EventHandler<ActionEvent> confirmationButtonEvent = event -> {
+        // Don't forget to fill when action has to occur on tabs
+        System.out.println("OK!");
+        FileManager.setFolders(sourceFolders);
+        FileManager.setExecutables(sourceFiles);
+        FileManager.setBlacklist(blacklist);
+        applicationLibrary.setLibrary(applications);
+        close();
+    };
+
+    private final EventHandler<ActionEvent> cancelButtonEvent = event -> {
+        System.out.println("Cancel!");
+        // Don't forget to fill when action has to occur on tabs
+        setAll();
+        close();
+    };
 
     public OptionWindow(final Stage owner, final ApplicationLibrary applicationLibrary) {
-        main = owner;
-        final HBox confirmOrCancelButtons = buildConfirmOrCancelButtons();
+        this.owner = owner;
+        this.applicationLibrary = applicationLibrary;
+        setAll();
 
-        // AFTER buildConfirmOrCancelButtons !! VERY IMPORTANT YO !!
         final TabPane tabPane = new TabPane(
-                new FolderTab(this, "Sources", confirmButton, cancelButton),
-                new ApplicationTab(this, "Apps", confirmButton, cancelButton, applicationLibrary),
-                new BlacklistTab(this, "Blacklist", confirmButton, cancelButton,
-                                 applicationLibrary),
-                new ParameterTab(this, "Other", confirmButton, cancelButton)
+                new FolderTab(this, "Sources", sourceFolders, sourceFiles),
+                new ApplicationTab(this, "Apps", applications, blacklist),
+                new BlacklistTab(this, "Blacklist", blacklist),
+                new ParameterTab(this, "Other")
         );
-
+        final HBox confirmOrCancelButtons = buildConfirmOrCancelButtons();
         final VBox root = buildRoot(tabPane, confirmOrCancelButtons);
 
         initOwner(owner);
         setRoot(root);
+        getScene().getStylesheets().add("/style.css");
+        //        ScenicView.show(root);
+    }
+
+    @Override
+    protected void onOpenWindow() {
+        System.out.println("OPENING OPTION WINDOW !!");
+        setAll();
     }
 
     private VBox buildRoot(final Node... nodes) {
@@ -54,9 +92,11 @@ public class OptionWindow extends UndecoratedStage {
     }
 
     public HBox buildConfirmOrCancelButtons() {
-        confirmButton = makeTextButton("    OK    ", event -> close());
+        final Button confirmButton = makeTextButton("    OK    ", event -> close());
+        confirmButton.setOnAction(confirmationButtonEvent);
 
-        cancelButton = makeTextButton(" Cancel ", event -> close());
+        final Button cancelButton = makeTextButton(" Cancel ", event -> close());
+        cancelButton.setOnAction(cancelButtonEvent);
 
         final HBox confirmOrCancel = new HBox(confirmButton, cancelButton);
         confirmOrCancel.setAlignment(Pos.CENTER_RIGHT);
@@ -64,9 +104,16 @@ public class OptionWindow extends UndecoratedStage {
         return confirmOrCancel;
     }
 
+    public void setAll() {
+        applications.setAll(applicationLibrary.getLibraryCopies());
+        sourceFolders.setAll(FileManager.getFolders());
+        sourceFiles.setAll(FileManager.getExecutables());
+        blacklist.setAll(FileManager.getBlacklist());
+    }
+
     @Override
     public void hide() {
         super.hide();
-        main.setOpacity(1);
+        owner.setOpacity(1);
     }
 }

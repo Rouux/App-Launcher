@@ -22,6 +22,7 @@ public abstract class UndecoratedStage extends Stage {
     public void setRoot(final Parent root) {
         scene = new Scene(root);
         final JMetro jMetro = new JMetro(scene, Style.DARK);
+        setScene(scene);
 
         root.setOnMousePressed(event -> {
             xOffset = getX() - event.getScreenX();
@@ -34,7 +35,13 @@ public abstract class UndecoratedStage extends Stage {
         root.getStyleClass().add(JMetroStyleClass.BACKGROUND);
         root.setStyle("-fx-border-color: #060606;");
 
-        setScene(scene);
+        showingProperty().addListener((observable, oldValue, newValue) -> {
+            if(newValue != null && newValue) {
+                onOpenWindow();
+            }
+        });
     }
+
+    protected void onOpenWindow() {}
 
 }

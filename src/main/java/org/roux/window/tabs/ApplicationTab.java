@@ -1,76 +1,44 @@
 package org.roux.window.tabs;
 
 import javafx.beans.Observable;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringPropertyBase;
+import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.fxmisc.easybind.EasyBind;
 import org.roux.application.Application;
-import org.roux.application.ApplicationLibrary;
 import org.roux.utils.Utils;
 import org.roux.window.EditApplicationWindow;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import static org.roux.utils.Utils.makeTextButton;
 import static org.roux.utils.Utils.makeVerticalSeparator;
 
 public class ApplicationTab extends CustomTab {
 
-    private final ApplicationLibrary applicationLibrary;
+    private final ObservableList<Application> applications;
+    private final ObservableList<String> blacklist;
     private final EditApplicationWindow editApplicationWindow;
+
+    private boolean seeBlacklisted = false;
 
     private TableView<Application> applicationView;
 
-    private final Map<Application, StringPropertyBase> appToName = new HashMap<>();
-    private final Map<Application, List<String>> appToKeywords = new HashMap<>();
-    private final List<Application> appToRemove = new ArrayList<>();
-    private final List<Application> addToBlacklist = new ArrayList<>();
-
-    public ApplicationTab(final Stage sourceWindow, final String name, final Button confirmButton,
-                          final Button cancelButton,
-                          final ApplicationLibrary applicationLibrary) {
-        super(sourceWindow, name, confirmButton, cancelButton);
-        this.applicationLibrary = applicationLibrary;
-        editApplicationWindow =
-                new EditApplicationWindow(sourceWindow, confirmButton, cancelButton);
+    public ApplicationTab(final Stage sourceWindow, final String name,
+                          final ObservableList<Application> applications,
+                          final ObservableList<String> blacklist) {
+        super(sourceWindow, name);
+        this.applications = applications;
+        this.blacklist = blacklist;
+        editApplicationWindow = new EditApplicationWindow(sourceWindow);
         editApplicationWindow.setOnHidden(event -> applicationView.refresh());
 
         applicationView = buildApplicationView();
         final HBox applicationButtons = buildApplicationButtons();
-
-        onOptionConfirm(event -> {
-            appToKeywords.forEach(Application::setKeywords);
-            appToName.forEach((application, stringPropertyBase)
-                                      -> application.setName(stringPropertyBase.get()));
-            appToRemove.forEach(application -> applicationLibrary.getLibrary().remove(application));
-            addToBlacklist.forEach(application -> application.setBlacklisted(true));
-            appToRemove.clear();
-            applicationView.refresh();
-        });
-
-        onOptionCancel(event -> {
-            applicationLibrary.getLibrary().forEach(application -> {
-                appToName.put(application, new SimpleStringProperty(application.getName()));
-                appToKeywords.put(application, new ArrayList<>(application.getKeywords()));
-            });
-            appToRemove.forEach(application -> applicationLibrary.getLibrary().add(application));
-            appToRemove.clear();
-            addToBlacklist.forEach(application -> application.setBlacklisted(false));
-            addToBlacklist.clear();
-            applicationView.refresh();
-        });
 
         final VBox root = new VBox(applicationView, applicationButtons);
         root.setAlignment(Pos.CENTER);
@@ -79,24 +47,42 @@ public class ApplicationTab extends CustomTab {
     }
 
     public TableView<Application> buildApplicationView() {
-        final TableView<Application> table = new TableView<>(applicationLibrary.getLibrary());
+        final TableView<Application> table = new TableView<>();
+        table.getItems().addAll(applications);
         table.setEditable(false);
         table.setStyle("-fx-font-size: 12");
         table.setRowFactory(tv -> {
             final TableRow<Application> row = new TableRow<>();
+            EasyBind.select(row.itemProperty())
+                    .selectObject(Application::isBlacklistedProperty)
+                    .addListener((observable, oldValue, newValue) -> {
+                        if(newValue == null) return;
+                        if(newValue) {
+                            // To ensure only one subsist
+                            row.getStyleClass().remove("table-row-blacklisted");
+                            row.getStyleClass().add("table-row-blacklisted");
+                        } else {
+                            row.getStyleClass().remove("table-row-blacklisted");
+                        }
+                    });
             row.setOnMouseClicked(event -> {
                 if(event.getClickCount() == 2 && !row.isEmpty() && row.getItem() != null) {
                     final Application application = row.getItem();
-                    editApplicationWindow.edit(application,
-                                               appToName.get(application),
-                                               appToKeywords.get(application));
+                    editApplicationWindow.edit(application);
                 }
             });
+
             return row;
         });
         table.getItems().addListener((Observable observable) -> Utils.autoResizeColumns(table));
-        applicationLibrary.getLibrary().addListener((Observable observable) -> {
+        applications.addListener((Observable observable) -> {
             Utils.autoResizeColumns(table);
+            table.refresh();
+        });
+        blacklist.addListener((Observable observable) -> {
+            if(!seeBlacklisted) {
+                applicationView.setItems(applications.filtered(item -> !item.isBlacklisted()));
+            }
         });
 
         final TableColumn<Application, String> name = buildNameColumn();
@@ -109,11 +95,7 @@ public class ApplicationTab extends CustomTab {
     public TableColumn<Application, String> buildNameColumn() {
         final TableColumn<Application, String> column = new TableColumn<>("Name");
         column.setCellFactory(TextFieldTableCell.forTableColumn());
-        column.setCellValueFactory(data -> {
-            appToName.computeIfAbsent(data.getValue(),
-                                      k -> new SimpleStringProperty(data.getValue().getName()));
-            return new SimpleStringProperty(appToName.get(data.getValue()).get());
-        });
+        column.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getName()));
 
         return column;
     }
@@ -121,11 +103,8 @@ public class ApplicationTab extends CustomTab {
     public TableColumn<Application, String> buildKeywordsColumn() {
         final TableColumn<Application, String> column = new TableColumn<>("Keywords");
         column.setCellFactory(TextFieldTableCell.forTableColumn());
-        column.setCellValueFactory(data -> {
-            appToKeywords.computeIfAbsent(data.getValue(),
-                                          k -> new ArrayList<>(data.getValue().getKeywords()));
-            return new SimpleStringProperty(appToKeywords.get(data.getValue()).toString());
-        });
+        column.setCellValueFactory(
+                data -> new ReadOnlyStringWrapper(data.getValue().getKeywords().toString()));
 
         return column;
     }
@@ -134,32 +113,42 @@ public class ApplicationTab extends CustomTab {
         final Button edit = makeTextButton("Edit", event -> {
             final Application application = applicationView.getSelectionModel().getSelectedItem();
             if(application != null) {
-                editApplicationWindow.edit(application,
-                                           appToName.get(application),
-                                           appToKeywords.get(application));
+                editApplicationWindow.edit(application);
             }
         });
 
         final Button remove = makeTextButton("Remove", event -> {
             final Application application = applicationView.getSelectionModel().getSelectedItem();
             if(application != null) {
-                appToRemove.add(application);
-                applicationView.getItems().remove(application);
+                applications.remove(application);
             }
         });
 
-        final Button blacklist = makeTextButton("Add to blacklist", event -> {
+        final Button addBlacklist = makeTextButton("Add to blacklist", event -> {
             final Application application = applicationView.getSelectionModel().getSelectedItem();
             if(application != null) {
                 application.setBlacklisted(true);
-                addToBlacklist.add(application);
-                applicationView.getItems().remove(application);
+                blacklist.add(application.getExecutablePath().toString());
             }
+        });
+
+        final Button removeBlacklist = makeTextButton("Remove from blacklist", event -> {
+            final Application application = applicationView.getSelectionModel().getSelectedItem();
+            if(application != null) {
+                application.setBlacklisted(false);
+                blacklist.remove(application.getExecutablePath().toString());
+            }
+        });
+
+        final CheckBox checkBox = new CheckBox();
+        checkBox.setSelected(false);
+        checkBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if(newValue != null) seeBlacklisted = newValue;
         });
 
         final HBox buttons = new HBox(edit, makeVerticalSeparator(),
                                       remove, makeVerticalSeparator(),
-                                      blacklist);
+                                      addBlacklist, removeBlacklist, checkBox);
         buttons.setAlignment(Pos.CENTER);
         buttons.setSpacing(10);
         buttons.setPadding(new Insets(10));

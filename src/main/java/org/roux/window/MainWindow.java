@@ -66,7 +66,7 @@ public class MainWindow extends UndecoratedStage {
                 // error, missing executable
             }
         }
-        //@todo On verra si on met un truc ici pour dire que y'a erreur
+        //@todo Mettre un truc ici avec errorWindow !
     }
 
     public void scan() {
@@ -109,11 +109,11 @@ public class MainWindow extends UndecoratedStage {
                 new AutoCompleteTextField(this, applicationLibrary);
         textField.setPromptText("Find an app");
         textField.setPrefSize(FIELD_WIDTH, APP_HEIGHT);
-        textField.getEntries().addAll(applicationLibrary.getLibrary()
-                                              .stream()
-                                              .map(Application::getName)
-                                              .collect(Collectors.toList())
-        );
+        textField.getEntries().addAll(applicationLibrary.getNames());
+        applicationLibrary.addListener(c -> {
+            textField.getEntries().clear();
+            textField.getEntries().addAll(applicationLibrary.getNames());
+        });
         return textField;
     }
 

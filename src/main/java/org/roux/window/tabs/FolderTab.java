@@ -1,6 +1,5 @@
 package org.roux.window.tabs;
 
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -16,11 +15,9 @@ import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import org.roux.utils.FileManager;
 import org.roux.window.MainWindow;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.roux.utils.Utils.makeGraphicButton;
@@ -30,19 +27,20 @@ public class FolderTab extends CustomTab {
     private final DirectoryChooser directoryChooser;
     private final FileChooser fileChooser;
 
-    private final ObservableList<String> folders = FXCollections.observableList(new ArrayList<>());
-    private final List<String> startingFolders = new ArrayList<>();
+    private final ObservableList<String> folders;
 
     private final ListView<String> folderView;
 
-    private final ObservableList<String> files = FXCollections.observableList(new ArrayList<>());
-    private final List<String> startingFiles = new ArrayList<>();
+    private final ObservableList<String> files;
 
     private final ListView<String> fileView;
 
-    public FolderTab(final Stage sourceWindow, final String name, final Button confirmButton,
-                     final Button cancelButton) {
-        super(sourceWindow, name, confirmButton, cancelButton);
+    public FolderTab(final Stage sourceWindow, final String name,
+                     final ObservableList<String> sourceFolders,
+                     final ObservableList<String> sourceFiles) {
+        super(sourceWindow, name);
+        folders = sourceFolders;
+        files = sourceFiles;
         directoryChooser = new DirectoryChooser();
         fileChooser = new FileChooser();
 
@@ -52,47 +50,24 @@ public class FolderTab extends CustomTab {
         fileView = buildFileView();
         final HBox fileViewButtons = buildFileViewButtons();
 
-        onOptionConfirm(event -> {
-            FileManager.setFolders(folders);
-            startingFolders.clear();
-            startingFolders.addAll(folders);
-
-            FileManager.setExecutables(files);
-            startingFiles.clear();
-            startingFiles.addAll(files);
-        });
-
-        onOptionCancel(event -> {
-            folders.setAll(startingFolders);
-            files.setAll(startingFiles);
-        });
-
         final VBox root = new VBox(
-                new Label(""), // Pour ajouter un retour a la ligne
-                new Label("Folders"),
-                folderView,
-                folderViewButtons,
-                new Label("Files"),
-                fileView,
-                fileViewButtons);
+                new Label(""), // Pour ajouter un retour à la ligne
+                new Label("Folders"), folderView, folderViewButtons,
+                new Label("Files"), fileView, fileViewButtons);
         root.setSpacing(5);
         setRoot(sourceWindow, root);
     }
 
-    private static ListView<String> buildView(final List<String> source,
-                                              final List<String> initialList,
-                                              final ObservableList<String> currentList) {
+    private static ListView<String> buildView(final ObservableList<String> observableList) {
         final ListView<String> listView = new ListView<>();
         listView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        initialList.addAll(source);
-        currentList.addAll(source);
-        listView.setItems(currentList);
+        listView.setItems(observableList);
 
         return listView;
     }
 
     public ListView<String> buildFolderView() {
-        return buildView(FileManager.getFolders(), startingFolders, folders);
+        return buildView(folders);
     }
 
     private static Button buildAddButton(final EventHandler<MouseEvent> event) {
@@ -128,7 +103,7 @@ public class FolderTab extends CustomTab {
     }
 
     public ListView<String> buildFileView() {
-        return buildView(FileManager.getExecutables(), startingFiles, files);
+        return buildView(files);
     }
 
     public HBox buildFileViewButtons() {

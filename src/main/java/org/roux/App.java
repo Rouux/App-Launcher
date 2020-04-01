@@ -27,6 +27,7 @@ public class App extends Application {
 
         final MainWindow mainWindow = new MainWindow(applicationLibrary);
         mainWindow.show();
+
     }
 
     private static void showError(final Thread t, final Throwable e) {

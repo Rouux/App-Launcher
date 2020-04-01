@@ -16,9 +16,9 @@ import java.util.stream.Collectors;
 
 public class FileManager {
 
-    private static final List<String> FOLDERS = new ArrayList<>();
-    private static final List<String> EXECUTABLES = new ArrayList<>();
-    private static final List<String> BLACKLIST = new ArrayList<>();
+    private static List<String> FOLDERS = null;
+    private static List<String> EXECUTABLES = null;
+    private static List<String> BLACKLIST = null;
 
     public static final Integer DEFAULT_MAX_ENTRIES = 10;
     public static Integer MAX_ENTRIES;
@@ -67,10 +67,6 @@ public class FileManager {
     /**
      * Files ? Which one ? All of them. Well, all the executable one. Mucho timo & memory consumo so
      * !! WARNING !!
-     *
-     * @param customPredicate
-     *
-     * @return
      */
     public static List<Path> getFiles(final Predicate<Path> customPredicate) {
         final List<Path> folders = FileManager.getFolders().stream()
@@ -117,41 +113,44 @@ public class FileManager {
     }
 
     public static List<String> getFolders() {
-        if(FileManager.FOLDERS.isEmpty()) {
+        if(FileManager.FOLDERS == null) {
             final List<String> folders = (List<String>) root.get("folders");
-            if(folders != null) FileManager.FOLDERS.addAll(folders);
+            if(folders != null) FileManager.FOLDERS = new ArrayList<>(folders);
         }
         return FileManager.FOLDERS;
     }
 
     public static void setFolders(final Collection<String> folders) {
-        FileManager.FOLDERS.clear();
+        if(FileManager.FOLDERS == null) FileManager.FOLDERS = new ArrayList<>();
+        else FileManager.FOLDERS.clear();
         FileManager.FOLDERS.addAll(folders);
     }
 
     public static List<String> getExecutables() {
-        if(FileManager.EXECUTABLES.isEmpty()) {
+        if(FileManager.EXECUTABLES == null) {
             final List<String> executables = (List<String>) root.get("executables");
-            if(executables != null) FileManager.EXECUTABLES.addAll(executables);
+            if(executables != null) FileManager.EXECUTABLES = new ArrayList<>(executables);
         }
         return FileManager.EXECUTABLES;
     }
 
     public static void setExecutables(final Collection<String> executables) {
-        FileManager.EXECUTABLES.clear();
+        if(FileManager.EXECUTABLES == null) FileManager.EXECUTABLES = new ArrayList<>();
+        else FileManager.EXECUTABLES.clear();
         FileManager.EXECUTABLES.addAll(executables);
     }
 
     public static List<String> getBlacklist() {
-        if(FileManager.BLACKLIST.isEmpty()) {
+        if(FileManager.BLACKLIST == null) {
             final List<String> blacklist = (List<String>) root.get("blacklist");
-            if(blacklist != null) FileManager.BLACKLIST.addAll(blacklist);
+            if(blacklist != null) FileManager.BLACKLIST = new ArrayList<>(blacklist);
         }
         return FileManager.BLACKLIST;
     }
 
     public static void setBlacklist(final Collection<String> blacklist) {
-        FileManager.BLACKLIST.clear();
+        if(FileManager.BLACKLIST == null) FileManager.BLACKLIST = new ArrayList<>();
+        else FileManager.BLACKLIST.clear();
         FileManager.BLACKLIST.addAll(blacklist);
     }
 }

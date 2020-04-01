@@ -1,13 +1,11 @@
 package org.roux.window;
 
-import javafx.beans.property.StringPropertyBase;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -15,10 +13,7 @@ import javafx.stage.Stage;
 import org.roux.application.Application;
 
 import java.io.File;
-import java.nio.file.Paths;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.roux.utils.Utils.*;
 
@@ -30,39 +25,19 @@ public class EditApplicationWindow extends UndecoratedStage {
     private final VBox root;
     private Application application;
 
-    // Name
-    private final TextField applicationName;
-    private String initialApplicationName;
-    private StringPropertyBase applicationNameProperty;
-
-    // Path
-    private final Map<Application, String> applicationToPath;
-    private TextField applicationPath;
-
-    // Keywords
+    private final TextField nameField;
+    private TextField pathField;
     private final ListView<String> keywordView;
-    private List<String> keywords;
 
-    public EditApplicationWindow(final Stage owner, final Button confirmButton,
-                                 final Button cancelButton) {
-        applicationToPath = new HashMap<>();
-
-        applicationName = buildNameField();
+    public EditApplicationWindow(final Stage owner) {
+        nameField = buildNameField();
         final HBox pathOptions = buildPathOptions();
         keywordView = buildKeywordView();
         final HBox keywordButtons = buildKeywordButtons();
         // Confirm or cancel
         final HBox confirmOrCancelButtons = buildConfirmOrCancelButtons();
 
-        confirmButton.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
-            applicationToPath.forEach(
-                    (application, path) -> application.setExecutablePath(Paths.get(path)));
-            applicationToPath.clear();
-        });
-
-        cancelButton.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> applicationToPath.clear());
-
-        root = buildRoot(new Label("Name"), applicationName,
+        root = buildRoot(new Label("Name"), nameField,
                          new Label("Path"), pathOptions,
                          new Label("Keywords"), keywordView, keywordButtons,
                          confirmOrCancelButtons);
@@ -72,19 +47,11 @@ public class EditApplicationWindow extends UndecoratedStage {
         setRoot(root);
     }
 
-    public void edit(final Application application, final StringPropertyBase nameProperty,
-                     final List<String> tableKeywordsRef) {
+    public void edit(final Application application) {
         this.application = application;
-        applicationNameProperty = nameProperty;
-        initialApplicationName = nameProperty.get();
-        applicationName.setText(nameProperty.get());
-
-        applicationToPath.computeIfAbsent(application,
-                                          value -> application.getExecutablePath().toString());
-        applicationPath.setText(applicationToPath.get(application));
-
-        keywords = tableKeywordsRef;
-        keywordView.getItems().setAll(tableKeywordsRef);
+        nameField.setText(application.getName());
+        pathField.setText(application.getExecutablePath().toString());
+        keywordView.getItems().setAll(application.getKeywords());
         show();
     }
 
@@ -106,39 +73,31 @@ public class EditApplicationWindow extends UndecoratedStage {
                 t.consume();
             }
         });
-        textField.textProperty().addListener(
-                (observable, oldValue, newValue) -> applicationNameProperty.set(newValue));
-
         return textField;
     }
 
     private HBox buildPathOptions() {
-        applicationPath = new TextField();
-        applicationPath.setPromptText("Select a valid path for the application's executable");
-        applicationPath.setPrefWidth(WINDOW_WIDTH);
-        applicationPath.setOnKeyReleased(t -> {
+        pathField = new TextField();
+        pathField.setPromptText("Select a valid path for the application's executable");
+        pathField.setPrefWidth(WINDOW_WIDTH);
+        pathField.setOnKeyReleased(t -> {
             if(t.getCode() == KeyCode.ENTER) {
                 root.requestFocus();
                 t.consume();
             }
         });
-        applicationPath.textProperty().addListener((observable, oldValue, newValue) -> {
-            if(application != null)
-                applicationToPath.put(application, newValue);
-        });
-
         final FileChooser fileChooser = new FileChooser();
         final Button applicationSelectFile = makeTextButton("...", event -> {
-            final File currentFile = new File(applicationPath.getText());
+            final File currentFile = new File(pathField.getText());
             if(currentFile.isFile()) {
                 fileChooser.setInitialDirectory(currentFile.getParentFile());
                 final File chosenFile = fileChooser.showOpenDialog(this);
                 if(chosenFile != null && chosenFile.exists())
-                    applicationPath.setText(chosenFile.getAbsolutePath());
+                    pathField.setText(chosenFile.getAbsolutePath());
             }
         });
 
-        final HBox hBox = new HBox(applicationPath, applicationSelectFile);
+        final HBox hBox = new HBox(pathField, applicationSelectFile);
         hBox.setSpacing(10);
         hBox.setAlignment(Pos.CENTER);
         return hBox;
@@ -179,13 +138,13 @@ public class EditApplicationWindow extends UndecoratedStage {
 
     private HBox buildConfirmOrCancelButtons() {
         final Button confirmButton = makeTextButton("    OK    ", event -> {
-            keywords.clear();
-            keywords.addAll(keywordView.getItems());
+            application.setName(nameField.getText());
+            application.setExecutablePath(pathField.getText());
+            application.setKeywords(keywordView.getItems());
             close();
         });
 
         final Button cancelButton = makeTextButton(" Cancel ", event -> {
-            applicationNameProperty.set(initialApplicationName);
             close();
         });
 

@@ -15,7 +15,7 @@ public class Application extends SimpleObjectProperty<Application> {
 
     private Path executablePath;
     private String name;
-    private List<String> keywords;
+    private List<String> keywords = new ArrayList<>();
     private final BooleanProperty isBlacklisted = new SimpleBooleanProperty(false);
 
     public static void main(final String[] args) {
@@ -35,10 +35,18 @@ public class Application extends SimpleObjectProperty<Application> {
                 .replaceAll("_", " ");
     }
 
+    public static Application copy(final Application source) {
+        final Application copy = new Application(source.getExecutablePath().toString(),
+                                                 source.getName());
+        copy.getKeywords().addAll(source.getKeywords());
+        copy.setBlacklisted(source.isBlacklisted());
+
+        return copy;
+    }
+
     public Application(final Path path, final String name, final String... keywords) {
         executablePath = path;
         this.name = Application.beautifyName(name);
-        this.keywords = new ArrayList<>();
         if(keywords != null && keywords.length > 0) {
             this.keywords.addAll(Arrays.asList(keywords));
         }
@@ -50,6 +58,10 @@ public class Application extends SimpleObjectProperty<Application> {
 
     public Path getExecutablePath() {
         return executablePath;
+    }
+
+    public void setExecutablePath(final String executablePath) {
+        setExecutablePath(Paths.get(executablePath));
     }
 
     public void setExecutablePath(final Path executablePath) {
@@ -80,8 +92,8 @@ public class Application extends SimpleObjectProperty<Application> {
         return isBlacklisted.get();
     }
 
-    public void setBlacklisted(final boolean blacklisted) {
-        isBlacklisted.set(blacklisted);
+    public void setBlacklisted(final boolean isBlacklisted) {
+        this.isBlacklisted.set(isBlacklisted);
     }
 
     @Override

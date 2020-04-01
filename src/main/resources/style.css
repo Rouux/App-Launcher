@@ -5,3 +5,11 @@
 .scroll-pane {
     -fx-border-color: #696969;
 }
+
+.table-row-cell:odd {
+    -fx-background-color: alternate_row_color;
+}
+
+.table-row-blacklisted .text {
+    -fx-fill: #c40925;
+}
