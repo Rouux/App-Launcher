@@ -50,7 +50,6 @@ public class ApplicationTab extends CustomTab {
 
     public TableView<Application> buildApplicationView() {
         final TableView<Application> table = new TableView<>();
-        table.getItems().addAll(applications);
         table.setEditable(false);
         table.setStyle("-fx-font-size: 12");
         table.setRowFactory(tv -> {
@@ -76,6 +75,7 @@ public class ApplicationTab extends CustomTab {
 
             return row;
         });
+        table.getItems().setAll(applications);
         table.getItems().addListener((Observable observable) -> Utils.autoResizeColumns(table));
         applications.addListener((Observable observable) -> {
             Utils.autoResizeColumns(table);
@@ -95,6 +95,7 @@ public class ApplicationTab extends CustomTab {
         final TableColumn<Application, String> column = new TableColumn<>("Name");
         column.setCellFactory(TextFieldTableCell.forTableColumn());
         column.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getName()));
+        column.setMinWidth(80.0d);
 
         return column;
     }
@@ -104,6 +105,7 @@ public class ApplicationTab extends CustomTab {
         column.setCellFactory(TextFieldTableCell.forTableColumn());
         column.setCellValueFactory(
                 data -> new ReadOnlyStringWrapper(data.getValue().getKeywords().toString()));
+        column.setMinWidth(80.0d);
 
         return column;
     }
