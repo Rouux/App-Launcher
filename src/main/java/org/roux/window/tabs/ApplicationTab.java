@@ -1,7 +1,9 @@
 package org.roux.window.tabs;
 
 import javafx.beans.Observable;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -24,7 +26,7 @@ public class ApplicationTab extends CustomTab {
     private final ObservableList<String> blacklist;
     private final EditApplicationWindow editApplicationWindow;
 
-    private boolean seeBlacklisted = false;
+    private final BooleanProperty seeBlacklistedProperty = new SimpleBooleanProperty(false);
 
     private TableView<Application> applicationView;
 
@@ -34,7 +36,7 @@ public class ApplicationTab extends CustomTab {
         super(sourceWindow, name);
         this.applications = applications;
         this.blacklist = blacklist;
-        editApplicationWindow = new EditApplicationWindow(sourceWindow);
+        editApplicationWindow = new EditApplicationWindow(sourceWindow, blacklist);
         editApplicationWindow.setOnHidden(event -> applicationView.refresh());
 
         applicationView = buildApplicationView();
@@ -79,11 +81,8 @@ public class ApplicationTab extends CustomTab {
             Utils.autoResizeColumns(table);
             table.refresh();
         });
-        blacklist.addListener((Observable observable) -> {
-            if(!seeBlacklisted) {
-                applicationView.setItems(applications.filtered(item -> !item.isBlacklisted()));
-            }
-        });
+        blacklist.addListener(this::invalidated);
+        seeBlacklistedProperty.addListener(this::invalidated);
 
         final TableColumn<Application, String> name = buildNameColumn();
         final TableColumn<Application, String> keywords = buildKeywordsColumn();
@@ -124,34 +123,22 @@ public class ApplicationTab extends CustomTab {
             }
         });
 
-        final Button addBlacklist = makeTextButton("Add to blacklist", event -> {
-            final Application application = applicationView.getSelectionModel().getSelectedItem();
-            if(application != null) {
-                application.setBlacklisted(true);
-                blacklist.add(application.getExecutablePath().toString());
-            }
-        });
-
-        final Button removeBlacklist = makeTextButton("Remove from blacklist", event -> {
-            final Application application = applicationView.getSelectionModel().getSelectedItem();
-            if(application != null) {
-                application.setBlacklisted(false);
-                blacklist.remove(application.getExecutablePath().toString());
-            }
-        });
-
         final CheckBox checkBox = new CheckBox();
+        seeBlacklistedProperty.bind(checkBox.selectedProperty());
         checkBox.setSelected(false);
-        checkBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            if(newValue != null) seeBlacklisted = newValue;
-        });
 
         final HBox buttons = new HBox(edit, makeVerticalSeparator(),
                                       remove, makeVerticalSeparator(),
-                                      addBlacklist, removeBlacklist, checkBox);
+                                      new Label("See blacklisted"), checkBox);
         buttons.setAlignment(Pos.CENTER);
         buttons.setSpacing(10);
         buttons.setPadding(new Insets(10));
         return buttons;
+    }
+
+    private void invalidated(final Observable observable) {
+        if(!seeBlacklistedProperty.get())
+            applicationView.setItems(applications.filtered(item -> !item.isBlacklisted()));
+        else applicationView.setItems(applications);
     }
 }

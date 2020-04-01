@@ -72,7 +72,7 @@ public class ApplicationLibrary {
                 .orElse(null);
     }
 
-    public ObservableList<Application> scan() {
+    public void scan() {
         final List<Application> newApplications = new ArrayList<>();
         final Map<Path, String> executables = getExecutables();
         for(final Map.Entry<Path, String> entry : executables.entrySet()) {
@@ -90,7 +90,7 @@ public class ApplicationLibrary {
         // Coucou moi du futur, si je veux plus tard ouvrir une fenetre après scan
         // scan retourner la liste newApplications
         library.setAll(newApplications);
-        return library;
+        //        return library;
     }
 
     public List<String> filter(final SortedSet<String> entries, final String inputText) {
@@ -160,8 +160,9 @@ public class ApplicationLibrary {
                 .orElse(null);
     }
 
-    public List<String> getNames() {
+    public List<String> getNames(final boolean seeBlacklisted) {
         return library.stream()
+                .filter(application -> (seeBlacklisted || !application.isBlacklisted()))
                 .map(Application::getName)
                 .collect(Collectors.toList());
     }

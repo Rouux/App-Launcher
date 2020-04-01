@@ -62,7 +62,7 @@ public class OptionWindow extends UndecoratedStage {
         final TabPane tabPane = new TabPane(
                 new FolderTab(this, "Sources", sourceFolders, sourceFiles),
                 new ApplicationTab(this, "Apps", applications, blacklist),
-                new BlacklistTab(this, "Blacklist", blacklist),
+                new BlacklistTab(this, "Blacklist", blacklist, applications),
                 new ParameterTab(this, "Other")
         );
         final HBox confirmOrCancelButtons = buildConfirmOrCancelButtons();
@@ -85,7 +85,7 @@ public class OptionWindow extends UndecoratedStage {
         root.setAlignment(Pos.CENTER);
         root.setSpacing(5);
         root.setPadding(new Insets(10));
-        root.setPrefSize(420, 480);
+        root.setPrefSize(460, 540);
         root.getStyleClass().add(JMetroStyleClass.BACKGROUND);
 
         return root;

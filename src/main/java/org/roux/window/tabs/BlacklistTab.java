@@ -16,11 +16,12 @@ import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import org.roux.application.Application;
 import org.roux.window.MainWindow;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.roux.utils.Utils.*;
 
@@ -28,28 +29,27 @@ public class BlacklistTab extends CustomTab {
     private final DirectoryChooser directoryChooser;
     private final FileChooser fileChooser;
     private final ObservableList<String> blacklist;
+    private final ObservableList<Application> applications;
 
     private final ListView<String> blacklistView;
-    //    private final ObservableList<String> blacklistedFiles =
-    //            FXCollections.observableArrayList();
-    //    private final List<String> initialFiles = new ArrayList<>();
 
     private final ListView<String> banView;
     private final ObservableList<String> bannedFiles = FXCollections.observableArrayList();
-    private final List<String> startingFiles = new ArrayList<>();
 
     public BlacklistTab(final Stage sourceWindow, final String name,
-                        final ObservableList<String> blacklist) {
+                        final ObservableList<String> blacklist,
+                        final ObservableList<Application> applications) {
         super(sourceWindow, name);
         this.blacklist = blacklist;
+        this.applications = applications;
         directoryChooser = new DirectoryChooser();
         fileChooser = new FileChooser();
 
         blacklistView = buildBlacklistView();
         final HBox blacklistButtons = buildBlacklistButtons();
 
-        banView = buildFileView();
-        final HBox fileViewButtons = buildFileViewButtons();
+        banView = buildBannedView();
+        final HBox fileViewButtons = buildBannedButtons();
 
         final VBox root = new VBox(new Label(""), // Pour ajouter un retour a la ligne
                                    new Label("Blacklist"),
@@ -79,12 +79,15 @@ public class BlacklistTab extends CustomTab {
         return makeGraphicButton("add-icon.png", MainWindow.BUTTON_SIZE - 12, event);
     }
 
-    private static Button buildRemoveButton(final ListView<String> listView,
-                                            final ObservableList<String> observableList) {
+    private Button buildRemoveButton(final ListView<String> listView,
+                                     final ObservableList<String> observableList) {
         return makeGraphicButton("remove-icon.png", MainWindow.BUTTON_SIZE - 12, event -> {
             final List<String> selectedItems = listView.getSelectionModel().getSelectedItems();
+            for(final String path : selectedItems) {
+                final Application application = getApplicationFromPath(path);
+                if(application != null) application.setBlacklisted(false);
+            }
             observableList.removeAll(selectedItems);
-            //@todo si ça correspond a une appli, on remet dans 'Apps' ?
         });
     }
 
@@ -101,6 +104,9 @@ public class BlacklistTab extends CustomTab {
             final File selectedDirectory = directoryChooser.showDialog(sourceWindow);
             if(selectedDirectory != null) {
                 blacklist.add(selectedDirectory.getAbsolutePath());
+                final List<Application> applications
+                        = getApplicationsFromPath(selectedDirectory.getAbsolutePath());
+                applications.forEach(app -> app.setBlacklisted(true));
             }
         });
 
@@ -108,6 +114,9 @@ public class BlacklistTab extends CustomTab {
             final File selectedFile = fileChooser.showOpenDialog(sourceWindow);
             if(selectedFile != null) {
                 blacklist.add(selectedFile.getAbsolutePath());
+                final Application application =
+                        getApplicationFromPath(selectedFile.getAbsolutePath());
+                if(application != null) application.setBlacklisted(true);
             }
         });
 
@@ -118,11 +127,11 @@ public class BlacklistTab extends CustomTab {
                               remove);
     }
 
-    public ListView<String> buildFileView() {
+    public ListView<String> buildBannedView() {
         return buildView(bannedFiles);
     }
 
-    public HBox buildFileViewButtons() {
+    public HBox buildBannedButtons() {
         final Button add = buildAddButton(event -> {
             final File selectedExecutable = fileChooser.showOpenDialog(sourceWindow);
             if(selectedExecutable != null && selectedExecutable.canExecute()) {
@@ -133,5 +142,18 @@ public class BlacklistTab extends CustomTab {
 
         return buildButtonBox(add, makeVerticalSeparator(), remove);
 
+    }
+
+    private Application getApplicationFromPath(final String path) {
+        return applications.stream()
+                .filter(app -> app.getExecutablePath().toString().equals(path))
+                .findFirst()
+                .orElse(null);
+    }
+
+    private List<Application> getApplicationsFromPath(final String path) {
+        return applications.stream()
+                .filter(app -> app.getExecutablePath().startsWith(path))
+                .collect(Collectors.toList());
     }
 }

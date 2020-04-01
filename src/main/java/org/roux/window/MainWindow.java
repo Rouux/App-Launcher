@@ -1,7 +1,6 @@
 package org.roux.window;
 
 import javafx.application.Platform;
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
@@ -16,7 +15,6 @@ import org.roux.utils.AutoCompleteTextField;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.stream.Collectors;
 
 import static org.roux.utils.Utils.makeGraphicButton;
 import static org.roux.utils.Utils.makeVerticalSeparator;
@@ -70,12 +68,9 @@ public class MainWindow extends UndecoratedStage {
     }
 
     public void scan() {
-        final ObservableList<Application> applications = applicationLibrary.scan();
+        applicationLibrary.scan();
         textField.getEntries().clear();
-        textField.getEntries().addAll(applications.stream()
-                                              .map(Application::getName)
-                                              .collect(Collectors.toList())
-        );
+        textField.getEntries().addAll(applicationLibrary.getNames(false));
     }
 
     public Parent buildRoot() {
@@ -109,10 +104,10 @@ public class MainWindow extends UndecoratedStage {
                 new AutoCompleteTextField(this, applicationLibrary);
         textField.setPromptText("Find an app");
         textField.setPrefSize(FIELD_WIDTH, APP_HEIGHT);
-        textField.getEntries().addAll(applicationLibrary.getNames());
+        textField.getEntries().addAll(applicationLibrary.getNames(false));
         applicationLibrary.addListener(c -> {
             textField.getEntries().clear();
-            textField.getEntries().addAll(applicationLibrary.getNames());
+            textField.getEntries().addAll(applicationLibrary.getNames(false));
         });
         return textField;
     }

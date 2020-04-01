@@ -1,5 +1,6 @@
 package org.roux.window;
 
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -19,20 +20,24 @@ import static org.roux.utils.Utils.*;
 
 public class EditApplicationWindow extends UndecoratedStage {
 
-    private final static int WINDOW_WIDTH = 480;
-    private final static int WINDOW_HEIGHT = 320;
+    private final static int WINDOW_WIDTH = 420;
+    private final static int WINDOW_HEIGHT = 360;
 
     private final VBox root;
     private Application application;
+    private final ObservableList<String> blacklist;
 
     private final TextField nameField;
     private TextField pathField;
     private final ListView<String> keywordView;
+    private final CheckBox blacklistCheckbox;
 
-    public EditApplicationWindow(final Stage owner) {
+    public EditApplicationWindow(final Stage owner, final ObservableList<String> blacklist) {
+        this.blacklist = blacklist;
         nameField = buildNameField();
         final HBox pathOptions = buildPathOptions();
         keywordView = buildKeywordView();
+        blacklistCheckbox = buildBlacklistCheckbox();
         final HBox keywordButtons = buildKeywordButtons();
         // Confirm or cancel
         final HBox confirmOrCancelButtons = buildConfirmOrCancelButtons();
@@ -40,6 +45,7 @@ public class EditApplicationWindow extends UndecoratedStage {
         root = buildRoot(new Label("Name"), nameField,
                          new Label("Path"), pathOptions,
                          new Label("Keywords"), keywordView, keywordButtons,
+                         blacklistCheckbox,
                          confirmOrCancelButtons);
 
         setOnShowing(event -> root.requestFocus());
@@ -51,7 +57,9 @@ public class EditApplicationWindow extends UndecoratedStage {
         this.application = application;
         nameField.setText(application.getName());
         pathField.setText(application.getExecutablePath().toString());
+        blacklistCheckbox.setSelected(application.isBlacklisted());
         keywordView.getItems().setAll(application.getKeywords());
+
         show();
     }
 
@@ -103,6 +111,13 @@ public class EditApplicationWindow extends UndecoratedStage {
         return hBox;
     }
 
+    private CheckBox buildBlacklistCheckbox() {
+        final CheckBox checkBox = new CheckBox(" Blacklist this application");
+        checkBox.setSelected(false);
+
+        return checkBox;
+    }
+
     private ListView<String> buildKeywordView() {
         final ListView<String> keywordView = new ListView<>();
         keywordView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
@@ -140,6 +155,13 @@ public class EditApplicationWindow extends UndecoratedStage {
         final Button confirmButton = makeTextButton("    OK    ", event -> {
             application.setName(nameField.getText());
             application.setExecutablePath(pathField.getText());
+            application.setBlacklisted(blacklistCheckbox.isSelected());
+            if(application.isBlacklisted()) {
+                if(!blacklist.contains(application.getExecutablePath().toString()))
+                    blacklist.add(application.getExecutablePath().toString());
+            } else {
+                blacklist.remove(application.getExecutablePath().toString());
+            }
             application.setKeywords(keywordView.getItems());
             close();
         });
