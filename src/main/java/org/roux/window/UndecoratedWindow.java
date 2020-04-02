@@ -9,14 +9,11 @@ import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.JMetroStyleClass;
 import jfxtras.styles.jmetro.Style;
 
-public abstract class UndecoratedStage extends Stage {
-
-    private double xOffset = 0;
-    private double yOffset = 0;
+public abstract class UndecoratedWindow extends Stage {
 
     protected Scene scene;
 
-    public UndecoratedStage() {
+    public UndecoratedWindow() {
         initStyle(StageStyle.UNDECORATED);
     }
 
@@ -27,15 +24,7 @@ public abstract class UndecoratedStage extends Stage {
         jMetro.setScene(scene);
         jMetro.setStyle(Style.DARK);
 
-        root.setOnMousePressed(event -> {
-            xOffset = getX() - event.getScreenX();
-            yOffset = getY() - event.getScreenY();
-        });
-        root.setOnMouseDragged(event -> {
-            setX(event.getScreenX() + xOffset);
-            setY(event.getScreenY() + yOffset);
-        });
-        root.setOnKeyPressed(event -> {
+        root.setOnKeyReleased(event -> {
             if(event.getCode().equals(KeyCode.ENTER)) {
                 System.out.println("Enter -> OK");
                 onConfirmAction();
@@ -45,6 +34,7 @@ public abstract class UndecoratedStage extends Stage {
             }
         });
         root.getStyleClass().add(JMetroStyleClass.BACKGROUND);
+        root.getStylesheets().add("style.css");
         root.setStyle("-fx-border-color: #060606;");
 
         showingProperty().addListener((observable, oldValue, newValue) -> {

@@ -6,7 +6,7 @@ import javafx.stage.Stage;
 import org.roux.application.ApplicationLibrary;
 import org.roux.utils.FileManager;
 import org.roux.window.ErrorWindow;
-import org.roux.window.MainWindow;
+import org.roux.window.SearchWindow;
 
 public class App extends Application {
 
@@ -25,8 +25,8 @@ public class App extends Application {
     public void start(final Stage stage) {
         Thread.setDefaultUncaughtExceptionHandler(App::showError);
 
-        final MainWindow mainWindow = new MainWindow(applicationLibrary);
-        mainWindow.show();
+        final SearchWindow searchWindow = new SearchWindow(applicationLibrary);
+        searchWindow.show();
     }
 
     private static void showError(final Thread t, final Throwable e) {

@@ -23,10 +23,10 @@ import org.roux.window.tabs.ParameterTab;
 
 import static org.roux.utils.Utils.makeTextButton;
 
-public class OptionWindow extends UndecoratedStage {
+public class OptionWindow extends WindowLayout {
 
-    public static final int WINDOW_WIDTH = 500;
-    public static final int WINDOW_HEIGHT = 540;
+    public static final double WINDOW_DEFAULT_WIDTH = 500.0d;
+    public static final double WINDOW_DEFAULT_HEIGHT = 560.0d;
 
     private final Stage owner;
     private ApplicationLibrary applicationLibrary;
@@ -71,7 +71,7 @@ public class OptionWindow extends UndecoratedStage {
 
         initOwner(owner);
         setRoot(root);
-        getScene().getStylesheets().add("style.css");
+        root.requestFocus();
     }
 
     @Override
@@ -94,7 +94,7 @@ public class OptionWindow extends UndecoratedStage {
         root.setAlignment(Pos.CENTER);
         root.setSpacing(5);
         root.setPadding(new Insets(10));
-        root.setPrefSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+        root.setPrefSize(WINDOW_DEFAULT_WIDTH, WINDOW_DEFAULT_HEIGHT);
         root.getStyleClass().add(JMetroStyleClass.BACKGROUND);
 
         return root;

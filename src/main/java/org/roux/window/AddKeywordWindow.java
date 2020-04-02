@@ -13,7 +13,7 @@ import javafx.stage.Stage;
 
 import static org.roux.utils.Utils.makeTextButton;
 
-public class AddKeywordWindow extends UndecoratedStage {
+public class AddKeywordWindow extends WindowLayout {
 
     private final static int WINDOW_WIDTH = 260;
     private final static int WINDOW_HEIGHT = 90;
@@ -59,10 +59,10 @@ public class AddKeywordWindow extends UndecoratedStage {
     private TextField buildNameField() {
         final TextField textField = new TextField();
         textField.setPromptText("Keyword (case sensitive)");
-        textField.setOnKeyReleased(t -> {
-            if(t.getCode() == KeyCode.ENTER) {
+        textField.setOnKeyReleased(keyEvent -> {
+            if(keyEvent.getCode() == KeyCode.ENTER) {
                 root.requestFocus();
-                t.consume();
+                keyEvent.consume();
             }
         });
         return textField;

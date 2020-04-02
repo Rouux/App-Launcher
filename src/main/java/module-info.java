@@ -7,6 +7,9 @@ module org.roux {
     requires org.apache.commons.io;
     requires easybind;
     requires org.scenicview.scenicview;
+    requires javafx.web;
+    requires javafx.swing;
+    requires javafx.fxml;
 
     exports org.roux;
     exports org.roux.window;

@@ -21,7 +21,7 @@ import java.util.List;
 
 import static org.roux.utils.Utils.*;
 
-public class EditApplicationWindow extends UndecoratedStage {
+public class EditApplicationWindow extends WindowLayout {
 
     private final static int WINDOW_WIDTH = 420;
     private final static int WINDOW_HEIGHT = 360;
@@ -155,10 +155,10 @@ public class EditApplicationWindow extends UndecoratedStage {
 
     private HBox buildKeywordButtons() {
         final Button add =
-                makeGraphicButton("add-icon.png", MainWindow.BUTTON_SIZE - 8,
+                makeGraphicButton("add-icon.png", SearchWindow.BUTTON_SIZE - 8,
                                   event -> addKeywordWindow.open(keywordView));
         final Button remove =
-                makeGraphicButton("remove-icon.png", MainWindow.BUTTON_SIZE - 8, event -> {
+                makeGraphicButton("remove-icon.png", SearchWindow.BUTTON_SIZE - 8, event -> {
                     final List<String> items = keywordView.getSelectionModel().getSelectedItems();
                     keywordView.getItems().removeAll(items);
                 });

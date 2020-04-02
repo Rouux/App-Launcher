@@ -15,7 +15,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import org.roux.window.MainWindow;
+import org.roux.window.SearchWindow;
 
 import java.io.File;
 import java.util.List;
@@ -73,12 +73,12 @@ public class FolderTab extends CustomTab {
     }
 
     private static Button buildAddButton(final EventHandler<MouseEvent> event) {
-        return makeGraphicButton("add-icon.png", MainWindow.BUTTON_SIZE - 12, event);
+        return makeGraphicButton("add-icon.png", SearchWindow.BUTTON_SIZE - 12, event);
     }
 
     private static Button buildRemoveButton(final ListView<String> listView,
                                             final ObservableList<String> observableList) {
-        return makeGraphicButton("remove-icon.png", MainWindow.BUTTON_SIZE - 12, event -> {
+        return makeGraphicButton("remove-icon.png", SearchWindow.BUTTON_SIZE - 12, event -> {
             final List<String> selectedItems =
                     listView.getSelectionModel().getSelectedItems();
             observableList.removeAll(selectedItems);

@@ -19,19 +19,17 @@ import java.nio.file.Path;
 import static org.roux.utils.Utils.makeGraphicButton;
 import static org.roux.utils.Utils.makeVerticalSeparator;
 
-public class MainWindow extends UndecoratedStage {
+public class SearchWindow extends UndecoratedWindow {
 
     public static final int FIELD_WIDTH = 280;
     public static final int APP_HEIGHT = FIELD_WIDTH / 12;
     public static final int BUTTON_SIZE = APP_HEIGHT;
 
     private final ApplicationLibrary applicationLibrary;
-
     private OptionWindow optionWindow;
-
     private AutoCompleteTextField textField;
 
-    public MainWindow(final ApplicationLibrary applicationLibrary) {
+    public SearchWindow(final ApplicationLibrary applicationLibrary) {
         this.applicationLibrary = applicationLibrary;
         final Parent root = buildRoot();
 
@@ -86,12 +84,12 @@ public class MainWindow extends UndecoratedStage {
     private Parent buildRoot() {
         textField = makeField();
         final Button updateButton =
-                makeGraphicButton("update-icon.png", MainWindow.BUTTON_SIZE, event -> {
+                makeGraphicButton("update-icon.png", SearchWindow.BUTTON_SIZE, event -> {
                     scan();
                     event.consume();
                 });
         final Button optionButton =
-                makeGraphicButton("option-icon.png", MainWindow.BUTTON_SIZE, event -> {
+                makeGraphicButton("option-icon.png", SearchWindow.BUTTON_SIZE, event -> {
                     if(optionWindow == null)
                         optionWindow = new OptionWindow(this, applicationLibrary);
                     optionWindow.show();

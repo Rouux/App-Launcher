@@ -20,7 +20,7 @@ import java.io.StringWriter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class ErrorWindow extends UndecoratedStage {
+public class ErrorWindow extends WindowLayout {
 
     public ErrorWindow(final String message) {
         super();

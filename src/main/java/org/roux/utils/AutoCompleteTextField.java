@@ -6,7 +6,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import org.roux.application.ApplicationLibrary;
-import org.roux.window.MainWindow;
+import org.roux.window.SearchWindow;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -25,7 +25,7 @@ public class AutoCompleteTextField extends TextField {
     private List<String> filteredEntries;
     private final MaxSizedContextMenu entriesPopup;
 
-    public AutoCompleteTextField(final MainWindow mainWindow,
+    public AutoCompleteTextField(final SearchWindow searchWindow,
                                  final ApplicationLibrary applicationLibrary) {
         super();
         entries = new TreeSet<>();
@@ -53,7 +53,7 @@ public class AutoCompleteTextField extends TextField {
             final List<String> list = getFilteredEntries();
             if(ke.getCode() == KeyCode.ENTER) {
                 if(list != null && !list.isEmpty()) {
-                    mainWindow.launchApplication(list.get(0));
+                    searchWindow.launchApplication(list.get(0));
                 }
             } else if(ke.getCode() == KeyCode.TAB) {
                 if(list != null && !list.isEmpty()) {
