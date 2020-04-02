@@ -13,7 +13,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.roux.application.Application;
-import org.scenicview.ScenicView;
 
 import java.io.File;
 import java.util.ArrayList;

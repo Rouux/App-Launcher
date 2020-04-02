@@ -82,9 +82,6 @@ public class ApplicationTab extends CustomTab {
             return row;
         });
         table.getItems().addListener((Observable observable) -> Utils.autoResizeColumns(table));
-        //        applications.addListener((Observable observable) -> {
-        //            table.refresh();
-        //        });
         blacklist.addListener(this::invalidated);
         seeBlacklistedProperty.addListener(this::invalidated);
 
@@ -110,7 +107,7 @@ public class ApplicationTab extends CustomTab {
         column.setCellFactory(TextFieldTableCell.forTableColumn());
         column.setCellValueFactory(
                 data -> {
-                    String filename = FilenameUtils.removeExtension(
+                    final String filename = FilenameUtils.removeExtension(
                             data.getValue().getExecutablePath().getFileName().toString());
                     return new ReadOnlyStringWrapper(filename);
                 });

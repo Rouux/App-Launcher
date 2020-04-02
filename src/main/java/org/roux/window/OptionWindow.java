@@ -20,7 +20,6 @@ import org.roux.window.tabs.ApplicationTab;
 import org.roux.window.tabs.BlacklistTab;
 import org.roux.window.tabs.FolderTab;
 import org.roux.window.tabs.ParameterTab;
-import org.scenicview.ScenicView;
 
 import static org.roux.utils.Utils.makeTextButton;
 

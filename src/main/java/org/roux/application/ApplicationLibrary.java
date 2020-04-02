@@ -1,6 +1,5 @@
 package org.roux.application;
 
-import javafx.beans.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -31,9 +30,30 @@ public class ApplicationLibrary {
                 library.add(application);
             });
         }
+        library.sort((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()));
     }
 
-    public Map<Path, String> getExecutables() {
+    public void scan() {
+        final List<Application> newApplications = new ArrayList<>();
+        final Map<Path, String> executables = getExecutables();
+        for(final Map.Entry<Path, String> entry : executables.entrySet()) {
+            final Path path = entry.getKey();
+            final String name = entry.getValue();
+            Application application;
+            if((application = findSamePathApplication(path)) == null) {
+                application = new Application(path, name);
+                application.setBlacklisted(isBlacklisted(application.getExecutablePath()));
+            }
+            newApplications.add(application);
+        }
+        // Coucou moi du futur, si je veux plus tard ouvrir une fenetre après scan
+        // scan retourner la liste newApplications
+        newApplications.sort((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()));
+        library.setAll(newApplications);
+        //        return library;
+    }
+
+    private Map<Path, String> getExecutables() {
         final List<Path> files = FileManager.getFilesFromFolders();
         final Map<Path, String> results = new HashMap<>();
         files.stream() //@todo remplacer par des banwords btw
@@ -67,27 +87,6 @@ public class ApplicationLibrary {
                 .filter(app -> app.getExecutablePath().equals(path))
                 .findFirst()
                 .orElse(null);
-    }
-
-    public void scan() {
-        final List<Application> newApplications = new ArrayList<>();
-        final Map<Path, String> executables = getExecutables();
-        for(final Map.Entry<Path, String> entry : executables.entrySet()) {
-            final Path path = entry.getKey();
-            final String name = entry.getValue();
-            Application application;
-            if((application = findSamePathApplication(path)) == null) {
-                application = new Application(path, name);
-            }
-            //@todo actuellement j'affiche juste pas, retravailler pour afficher quand même ?
-            // Histoire d'eviter que le mec se demande pourquoi son app s'affiche pas
-            application.setBlacklisted(isBlacklisted(application.getExecutablePath()));
-            if(!application.isBlacklisted()) newApplications.add(application);
-        }
-        // Coucou moi du futur, si je veux plus tard ouvrir une fenetre après scan
-        // scan retourner la liste newApplications
-        library.setAll(newApplications);
-        //        return library;
     }
 
     public List<String> filter(final SortedSet<String> entries, final String inputText) {
