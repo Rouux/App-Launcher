@@ -41,7 +41,7 @@
 }
 
 .table-view:row-selection > .virtual-flow > .clipped-container > .sheet > .table-row-cell > .table-cell {
-    -fx-padding: 0.8em 0.2em 0.4em 1em;
+    -fx-padding: 0.8em 0.5em 0.4em 1em;
     -fx-background-color: transparent;
 }
 
