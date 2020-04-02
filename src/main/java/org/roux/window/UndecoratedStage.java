@@ -2,6 +2,7 @@ package org.roux.window;
 
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import jfxtras.styles.jmetro.JMetro;
@@ -32,6 +33,13 @@ public abstract class UndecoratedStage extends Stage {
             setX(event.getScreenX() + xOffset);
             setY(event.getScreenY() + yOffset);
         });
+        root.setOnKeyPressed(event -> {
+            if(event.getCode().equals(KeyCode.ENTER)) {
+                System.out.println("Enter -> OK");
+            } else if(event.getCode().equals(KeyCode.ESCAPE)) {
+                System.out.println("Escape -> CANCEL");
+            }
+        });
         root.getStyleClass().add(JMetroStyleClass.BACKGROUND);
         root.setStyle("-fx-border-color: #060606;");
 
@@ -43,5 +51,7 @@ public abstract class UndecoratedStage extends Stage {
     }
 
     protected void onOpenWindow() {}
+
+    protected void onClosingWindow() {}
 
 }

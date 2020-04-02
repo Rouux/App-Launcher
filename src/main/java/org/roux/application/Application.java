@@ -2,7 +2,6 @@ package org.roux.application;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleObjectProperty;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -11,7 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-public class Application extends SimpleObjectProperty<Application> {
+public class Application {
 
     private Path executablePath;
     private String name;

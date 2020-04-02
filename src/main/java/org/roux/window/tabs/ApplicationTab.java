@@ -121,7 +121,6 @@ public class ApplicationTab extends CustomTab {
             final Application application = applicationView.getSelectionModel().getSelectedItem();
             if(application != null) {
                 applications.remove(application);
-                System.out.println("remove");
             }
         });
 

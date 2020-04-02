@@ -30,10 +30,12 @@ public class EditApplicationWindow extends UndecoratedStage {
     private final TextField nameField;
     private TextField pathField;
     private final ListView<String> keywordView;
+    private final AddKeywordWindow addKeywordWindow;
     private final CheckBox blacklistCheckbox;
 
     public EditApplicationWindow(final Stage owner, final ObservableList<String> blacklist) {
         this.blacklist = blacklist;
+        addKeywordWindow = new AddKeywordWindow(owner);
         nameField = buildNameField();
         final HBox pathOptions = buildPathOptions();
         keywordView = buildKeywordView();
@@ -59,6 +61,7 @@ public class EditApplicationWindow extends UndecoratedStage {
         pathField.setText(application.getExecutablePath().toString());
         blacklistCheckbox.setSelected(application.isBlacklisted());
         keywordView.getItems().setAll(application.getKeywords());
+        keywordView.refresh();
 
         show();
     }
@@ -137,7 +140,7 @@ public class EditApplicationWindow extends UndecoratedStage {
     private HBox buildKeywordButtons() {
         final Button add =
                 makeGraphicButton("add-icon.png", MainWindow.BUTTON_SIZE - 8,
-                                  event -> keywordView.getItems().add("keyword"));
+                                  event -> addKeywordWindow.open(keywordView));
         final Button remove =
                 makeGraphicButton("remove-icon.png", MainWindow.BUTTON_SIZE - 8, event -> {
                     final List<String> items = keywordView.getSelectionModel().getSelectedItems();
