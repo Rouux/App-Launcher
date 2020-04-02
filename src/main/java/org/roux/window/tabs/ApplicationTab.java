@@ -50,6 +50,7 @@ public class ApplicationTab extends CustomTab {
 
     public TableView<Application> buildApplicationView() {
         final TableView<Application> table = new TableView<>();
+        table.getItems().setAll(applications);
         table.setEditable(false);
         table.setStyle("-fx-font-size: 12");
         table.setRowFactory(tv -> {
@@ -75,7 +76,6 @@ public class ApplicationTab extends CustomTab {
 
             return row;
         });
-        table.getItems().setAll(applications);
         table.getItems().addListener((Observable observable) -> Utils.autoResizeColumns(table));
 //        applications.addListener((Observable observable) -> {
 //            table.refresh();

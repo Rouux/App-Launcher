@@ -1,5 +1,6 @@
 package org.roux.window;
 
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -14,6 +15,7 @@ import javafx.stage.Stage;
 import org.roux.application.Application;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.roux.utils.Utils.*;
@@ -60,8 +62,8 @@ public class EditApplicationWindow extends UndecoratedStage {
         nameField.setText(application.getName());
         pathField.setText(application.getExecutablePath().toString());
         blacklistCheckbox.setSelected(application.isBlacklisted());
-        keywordView.getItems().setAll(application.getKeywords());
-        keywordView.refresh();
+        final List<String> dontDeleteItIsNeeded = new ArrayList<>(application.getKeywords());
+        keywordView.setItems(FXCollections.observableList(dontDeleteItIsNeeded));
 
         show();
     }
