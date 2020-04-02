@@ -20,10 +20,14 @@ import org.roux.window.tabs.ApplicationTab;
 import org.roux.window.tabs.BlacklistTab;
 import org.roux.window.tabs.FolderTab;
 import org.roux.window.tabs.ParameterTab;
+import org.scenicview.ScenicView;
 
 import static org.roux.utils.Utils.makeTextButton;
 
 public class OptionWindow extends UndecoratedStage {
+
+    public static final int WINDOW_WIDTH = 500;
+    public static final int WINDOW_HEIGHT = 540;
 
     private final Stage owner;
     private ApplicationLibrary applicationLibrary;
@@ -68,8 +72,7 @@ public class OptionWindow extends UndecoratedStage {
 
         initOwner(owner);
         setRoot(root);
-        getScene().getStylesheets().add("/style.css");
-        //        ScenicView.show(root);
+        getScene().getStylesheets().add("style.css");
     }
 
     @Override
@@ -82,7 +85,7 @@ public class OptionWindow extends UndecoratedStage {
         root.setAlignment(Pos.CENTER);
         root.setSpacing(5);
         root.setPadding(new Insets(10));
-        root.setPrefSize(460, 540);
+        root.setPrefSize(WINDOW_WIDTH, WINDOW_HEIGHT);
         root.getStyleClass().add(JMetroStyleClass.BACKGROUND);
 
         return root;

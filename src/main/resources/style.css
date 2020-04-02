@@ -1,15 +1,72 @@
+/* ErrorWindow */
+
 .scroll-pane > .viewport {
     -fx-background-color: rgba(69, 69, 69, 0.8);
 }
 
 .scroll-pane {
-    -fx-border-color: #696969;
+    -fx-border-color: table_view_border_color;
 }
 
-.table-row-cell:odd {
+/* ListView */
+
+.list-view.alternating-row-colors > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:hover:odd {
+    -fx-background-color: cell_hover_color;
+}
+
+.list-view.alternating-row-colors > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:hover:even {
+    -fx-background-color: cell_hover_color;
+}
+
+.list-view.alternating-row-colors > .virtual-flow > .clipped-container > .sheet > .list-cell:empty:hover:odd {
     -fx-background-color: alternate_row_color;
 }
 
+.list-view.alternating-row-colors > .virtual-flow > .clipped-container > .sheet > .list-cell:empty:hover:even {
+    -fx-background-color: list_view_background_color;
+}
+
+/* TableView */
+
 .table-row-blacklisted .text {
     -fx-fill: #c40925;
+}
+
+/*!* - when focused (with cell selection mode) *!*/
+.table-view:focused > .virtual-flow > .clipped-container > .sheet > .table-row-cell .table-cell:selected,
+.table-view:focused > .virtual-flow > .clipped-container > .sheet > .table-row-cell:selected .table-cell {
+    -fx-background-color: cell_selected_color;
+    -fx-border-color: transparent table_view_border_color transparent transparent;
+    -fx-border-width: 1;
+}
+
+.table-view:row-selection > .virtual-flow > .clipped-container > .sheet > .table-row-cell > .table-cell {
+    -fx-padding: 0.8em 0.2em 0.4em 1em;
+    -fx-background-color: transparent;
+}
+
+.column-header.table-column, .column-header.table-column:last-visible {
+    -fx-border-color: transparent table_view_border_color table_view_border_color transparent;
+    -fx-border-width: 1;
+}
+
+.table-column, .table-column:last-visible {
+    -fx-border-color: transparent table_view_border_color transparent transparent;
+    -fx-border-width: 1;
+}
+
+.table-view:row-selection > .virtual-flow > .clipped-container > .sheet > .table-row-cell:hover:odd {
+    -fx-background-color: alternate_row_color;
+}
+
+.table-view:row-selection > .virtual-flow > .clipped-container > .sheet > .table-row-cell:hover:even {
+    -fx-background-color: table_background_color;
+}
+
+.table-view:row-selection > .virtual-flow > .clipped-container > .sheet > .table-row-cell > .table-cell:filled:hover {
+    -fx-background-color: transparent;
+}
+
+.table-view:row-selection > .virtual-flow > .clipped-container > .sheet > .table-row-cell:filled:hover {
+    -fx-background-color: cell_hover_color;
 }

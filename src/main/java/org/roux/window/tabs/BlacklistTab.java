@@ -46,6 +46,7 @@ public class BlacklistTab extends CustomTab {
         fileChooser = new FileChooser();
 
         blacklistView = buildBlacklistView();
+        blacklistView.getStyleClass().add("alternating-row-colors");
         final HBox blacklistButtons = buildBlacklistButtons();
 
         banView = buildBannedView();

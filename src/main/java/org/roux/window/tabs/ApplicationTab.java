@@ -12,6 +12,7 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.apache.commons.io.FilenameUtils;
 import org.fxmisc.easybind.EasyBind;
 import org.roux.application.Application;
 import org.roux.utils.Utils;
@@ -40,6 +41,7 @@ public class ApplicationTab extends CustomTab {
         editApplicationWindow.setOnHidden(event -> applicationView.refresh());
 
         applicationView = buildApplicationView();
+        applicationView.getStyleClass().add("alternating-row-colors");
         final HBox applicationButtons = buildApplicationButtons();
 
         final VBox root = new VBox(applicationView, applicationButtons);
@@ -67,6 +69,9 @@ public class ApplicationTab extends CustomTab {
                             row.getStyleClass().remove("table-row-blacklisted");
                         }
                     });
+            row.hoverProperty().addListener((observable, oldValue, newValue) -> {
+
+            });
             row.setOnMouseClicked(event -> {
                 if(event.getClickCount() == 2 && !row.isEmpty() && row.getItem() != null) {
                     final Application application = row.getItem();
@@ -77,15 +82,16 @@ public class ApplicationTab extends CustomTab {
             return row;
         });
         table.getItems().addListener((Observable observable) -> Utils.autoResizeColumns(table));
-//        applications.addListener((Observable observable) -> {
-//            table.refresh();
-//        });
+        //        applications.addListener((Observable observable) -> {
+        //            table.refresh();
+        //        });
         blacklist.addListener(this::invalidated);
         seeBlacklistedProperty.addListener(this::invalidated);
 
         final TableColumn<Application, String> name = buildNameColumn();
+        final TableColumn<Application, String> executable = buildExecutableColumn();
         final TableColumn<Application, String> keywords = buildKeywordsColumn();
-        table.getColumns().setAll(name, keywords);
+        table.getColumns().setAll(name, executable, keywords);
         Utils.autoResizeColumns(table);
         return table;
     }
@@ -94,6 +100,20 @@ public class ApplicationTab extends CustomTab {
         final TableColumn<Application, String> column = new TableColumn<>("Name");
         column.setCellFactory(TextFieldTableCell.forTableColumn());
         column.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getName()));
+        column.setMinWidth(80.0d);
+
+        return column;
+    }
+
+    public TableColumn<Application, String> buildExecutableColumn() {
+        final TableColumn<Application, String> column = new TableColumn<>("Executable");
+        column.setCellFactory(TextFieldTableCell.forTableColumn());
+        column.setCellValueFactory(
+                data -> {
+                    String filename = FilenameUtils.removeExtension(
+                            data.getValue().getExecutablePath().getFileName().toString());
+                    return new ReadOnlyStringWrapper(filename);
+                });
         column.setMinWidth(80.0d);
 
         return column;

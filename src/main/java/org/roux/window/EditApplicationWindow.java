@@ -13,6 +13,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.roux.application.Application;
+import org.scenicview.ScenicView;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -41,6 +42,7 @@ public class EditApplicationWindow extends UndecoratedStage {
         nameField = buildNameField();
         final HBox pathOptions = buildPathOptions();
         keywordView = buildKeywordView();
+        keywordView.getStyleClass().add("alternating-row-colors");
         blacklistCheckbox = buildBlacklistCheckbox();
         final HBox keywordButtons = buildKeywordButtons();
         // Confirm or cancel
@@ -55,6 +57,7 @@ public class EditApplicationWindow extends UndecoratedStage {
         setOnShowing(event -> root.requestFocus());
         initOwner(owner);
         setRoot(root);
+        getScene().getStylesheets().add("style.css");
     }
 
     public void edit(final Application application) {

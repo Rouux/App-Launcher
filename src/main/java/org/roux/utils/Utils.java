@@ -23,7 +23,7 @@ public class Utils {
     public static void autoResizeColumns(final TableView<?> table) {
         table.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
         table.getColumns().forEach((column) -> {
-            final Text title = new Text(column.getText().toUpperCase());
+            final Text title = new Text(column.getText());
             double max = title.getLayoutBounds().getWidth() * 1;
             for(int i = 0; i < table.getItems().size(); i++) {
                 if(column.getCellData(i) != null) {
@@ -32,7 +32,7 @@ public class Utils {
                     if(layoutWidth > max) max = layoutWidth;
                 }
             }
-            column.setPrefWidth(max + 50.0d);
+            column.setPrefWidth(max + 20.0d);
         });
     }
 

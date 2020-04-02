@@ -45,9 +45,11 @@ public class FolderTab extends CustomTab {
         fileChooser = new FileChooser();
 
         folderView = buildFolderView();
+        folderView.getStyleClass().add("alternating-row-colors");
         final HBox folderViewButtons = buildFolderViewButtons();
 
         fileView = buildFileView();
+        fileView.getStyleClass().add("alternating-row-colors");
         final HBox fileViewButtons = buildFileViewButtons();
 
         final VBox root = new VBox(
