@@ -32,6 +32,16 @@ public class AddKeywordWindow extends UndecoratedStage {
         setRoot(root);
     }
 
+    @Override
+    protected void onConfirmAction() {
+        //@todo see if there's anything logical by pushing ENTER here
+    }
+
+    @Override
+    protected void onCancelAction() {
+        //@todo see if there's anything logical by pushing ESCAPE here
+    }
+
     public void open(final ListView<String> keywordView) {
         this.keywordView = keywordView;
         keywordField.setText("");

@@ -82,6 +82,16 @@ public class ErrorWindow extends UndecoratedStage {
         show();
     }
 
+    @Override
+    protected void onConfirmAction() {
+        //@todo see if there's anything logical by pushing ENTER here
+    }
+
+    @Override
+    protected void onCancelAction() {
+        //@todo see if there's anything logical by pushing ESCAPE here
+    }
+
     private Button buildCopyButton(final String error) {
         final Button copyButton = new Button("Copy to clipboard");
         copyButton.setOnAction(event -> {

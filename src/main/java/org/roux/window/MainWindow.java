@@ -47,6 +47,16 @@ public class MainWindow extends UndecoratedStage {
         setOnShowing(event -> textField.requestFocus());
     }
 
+    @Override
+    protected void onConfirmAction() {
+        //@todo see if there's anything logical by pushing ENTER here
+    }
+
+    @Override
+    protected void onCancelAction() {
+        //@todo see if there's anything logical by pushing ESCAPE here
+    }
+
     public void launchApplication(final String name) {
         final Application application = applicationLibrary.getApplication(name);
         if(application != null) {
@@ -67,13 +77,13 @@ public class MainWindow extends UndecoratedStage {
         //@todo Mettre un truc ici avec errorWindow !
     }
 
-    public void scan() {
+    private void scan() {
         applicationLibrary.scan();
         textField.getEntries().clear();
         textField.getEntries().addAll(applicationLibrary.getNames(false));
     }
 
-    public Parent buildRoot() {
+    private Parent buildRoot() {
         textField = makeField();
         final Button updateButton =
                 makeGraphicButton("update-icon.png", MainWindow.BUTTON_SIZE, event -> {
@@ -99,7 +109,7 @@ public class MainWindow extends UndecoratedStage {
         return root;
     }
 
-    public AutoCompleteTextField makeField() {
+    private AutoCompleteTextField makeField() {
         final AutoCompleteTextField textField =
                 new AutoCompleteTextField(this, applicationLibrary);
         textField.setPromptText("Find an app");

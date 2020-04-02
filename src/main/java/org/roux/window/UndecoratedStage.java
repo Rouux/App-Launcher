@@ -22,8 +22,10 @@ public abstract class UndecoratedStage extends Stage {
 
     public void setRoot(final Parent root) {
         scene = new Scene(root);
-        final JMetro jMetro = new JMetro(scene, Style.DARK);
         setScene(scene);
+        final JMetro jMetro = new JMetro();
+        jMetro.setScene(scene);
+        jMetro.setStyle(Style.DARK);
 
         root.setOnMousePressed(event -> {
             xOffset = getX() - event.getScreenX();
@@ -36,8 +38,10 @@ public abstract class UndecoratedStage extends Stage {
         root.setOnKeyPressed(event -> {
             if(event.getCode().equals(KeyCode.ENTER)) {
                 System.out.println("Enter -> OK");
+                onConfirmAction();
             } else if(event.getCode().equals(KeyCode.ESCAPE)) {
                 System.out.println("Escape -> CANCEL");
+                onCancelAction();
             }
         });
         root.getStyleClass().add(JMetroStyleClass.BACKGROUND);
@@ -52,6 +56,8 @@ public abstract class UndecoratedStage extends Stage {
 
     protected void onOpenWindow() {}
 
-    protected void onClosingWindow() {}
+    protected abstract void onConfirmAction();
+
+    protected abstract void onCancelAction();
 
 }

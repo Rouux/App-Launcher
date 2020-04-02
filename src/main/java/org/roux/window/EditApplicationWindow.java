@@ -12,6 +12,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.roux.application.Application;
 
 import java.io.File;
@@ -56,7 +57,18 @@ public class EditApplicationWindow extends UndecoratedStage {
         setOnShowing(event -> root.requestFocus());
         initOwner(owner);
         setRoot(root);
+        initStyle(StageStyle.DECORATED);
         getScene().getStylesheets().add("style.css");
+    }
+
+    @Override
+    protected void onConfirmAction() {
+        //@todo see if there's anything logical by pushing ENTER here
+    }
+
+    @Override
+    protected void onCancelAction() {
+        //@todo see if there's anything logical by pushing ESCAPE here
     }
 
     public void edit(final Application application) {

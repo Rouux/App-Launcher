@@ -79,6 +79,16 @@ public class OptionWindow extends UndecoratedStage {
         setAll();
     }
 
+    @Override
+    protected void onConfirmAction() {
+        //@todo see if there's anything logical by pushing ENTER here
+    }
+
+    @Override
+    protected void onCancelAction() {
+        //@todo see if there's anything logical by pushing ESCAPE here
+    }
+
     private VBox buildRoot(final Node... nodes) {
         final VBox root = new VBox(nodes);
         root.setAlignment(Pos.CENTER);
@@ -90,7 +100,7 @@ public class OptionWindow extends UndecoratedStage {
         return root;
     }
 
-    public HBox buildConfirmOrCancelButtons() {
+    private HBox buildConfirmOrCancelButtons() {
         final Button confirmButton = makeTextButton("    OK    ", event -> close());
         confirmButton.setOnAction(confirmationButtonEvent);
 
@@ -103,7 +113,7 @@ public class OptionWindow extends UndecoratedStage {
         return confirmOrCancel;
     }
 
-    public void setAll() {
+    private void setAll() {
         applications.setAll(applicationLibrary.getLibraryCopies());
         sourceFolders.setAll(FileManager.getFolders());
         sourceFiles.setAll(FileManager.getExecutables());
