@@ -81,12 +81,22 @@
     -fx-background-color: rgba(175, 175, 175, 0.25);
 }
 
+.minimize-button:pressed, .minimize-button:focused {
+    -fx-border-width: 0;
+    -fx-border-insets: 0;
+}
+
 .maximize-button {
     -fx-border-width: 0;
 }
 
 .maximize-button:hover {
     -fx-background-color: rgba(175, 175, 175, 0.25);
+}
+
+.maximize-button:pressed, .maximize-button:focused {
+    -fx-border-width: 0;
+    -fx-border-insets: 0;
 }
 
 .close-button {
@@ -96,6 +106,11 @@
 
 .close-button:hover {
     -fx-background-color: red;
+}
+
+.close-button:pressed, .close-button:focused {
+    -fx-border-width: 0;
+    -fx-border-insets: 0;
 }
 
 /* Windows-like layout */

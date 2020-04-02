@@ -31,6 +31,8 @@ public abstract class WindowLayout extends UndecoratedWindow {
     private final HBox header;
     private final BorderPane layout;
 
+    private boolean isMaximized = false;
+    private boolean isMinimized = false;
     private double xOffset = 0;
     private double yOffset = 0;
 
@@ -115,12 +117,12 @@ public abstract class WindowLayout extends UndecoratedWindow {
         final Region gapFiller = new Region();
         gapFiller.setPrefWidth(WINDOW_MAXIMUM_WIDTH * 2);
 
-        final Button minimize = makeGraphicButton("minimize.png", BUTTON_SIZE, event -> {
-
-        });
-        minimize.getStyleClass().add("minimize-button");
+        //        final Button minimize = makeGraphicButton("minimize.png", BUTTON_SIZE, event -> {
+        //            setIconified(!isIconified());
+        //        });
+        //        minimize.getStyleClass().add("minimize-button");
         final Button maximize = makeGraphicButton("maximize.png", BUTTON_SIZE, event -> {
-
+            setMaximized(!isMaximized());
         });
         maximize.getStyleClass().add("maximize-button");
         final Button exit = makeGraphicButton("close.png", BUTTON_SIZE, event -> {
@@ -128,7 +130,9 @@ public abstract class WindowLayout extends UndecoratedWindow {
         });
         exit.getStyleClass().add("close-button");
 
-        hBox.getChildren().addAll(title, gapFiller, minimize, maximize, exit);
+        hBox.getChildren().addAll(title, gapFiller,
+                //                                  minimize,
+                                  maximize, exit);
         return hBox;
     }
 
