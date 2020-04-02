@@ -6,8 +6,8 @@ import javafx.stage.Stage;
 
 public abstract class CustomTab extends Tab {
 
-    private final double xOffset = 0;
-    private final double yOffset = 0;
+    //    private final double xOffset = 0;
+    //    private final double yOffset = 0;
 
     protected final Stage sourceWindow;
 
@@ -27,6 +27,10 @@ public abstract class CustomTab extends Tab {
         //            source.setY(event.getScreenY() + yOffset);
         //        });
         setContent(root);
+    }
+
+    protected void looseFocus() {
+        sourceWindow.getScene().getRoot().requestFocus();
     }
 
 }

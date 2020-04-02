@@ -16,7 +16,7 @@ import static org.roux.utils.Utils.makeTextButton;
 public class AddKeywordWindow extends WindowLayout {
 
     private final static int WINDOW_WIDTH = 260;
-    private final static int WINDOW_HEIGHT = 90;
+    private final static int WINDOW_HEIGHT = 100;
 
     private final VBox root;
     private final TextField keywordField;
@@ -34,12 +34,14 @@ public class AddKeywordWindow extends WindowLayout {
 
     @Override
     protected void onConfirmAction() {
-        //@todo see if there's anything logical by pushing ENTER here
+        if(keywordField.getText().trim().length() > 0)
+            keywordView.getItems().add(keywordField.getText());
+        close();
     }
 
     @Override
     protected void onCancelAction() {
-        //@todo see if there's anything logical by pushing ESCAPE here
+        close();
     }
 
     public void open(final ListView<String> keywordView) {
@@ -69,15 +71,8 @@ public class AddKeywordWindow extends WindowLayout {
     }
 
     private HBox buildConfirmOrCancelButtons() {
-        final Button confirmButton = makeTextButton("    OK    ", event -> {
-            if(keywordField.getText().trim().length() > 0)
-                keywordView.getItems().add(keywordField.getText());
-            close();
-        });
-
-        final Button cancelButton = makeTextButton(" Cancel ", event -> {
-            close();
-        });
+        final Button confirmButton = makeTextButton("    OK    ", event -> onConfirmAction());
+        final Button cancelButton = makeTextButton(" Cancel ", event -> onCancelAction());
 
         final HBox confirmOrCancel = new HBox(confirmButton, cancelButton);
         confirmOrCancel.setAlignment(Pos.CENTER_RIGHT);

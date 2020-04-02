@@ -23,7 +23,7 @@ import java.util.List;
 import static org.roux.utils.Utils.makeGraphicButton;
 import static org.roux.utils.Utils.makeVerticalSeparator;
 
-public class FolderTab extends CustomTab {
+public class SourceTab extends CustomTab {
     private final DirectoryChooser directoryChooser;
     private final FileChooser fileChooser;
 
@@ -35,7 +35,7 @@ public class FolderTab extends CustomTab {
 
     private final ListView<String> fileView;
 
-    public FolderTab(final Stage sourceWindow, final String name,
+    public SourceTab(final Stage sourceWindow, final String name,
                      final ObservableList<String> sourceFolders,
                      final ObservableList<String> sourceFiles) {
         super(sourceWindow, name);
@@ -60,7 +60,7 @@ public class FolderTab extends CustomTab {
         setRoot(sourceWindow, root);
     }
 
-    private static ListView<String> buildView(final ObservableList<String> observableList) {
+    private ListView<String> buildView(final ObservableList<String> observableList) {
         final ListView<String> listView = new ListView<>();
         listView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         listView.setItems(observableList);
@@ -68,20 +68,21 @@ public class FolderTab extends CustomTab {
         return listView;
     }
 
-    public ListView<String> buildFolderView() {
+    private ListView<String> buildFolderView() {
         return buildView(folders);
     }
 
-    private static Button buildAddButton(final EventHandler<MouseEvent> event) {
+    private Button buildAddButton(final EventHandler<MouseEvent> event) {
         return makeGraphicButton("add-icon.png", SearchWindow.BUTTON_SIZE - 12, event);
     }
 
-    private static Button buildRemoveButton(final ListView<String> listView,
-                                            final ObservableList<String> observableList) {
+    private Button buildRemoveButton(final ListView<String> listView,
+                                     final ObservableList<String> observableList) {
         return makeGraphicButton("remove-icon.png", SearchWindow.BUTTON_SIZE - 12, event -> {
             final List<String> selectedItems =
                     listView.getSelectionModel().getSelectedItems();
             observableList.removeAll(selectedItems);
+            looseFocus();
         });
     }
 
@@ -93,32 +94,33 @@ public class FolderTab extends CustomTab {
         return buttons;
     }
 
-    public HBox buildFolderViewButtons() {
+    private HBox buildFolderViewButtons() {
         final Button add = buildAddButton(event -> {
             final File selectedDirectory = directoryChooser.showDialog(sourceWindow);
             if(selectedDirectory != null) {
                 folders.add(selectedDirectory.getAbsolutePath());
             }
+            looseFocus();
         });
         final Button remove = buildRemoveButton(folderView, folders);
 
         return buildButtonBox(add, makeVerticalSeparator(), remove);
     }
 
-    public ListView<String> buildFileView() {
+    private ListView<String> buildFileView() {
         return buildView(files);
     }
 
-    public HBox buildFileViewButtons() {
+    private HBox buildFileViewButtons() {
         final Button add = buildAddButton(event -> {
             final File selectedExecutable = fileChooser.showOpenDialog(sourceWindow);
             if(selectedExecutable != null && selectedExecutable.canExecute()) {
                 files.add(selectedExecutable.getAbsolutePath());
             }
+            looseFocus();
         });
         final Button remove = buildRemoveButton(fileView, files);
 
         return buildButtonBox(add, makeVerticalSeparator(), remove);
-
     }
 }

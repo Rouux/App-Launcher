@@ -20,8 +20,8 @@ import org.roux.utils.UndecoratedWindowHelper;
 public abstract class WindowLayout extends UndecoratedWindow {
 
     private static final Rectangle2D screenBounds = Screen.getPrimary().getBounds();
-    public static final double WINDOW_MINIMUM_WIDTH = 240.0d;
-    public static final double WINDOW_MINIMUM_HEIGHT = 240.0d;
+    public static final double WINDOW_MINIMUM_WIDTH = 120.0;
+    public static final double WINDOW_MINIMUM_HEIGHT = 120.0d;
     public static final double WINDOW_DEFAULT_WIDTH = 480.0d;
     public static final double WINDOW_DEFAULT_HEIGHT = 480.0d;
     public static final double WINDOW_MAXIMUM_WIDTH = screenBounds.getWidth();

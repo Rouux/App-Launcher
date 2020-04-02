@@ -89,6 +89,7 @@ public class BlacklistTab extends CustomTab {
                 if(application != null) application.setBlacklisted(false);
             }
             observableList.removeAll(selectedItems);
+            looseFocus();
         });
     }
 
@@ -109,6 +110,7 @@ public class BlacklistTab extends CustomTab {
                         = getApplicationsFromPath(selectedDirectory.getAbsolutePath());
                 applications.forEach(app -> app.setBlacklisted(true));
             }
+            looseFocus();
         });
 
         final Button addFile = makeTextButton("Add file", event -> {
@@ -119,6 +121,7 @@ public class BlacklistTab extends CustomTab {
                         getApplicationFromPath(selectedFile.getAbsolutePath());
                 if(application != null) application.setBlacklisted(true);
             }
+            looseFocus();
         });
 
         final Button remove = buildRemoveButton(blacklistView, blacklist);
@@ -138,6 +141,7 @@ public class BlacklistTab extends CustomTab {
             if(selectedExecutable != null && selectedExecutable.canExecute()) {
                 bannedFiles.add(selectedExecutable.getAbsolutePath());
             }
+            looseFocus();
         });
         final Button remove = buildRemoveButton(banView, bannedFiles);
 

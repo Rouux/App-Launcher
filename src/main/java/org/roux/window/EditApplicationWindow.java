@@ -12,7 +12,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import org.roux.application.Application;
 
 import java.io.File;
@@ -38,7 +37,7 @@ public class EditApplicationWindow extends WindowLayout {
 
     public EditApplicationWindow(final Stage owner, final ObservableList<String> blacklist) {
         this.blacklist = blacklist;
-        addKeywordWindow = new AddKeywordWindow(owner);
+        addKeywordWindow = new AddKeywordWindow(this);
         nameField = buildNameField();
         final HBox pathOptions = buildPathOptions();
         keywordView = buildKeywordView();
@@ -57,18 +56,26 @@ public class EditApplicationWindow extends WindowLayout {
         setOnShowing(event -> root.requestFocus());
         initOwner(owner);
         setRoot(root);
-        initStyle(StageStyle.DECORATED);
-        getScene().getStylesheets().add("style.css");
     }
 
     @Override
     protected void onConfirmAction() {
-        //@todo see if there's anything logical by pushing ENTER here
+        application.setName(nameField.getText());
+        application.setExecutablePath(pathField.getText());
+        application.setBlacklisted(blacklistCheckbox.isSelected());
+        if(application.isBlacklisted()) {
+            if(!blacklist.contains(application.getExecutablePath().toString()))
+                blacklist.add(application.getExecutablePath().toString());
+        } else {
+            blacklist.remove(application.getExecutablePath().toString());
+        }
+        application.setKeywords(keywordView.getItems());
+        close();
     }
 
     @Override
     protected void onCancelAction() {
-        //@todo see if there's anything logical by pushing ESCAPE here
+        close();
     }
 
     public void edit(final Application application) {
@@ -122,6 +129,7 @@ public class EditApplicationWindow extends WindowLayout {
                 if(chosenFile != null && chosenFile.exists())
                     pathField.setText(chosenFile.getAbsolutePath());
             }
+            root.requestFocus();
         });
 
         final HBox hBox = new HBox(pathField, applicationSelectFile);
@@ -155,8 +163,10 @@ public class EditApplicationWindow extends WindowLayout {
 
     private HBox buildKeywordButtons() {
         final Button add =
-                makeGraphicButton("add-icon.png", SearchWindow.BUTTON_SIZE - 8,
-                                  event -> addKeywordWindow.open(keywordView));
+                makeGraphicButton("add-icon.png", SearchWindow.BUTTON_SIZE - 8, event -> {
+                    addKeywordWindow.open(keywordView);
+                    root.requestFocus();
+                });
         final Button remove =
                 makeGraphicButton("remove-icon.png", SearchWindow.BUTTON_SIZE - 8, event -> {
                     final List<String> items = keywordView.getSelectionModel().getSelectedItems();
@@ -171,24 +181,8 @@ public class EditApplicationWindow extends WindowLayout {
     }
 
     private HBox buildConfirmOrCancelButtons() {
-        final Button confirmButton = makeTextButton("    OK    ", event -> {
-            application.setName(nameField.getText());
-            application.setExecutablePath(pathField.getText());
-            application.setBlacklisted(blacklistCheckbox.isSelected());
-            if(application.isBlacklisted()) {
-                if(!blacklist.contains(application.getExecutablePath().toString()))
-                    blacklist.add(application.getExecutablePath().toString());
-            } else {
-                blacklist.remove(application.getExecutablePath().toString());
-            }
-            application.setKeywords(keywordView.getItems());
-            close();
-        });
-
-        final Button cancelButton = makeTextButton(" Cancel ", event -> {
-            close();
-        });
-
+        final Button confirmButton = makeTextButton("    OK    ", event -> onConfirmAction());
+        final Button cancelButton = makeTextButton(" Cancel ", event -> onCancelAction());
         final HBox confirmOrCancel = new HBox(confirmButton, cancelButton);
         confirmOrCancel.setAlignment(Pos.CENTER_RIGHT);
         confirmOrCancel.setSpacing(10);

@@ -89,7 +89,7 @@ public class ErrorWindow extends WindowLayout {
 
     @Override
     protected void onCancelAction() {
-        //@todo see if there's anything logical by pushing ESCAPE here
+        close();
     }
 
     private Button buildCopyButton(final String error) {

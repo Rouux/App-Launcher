@@ -2,8 +2,6 @@ package org.roux.window;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -18,8 +16,8 @@ import org.roux.application.ApplicationLibrary;
 import org.roux.utils.FileManager;
 import org.roux.window.tabs.ApplicationTab;
 import org.roux.window.tabs.BlacklistTab;
-import org.roux.window.tabs.FolderTab;
 import org.roux.window.tabs.ParameterTab;
+import org.roux.window.tabs.SourceTab;
 
 import static org.roux.utils.Utils.makeTextButton;
 
@@ -29,7 +27,7 @@ public class OptionWindow extends WindowLayout {
     public static final double WINDOW_DEFAULT_HEIGHT = 560.0d;
 
     private final Stage owner;
-    private ApplicationLibrary applicationLibrary;
+    private final ApplicationLibrary applicationLibrary;
 
     // Kinda local thingy
     /**
@@ -40,28 +38,13 @@ public class OptionWindow extends WindowLayout {
     private final ObservableList<String> sourceFiles = FXCollections.observableArrayList();
     private final ObservableList<String> blacklist = FXCollections.observableArrayList();
 
-    private final EventHandler<ActionEvent> confirmationButtonEvent = event -> {
-        // Don't forget to fill when action has to occur on tabs
-        FileManager.setFolders(sourceFolders);
-        FileManager.setExecutables(sourceFiles);
-        FileManager.setBlacklist(blacklist);
-        applicationLibrary.setLibrary(applications);
-        close();
-    };
-
-    private final EventHandler<ActionEvent> cancelButtonEvent = event -> {
-        // Don't forget to fill when action has to occur on tabs
-        setAll();
-        close();
-    };
-
     public OptionWindow(final Stage owner, final ApplicationLibrary applicationLibrary) {
         this.owner = owner;
         this.applicationLibrary = applicationLibrary;
         setAll();
 
         final TabPane tabPane = new TabPane(
-                new FolderTab(this, "Sources", sourceFolders, sourceFiles),
+                new SourceTab(this, "Sources", sourceFolders, sourceFiles),
                 new ApplicationTab(this, "Apps", applications, blacklist),
                 new BlacklistTab(this, "Blacklist", blacklist, applications),
                 new ParameterTab(this, "Other")
@@ -81,12 +64,17 @@ public class OptionWindow extends WindowLayout {
 
     @Override
     protected void onConfirmAction() {
-        //@todo see if there's anything logical by pushing ENTER here
+        FileManager.setFolders(sourceFolders);
+        FileManager.setExecutables(sourceFiles);
+        FileManager.setBlacklist(blacklist);
+        applicationLibrary.setLibrary(applications);
+        close();
     }
 
     @Override
     protected void onCancelAction() {
-        //@todo see if there's anything logical by pushing ESCAPE here
+        setAll();
+        close();
     }
 
     private VBox buildRoot(final Node... nodes) {
@@ -102,10 +90,10 @@ public class OptionWindow extends WindowLayout {
 
     private HBox buildConfirmOrCancelButtons() {
         final Button confirmButton = makeTextButton("    OK    ", event -> close());
-        confirmButton.setOnAction(confirmationButtonEvent);
+        confirmButton.setOnAction(event -> onConfirmAction());
 
         final Button cancelButton = makeTextButton(" Cancel ", event -> close());
-        cancelButton.setOnAction(cancelButtonEvent);
+        cancelButton.setOnAction(event -> onCancelAction());
 
         final HBox confirmOrCancel = new HBox(confirmButton, cancelButton);
         confirmOrCancel.setAlignment(Pos.CENTER_RIGHT);

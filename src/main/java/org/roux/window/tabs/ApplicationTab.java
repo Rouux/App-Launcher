@@ -81,7 +81,7 @@ public class ApplicationTab extends CustomTab {
 
             return row;
         });
-        table.getItems().addListener((Observable observable) -> Utils.autoResizeColumns(table));
+        applications.addListener((Observable observable) -> Utils.autoResizeColumns(table));
         blacklist.addListener(this::invalidated);
         seeBlacklistedProperty.addListener(this::invalidated);
 

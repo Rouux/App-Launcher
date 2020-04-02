@@ -5,7 +5,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
-import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
@@ -32,15 +31,9 @@ public class SearchWindow extends UndecoratedWindow {
     public SearchWindow(final ApplicationLibrary applicationLibrary) {
         this.applicationLibrary = applicationLibrary;
         final Parent root = buildRoot();
-
         setRoot(root);
+
         scene.setFill(Color.TRANSPARENT);
-        scene.setOnKeyPressed(ke -> {
-            if(ke.getCode() == KeyCode.ESCAPE) {
-                close();
-                Platform.exit();
-            }
-        });
         setAlwaysOnTop(true);
         setOnShowing(event -> textField.requestFocus());
     }
@@ -52,7 +45,8 @@ public class SearchWindow extends UndecoratedWindow {
 
     @Override
     protected void onCancelAction() {
-        //@todo see if there's anything logical by pushing ESCAPE here
+        close();
+        Platform.exit();
     }
 
     public void launchApplication(final String name) {
