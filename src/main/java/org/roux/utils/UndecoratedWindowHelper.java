@@ -13,7 +13,7 @@ import javafx.stage.Stage;
  *
  *  And well my own work (Roux) to merge move and resize together
  */
-public class UndecoratedWindowHelper {
+public abstract class UndecoratedWindowHelper {
 
     private static final double THRESHOLD = 5;
 
@@ -45,8 +45,6 @@ public class UndecoratedWindowHelper {
         private boolean isCursorCloseToBorder;
         private double startX = 0;
         private double startY = 0;
-        //        private double xOffset = 0;
-        //        private double yOffset = 0;
 
         public ResizeListener(final Stage stage) {
             this.stage = stage;
@@ -66,6 +64,11 @@ public class UndecoratedWindowHelper {
                 isCursorCloseToBorder = true;
                 if(sceneWidth - mouseEventX < THRESHOLD && sceneHeight - mouseEventY < THRESHOLD) {
                     cursorEvent = Cursor.SE_RESIZE;
+                } else if(sceneHeight - mouseEventY < THRESHOLD
+                        && mouseEventX < THRESHOLD) {
+                    cursorEvent = Cursor.SW_RESIZE;
+                } else if(mouseEventX < THRESHOLD) {
+                    cursorEvent = Cursor.W_RESIZE;
                 } else if(sceneWidth - mouseEventX < THRESHOLD) {
                     cursorEvent = Cursor.E_RESIZE;
                 } else if(sceneHeight - mouseEventY < THRESHOLD) {
@@ -76,32 +79,35 @@ public class UndecoratedWindowHelper {
                 }
                 scene.setCursor(cursorEvent);
             } else if(MouseEvent.MOUSE_PRESSED.equals(mouseEventType)) {
-                if(isCursorCloseToBorder) {
+//                if(isCursorCloseToBorder) {
                     startX = stage.getWidth() - mouseEventX;
                     startY = stage.getHeight() - mouseEventY;
-                } else {
-                    //                    scene.setCursor(Cursor.MOVE);
-                    //                    xOffset = stage.getX() - mouseEvent.getScreenX();
-                    //                    yOffset = stage.getY() - mouseEvent.getScreenY();
-                }
+//                }
             } else if(MouseEvent.MOUSE_DRAGGED.equals(mouseEventType)) {
                 if(!Cursor.DEFAULT.equals(cursorEvent)) {
-                    if(!Cursor.E_RESIZE.equals(cursorEvent)) {
+                    if(!Cursor.W_RESIZE.equals(cursorEvent)
+                            && !Cursor.E_RESIZE.equals(cursorEvent)) {
                         if(stage.getHeight() > stage.getMinHeight()
                                 || mouseEventY + startY - stage.getHeight() > 0) {
                             stage.setHeight(mouseEventY + startY);
                         }
                     }
-                    if(!Cursor.S_RESIZE.equals(cursorEvent)) {
-                        if(stage.getWidth() > stage.getMinHeight()
-                                || mouseEventX + startX - stage.getWidth() > 0) {
-                            stage.setWidth(mouseEventX + startX);
+                    if(!Cursor.N_RESIZE.equals(cursorEvent)
+                            && !Cursor.S_RESIZE.equals(cursorEvent)) {
+                        if(Cursor.W_RESIZE.equals(cursorEvent)
+                                || Cursor.SW_RESIZE.equals(cursorEvent)) {
+                            if(stage.getWidth() > stage.getMinHeight() || mouseEventX < 0) {
+                                stage.setWidth(
+                                        stage.getX() - mouseEvent.getScreenX() + stage.getWidth());
+                                stage.setX(mouseEvent.getScreenX());
+                            }
+                        } else {
+                            if(stage.getWidth() > stage.getMinHeight()
+                                    || (mouseEventX + startX) - stage.getWidth() > 0) {
+                                stage.setWidth(mouseEventX + startX);
+                            }
                         }
                     }
-                } else {
-                    //                    scene.setCursor(Cursor.MOVE);
-                    //                    stage.setX(mouseEvent.getScreenX() + xOffset);
-                    //                    stage.setY(mouseEvent.getScreenY() + yOffset);
                 }
             }
         }

@@ -30,8 +30,6 @@ public abstract class WindowLayout extends UndecoratedWindow {
     private final HBox header;
     private final BorderPane layout;
 
-    private final boolean isMaximized = false;
-    private final boolean isMinimized = false;
     private double xOffset = 0;
     private double yOffset = 0;
 
@@ -120,13 +118,11 @@ public abstract class WindowLayout extends UndecoratedWindow {
         //            setIconified(!isIconified());
         //        });
         //        minimize.getStyleClass().add("minimize-button");
-        final Button maximize = makeGraphicButton("maximize.png", BUTTON_SIZE, event -> {
-            setMaximized(!isMaximized());
-        });
+        final Button maximize = makeGraphicButton("maximize.png", BUTTON_SIZE,
+                                                  event -> setMaximized(!isMaximized()));
         maximize.getStyleClass().add("maximize-button");
-        final Button exit = makeGraphicButton("close.png", BUTTON_SIZE, event -> {
-            onCancelAction();
-        });
+        final Button exit = makeGraphicButton("close.png", BUTTON_SIZE,
+                                              event -> onCancelAction());
         exit.getStyleClass().add("close-button");
 
         hBox.getChildren().addAll(title, gapFiller,
