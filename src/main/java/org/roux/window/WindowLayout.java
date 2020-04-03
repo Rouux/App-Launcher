@@ -1,6 +1,5 @@
 package org.roux.window;
 
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -31,8 +30,8 @@ public abstract class WindowLayout extends UndecoratedWindow {
     private final HBox header;
     private final BorderPane layout;
 
-    private boolean isMaximized = false;
-    private boolean isMinimized = false;
+    private final boolean isMaximized = false;
+    private final boolean isMinimized = false;
     private double xOffset = 0;
     private double yOffset = 0;
 
@@ -126,12 +125,12 @@ public abstract class WindowLayout extends UndecoratedWindow {
         });
         maximize.getStyleClass().add("maximize-button");
         final Button exit = makeGraphicButton("close.png", BUTTON_SIZE, event -> {
-            Platform.exit();
+            onCancelAction();
         });
         exit.getStyleClass().add("close-button");
 
         hBox.getChildren().addAll(title, gapFiller,
-                //                                  minimize,
+                                  //                                  minimize,
                                   maximize, exit);
         return hBox;
     }

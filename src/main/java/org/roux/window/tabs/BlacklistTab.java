@@ -18,6 +18,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.roux.application.Application;
 import org.roux.window.SearchWindow;
+import org.roux.window.WindowLayout;
 
 import java.io.File;
 import java.util.List;
@@ -68,6 +69,7 @@ public class BlacklistTab extends CustomTab {
         final ListView<String> listView = new ListView<>();
         listView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         listView.setItems(observableList);
+        listView.setPrefHeight(WindowLayout.WINDOW_MAXIMUM_HEIGHT);
 
         return listView;
     }

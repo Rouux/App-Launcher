@@ -17,6 +17,7 @@ import org.fxmisc.easybind.EasyBind;
 import org.roux.application.Application;
 import org.roux.utils.Utils;
 import org.roux.window.EditApplicationWindow;
+import org.roux.window.WindowLayout;
 
 import static org.roux.utils.Utils.makeTextButton;
 import static org.roux.utils.Utils.makeVerticalSeparator;
@@ -44,14 +45,15 @@ public class ApplicationTab extends CustomTab {
         applicationView.getStyleClass().add("alternating-row-colors");
         final HBox applicationButtons = buildApplicationButtons();
 
-        final VBox root = new VBox(applicationView, applicationButtons);
-        root.setAlignment(Pos.CENTER);
+        final VBox root = new VBox(new Label(""), new Label("Applications"),
+                                   applicationView, applicationButtons);
         root.setSpacing(5);
         setRoot(sourceWindow, root);
     }
 
     public TableView<Application> buildApplicationView() {
         final TableView<Application> table = new TableView<>();
+        table.setPrefHeight(WindowLayout.WINDOW_MAXIMUM_HEIGHT);
         table.getItems().setAll(applications);
         table.setEditable(false);
         table.setStyle("-fx-font-size: 12");

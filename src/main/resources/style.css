@@ -26,6 +26,12 @@
     -fx-background-color: list_view_background_color;
 }
 
+/*.list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:selected,*/
+/*.list-view:focused > .virtual-flow > .clipped-container > .sheet > .list-cell:selected {*/
+/*    -fx-background-color: cell_selected_color;*/
+/*    -fx-border-color: transparent list_view_background_color transparent transparent;*/
+/*}*/
+
 /* TableView */
 
 .table-row-blacklisted .text {
