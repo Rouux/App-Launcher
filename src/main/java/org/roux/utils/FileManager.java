@@ -19,6 +19,8 @@ public class FileManager {
     private static List<String> FOLDERS = null;
     private static List<String> EXECUTABLES = null;
     private static List<String> BLACKLIST = null;
+    private static List<String> BAN_WORD_FOLDERS = null;
+    private static List<String> BAN_WORD_EXECUTABLES = null;
 
     public static final Integer DEFAULT_MAX_ENTRIES = 10;
     public static Integer MAX_ENTRIES;
@@ -69,15 +71,26 @@ public class FileManager {
         List<Path> list = new ArrayList<>();
         try {
             list = Files.walk(folder).parallel()
-                    .filter(path -> path.toFile().isFile())
-                    .filter(path -> path.toFile().canExecute())
+                    .filter(path -> path.toFile().isFile() && path.toFile().canExecute())
                     .filter(path -> ApplicationLibrary.isExtensionAllowed(path.toString()))
+                    .filter(path -> !folderContainsBanWord(path))
+                    .filter(path -> !executableContainsBanWord(path))
                     .filter(customPredicate)
                     .collect(Collectors.toList());
         } catch(final IOException exception) {
             exception.printStackTrace();
         }
         return list;
+    }
+
+    private static boolean folderContainsBanWord(final Path folder) {
+        final Path path = folder.toFile().isDirectory() ? folder : folder.getParent();
+        return getBanWordFolders().parallelStream().anyMatch(s -> path.toString().contains(s));
+    }
+
+    private static boolean executableContainsBanWord(final Path executable) {
+        final Path path = executable.toFile().isFile() ? executable : executable.getParent();
+        return getBanWordExecutables().parallelStream().anyMatch(s -> path.toString().contains(s));
     }
 
     /**
@@ -130,6 +143,8 @@ public class FileManager {
         data.put("folders", getFolders());
         data.put("executables", getExecutables());
         data.put("blacklist", getBlacklist());
+        data.put("banWordFolders", getBanWordFolders());
+        data.put("banWordExecutables", getBanWordExecutables());
         data.put("applications", applicationLibrary.getLibraryAsJsonFriendly());
         final JSONObject jsonObject = new JSONObject(data);
         try(final PrintWriter writer = new PrintWriter(new File("data.json"))) {
@@ -141,47 +156,64 @@ public class FileManager {
     }
 
     public static List<String> getFolders() {
-        if(FileManager.FOLDERS == null) {
-            FileManager.FOLDERS = new ArrayList<>();
-            final List<String> folders = (List<String>) root.get("folders");
-            if(folders != null) FileManager.FOLDERS.addAll(folders);
-        }
+        if(FileManager.FOLDERS == null)
+            FileManager.FOLDERS = getData("folders");
         return FileManager.FOLDERS;
     }
 
     public static void setFolders(final Collection<String> folders) {
-        if(FileManager.FOLDERS == null) FileManager.FOLDERS = new ArrayList<>();
-        else FileManager.FOLDERS.clear();
-        FileManager.FOLDERS.addAll(folders);
+        getFolders().clear();
+        getFolders().addAll(folders);
     }
 
     public static List<String> getExecutables() {
-        if(FileManager.EXECUTABLES == null) {
-            FileManager.EXECUTABLES = new ArrayList<>();
-            final List<String> executables = (List<String>) root.get("executables");
-            if(executables != null) FileManager.EXECUTABLES.addAll(executables);
-        }
+        if(FileManager.EXECUTABLES == null)
+            FileManager.EXECUTABLES = getData("executables");
         return FileManager.EXECUTABLES;
     }
 
     public static void setExecutables(final Collection<String> executables) {
-        if(FileManager.EXECUTABLES == null) FileManager.EXECUTABLES = new ArrayList<>();
-        else FileManager.EXECUTABLES.clear();
-        FileManager.EXECUTABLES.addAll(executables);
+        getExecutables().clear();
+        getExecutables().addAll(executables);
     }
 
     public static List<String> getBlacklist() {
-        if(FileManager.BLACKLIST == null) {
-            FileManager.BLACKLIST = new ArrayList<>();
-            final List<String> blacklist = (List<String>) root.get("blacklist");
-            if(blacklist != null) FileManager.BLACKLIST.addAll(blacklist);
-        }
+        if(FileManager.BLACKLIST == null)
+            FileManager.BLACKLIST = getData("blacklist");
         return FileManager.BLACKLIST;
     }
 
     public static void setBlacklist(final Collection<String> blacklist) {
-        if(FileManager.BLACKLIST == null) FileManager.BLACKLIST = new ArrayList<>();
-        else FileManager.BLACKLIST.clear();
-        FileManager.BLACKLIST.addAll(blacklist);
+        getBlacklist().clear();
+        getBlacklist().addAll(blacklist);
+    }
+
+    public static List<String> getBanWordFolders() {
+        if(FileManager.BAN_WORD_FOLDERS == null)
+            FileManager.BAN_WORD_FOLDERS = getData("banWordFolders");
+        return FileManager.BAN_WORD_FOLDERS;
+    }
+
+    public static void setBanWordFolders(final Collection<String> banWordFolders) {
+        getBanWordFolders().clear();
+        getBanWordFolders().addAll(banWordFolders);
+    }
+
+    public static List<String> getBanWordExecutables() {
+        if(FileManager.BAN_WORD_EXECUTABLES == null)
+            FileManager.BAN_WORD_EXECUTABLES = getData("banWordExecutables");
+        return FileManager.BAN_WORD_EXECUTABLES;
+    }
+
+    public static void setBanWordExecutables(final Collection<String> banWordExecutables) {
+        getBanWordExecutables().clear();
+        getBanWordExecutables().addAll(banWordExecutables);
+    }
+
+    /* Utils */
+
+    private static List<String> getData(final String name) {
+        final List<String> data = (List<String>) root.get(name);
+        return data != null ? data : new ArrayList<>();
     }
 }

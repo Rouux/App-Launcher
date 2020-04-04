@@ -12,35 +12,32 @@ import javafx.scene.control.SelectionMode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.DirectoryChooser;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.roux.window.SearchWindow;
+import org.roux.window.TextFieldDialog;
 
-import java.io.File;
 import java.util.List;
+import java.util.Optional;
 
 import static org.roux.utils.Utils.makeGraphicButton;
 import static org.roux.utils.Utils.makeVerticalSeparator;
 
-public class SourceTab extends CustomTab {
-    private final DirectoryChooser directoryChooser;
-    private final FileChooser fileChooser;
-
-    private final ObservableList<String> folders;
+public class BanWordTab extends CustomTab {
+    private final ObservableList<String> banWordFolders;
     private final ListView<String> folderView;
 
-    private final ObservableList<String> files;
+    private final ObservableList<String> banWordExecutables;
     private final ListView<String> fileView;
 
-    public SourceTab(final Stage sourceWindow, final String name,
-                     final ObservableList<String> sourceFolders,
-                     final ObservableList<String> sourceFiles) {
+    private final TextFieldDialog textInputDialog;
+
+    public BanWordTab(final Stage sourceWindow, final String name,
+                      final ObservableList<String> banWordFolders,
+                      final ObservableList<String> banWordExecutables) {
         super(sourceWindow, name);
-        folders = sourceFolders;
-        files = sourceFiles;
-        directoryChooser = new DirectoryChooser();
-        fileChooser = new FileChooser();
+        this.banWordFolders = banWordFolders;
+        this.banWordExecutables = banWordExecutables;
+        textInputDialog = new TextFieldDialog(sourceWindow);
 
         folderView = buildFolderView();
         folderView.getStyleClass().add("alternating-row-colors");
@@ -67,7 +64,7 @@ public class SourceTab extends CustomTab {
     }
 
     private ListView<String> buildFolderView() {
-        return buildView(folders);
+        return buildView(banWordFolders);
     }
 
     private Button buildAddButton(final EventHandler<MouseEvent> event) {
@@ -94,30 +91,26 @@ public class SourceTab extends CustomTab {
 
     private HBox buildFolderViewButtons() {
         final Button add = buildAddButton(event -> {
-            final File selectedDirectory = directoryChooser.showDialog(sourceWindow);
-            if(selectedDirectory != null) {
-                folders.add(selectedDirectory.getAbsolutePath());
-            }
+            final Optional<String> result = textInputDialog.openDialog();
+            result.ifPresent(banWordFolders::add);
             looseFocus();
         });
-        final Button remove = buildRemoveButton(folderView, folders);
+        final Button remove = buildRemoveButton(folderView, banWordFolders);
 
         return buildButtonBox(add, makeVerticalSeparator(), remove);
     }
 
     private ListView<String> buildFileView() {
-        return buildView(files);
+        return buildView(banWordExecutables);
     }
 
     private HBox buildFileViewButtons() {
         final Button add = buildAddButton(event -> {
-            final File selectedExecutable = fileChooser.showOpenDialog(sourceWindow);
-            if(selectedExecutable != null && selectedExecutable.canExecute()) {
-                files.add(selectedExecutable.getAbsolutePath());
-            }
+            final Optional<String> result = textInputDialog.openDialog();
+            result.ifPresent(banWordExecutables::add);
             looseFocus();
         });
-        final Button remove = buildRemoveButton(fileView, files);
+        final Button remove = buildRemoveButton(fileView, banWordExecutables);
 
         return buildButtonBox(add, makeVerticalSeparator(), remove);
     }

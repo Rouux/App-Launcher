@@ -22,27 +22,13 @@ public abstract class UndecoratedWindowHelper {
         stage.getScene().addEventHandler(MouseEvent.MOUSE_MOVED, moveListener);
         stage.getScene().addEventHandler(MouseEvent.MOUSE_PRESSED, moveListener);
         stage.getScene().addEventHandler(MouseEvent.MOUSE_DRAGGED, moveListener);
-        //        stage.getScene().getRoot().getChildrenUnmodifiable()
-        //                .forEach(node -> addListenerDeeply(node, moveListener));
     }
-
-    //    public static void addListenerDeeply(final Node node, final EventHandler<MouseEvent>
-    //    listener) {
-    //        node.addEventHandler(MouseEvent.MOUSE_MOVED, listener);
-    //        node.addEventHandler(MouseEvent.MOUSE_PRESSED, listener);
-    //        node.addEventHandler(MouseEvent.MOUSE_DRAGGED, listener);
-    //        if(node instanceof Parent) {
-    //            ((Parent) node).getChildrenUnmodifiable()
-    //                    .forEach(child -> addListenerDeeply(child, listener));
-    //        }
-    //    }
 
     static class ResizeListener implements EventHandler<MouseEvent> {
 
         private final Stage stage;
 
         private Cursor cursorEvent = Cursor.DEFAULT;
-        private boolean isCursorCloseToBorder;
         private double startX = 0;
         private double startY = 0;
 
@@ -61,7 +47,6 @@ public abstract class UndecoratedWindowHelper {
             final double sceneHeight = scene.getHeight();
 
             if(MouseEvent.MOUSE_MOVED.equals(mouseEventType)) {
-                isCursorCloseToBorder = true;
                 if(sceneWidth - mouseEventX < THRESHOLD && sceneHeight - mouseEventY < THRESHOLD) {
                     cursorEvent = Cursor.SE_RESIZE;
                 } else if(sceneHeight - mouseEventY < THRESHOLD
@@ -74,15 +59,12 @@ public abstract class UndecoratedWindowHelper {
                 } else if(sceneHeight - mouseEventY < THRESHOLD) {
                     cursorEvent = Cursor.S_RESIZE;
                 } else {
-                    isCursorCloseToBorder = false;
                     cursorEvent = Cursor.DEFAULT;
                 }
                 scene.setCursor(cursorEvent);
             } else if(MouseEvent.MOUSE_PRESSED.equals(mouseEventType)) {
-//                if(isCursorCloseToBorder) {
-                    startX = stage.getWidth() - mouseEventX;
-                    startY = stage.getHeight() - mouseEventY;
-//                }
+                startX = stage.getWidth() - mouseEventX;
+                startY = stage.getHeight() - mouseEventY;
             } else if(MouseEvent.MOUSE_DRAGGED.equals(mouseEventType)) {
                 if(!Cursor.DEFAULT.equals(cursorEvent)) {
                     if(!Cursor.W_RESIZE.equals(cursorEvent)
@@ -96,7 +78,8 @@ public abstract class UndecoratedWindowHelper {
                             && !Cursor.S_RESIZE.equals(cursorEvent)) {
                         if(Cursor.W_RESIZE.equals(cursorEvent)
                                 || Cursor.SW_RESIZE.equals(cursorEvent)) {
-                            if(stage.getWidth() > stage.getMinHeight() || mouseEventX < 0) {
+                            if(stage.getWidth() > stage.getMinHeight()
+                                    || mouseEventX < 0) {
                                 stage.setWidth(
                                         stage.getX() - mouseEvent.getScreenX() + stage.getWidth());
                                 stage.setX(mouseEvent.getScreenX());

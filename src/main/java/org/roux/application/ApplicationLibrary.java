@@ -54,23 +54,12 @@ public class ApplicationLibrary {
     }
 
     private Map<Path, String> getExecutables() {
-        final List<Path> files = FileManager.getFilesFromFolders();
         final Map<Path, String> results = new HashMap<>();
-        files.stream() //@todo remplacer par des banwords btw
-                .filter(path -> !path.getFileName().toString().contains("redist"))
-                .filter(path -> !path.getFileName().toString().contains("dxsetup"))
-                .filter(path -> !path.getFileName().toString().contains("unins"))
-                .filter(path -> !(path.getFileName().toString().contains("crash")
-                        && path.getFileName().toString().contains("report")))
-                .filter(path -> !path.toString().contains("Steamworks Shared"))
-                .filter(path -> !path.toString().contains("Resources"))
-                .filter(path -> !path.toString().contains("resources"))
-                .filter(path -> !path.toString().contains("lib"))
+        FileManager.getFilesFromFolders()
                 .forEach(path -> results.put(path, deductName(path)));
-        FileManager.getExecutables().forEach(
-                executable -> results.put(Paths.get(executable),
-                                          FilenameUtils.removeExtension(executable)));
-
+        FileManager.getExecutables()
+                .forEach(executable -> results.put(Paths.get(executable),
+                                                   FilenameUtils.removeExtension(executable)));
         return results;
     }
 

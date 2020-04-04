@@ -49,9 +49,7 @@ public class ApplicationTab extends CustomTab {
                                    applicationView, applicationButtons);
         root.setSpacing(5);
         setRoot(sourceWindow, root);
-        setOnSelectionChanged(event -> {
-            Utils.autoResizeColumns(applicationView);
-        });
+        setOnSelectionChanged(event -> Utils.autoResizeColumns(applicationView));
     }
 
     public TableView<Application> buildApplicationView() {

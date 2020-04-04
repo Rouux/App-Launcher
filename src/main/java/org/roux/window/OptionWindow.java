@@ -14,10 +14,7 @@ import jfxtras.styles.jmetro.JMetroStyleClass;
 import org.roux.application.Application;
 import org.roux.application.ApplicationLibrary;
 import org.roux.utils.FileManager;
-import org.roux.window.tabs.ApplicationTab;
-import org.roux.window.tabs.BlacklistTab;
-import org.roux.window.tabs.ParameterTab;
-import org.roux.window.tabs.SourceTab;
+import org.roux.window.tabs.*;
 
 import static org.roux.utils.Utils.makeTextButton;
 
@@ -37,6 +34,8 @@ public class OptionWindow extends WindowLayout {
     private final ObservableList<String> sourceFolders = FXCollections.observableArrayList();
     private final ObservableList<String> sourceFiles = FXCollections.observableArrayList();
     private final ObservableList<String> blacklist = FXCollections.observableArrayList();
+    private final ObservableList<String> banWordFolders = FXCollections.observableArrayList();
+    private final ObservableList<String> banWordExecutables = FXCollections.observableArrayList();
 
     public OptionWindow(final Stage owner, final ApplicationLibrary applicationLibrary) {
         this.owner = owner;
@@ -47,6 +46,7 @@ public class OptionWindow extends WindowLayout {
                 new SourceTab(this, "Sources", sourceFolders, sourceFiles),
                 new ApplicationTab(this, "Apps", applications, blacklist),
                 new BlacklistTab(this, "Blacklist", blacklist, applications),
+                new BanWordTab(this, "Ban words", banWordFolders, banWordExecutables),
                 new ParameterTab(this, "Other")
         );
         final HBox confirmOrCancelButtons = buildConfirmOrCancelButtons();
@@ -67,6 +67,8 @@ public class OptionWindow extends WindowLayout {
         FileManager.setFolders(sourceFolders);
         FileManager.setExecutables(sourceFiles);
         FileManager.setBlacklist(blacklist);
+        FileManager.setBanWordFolders(banWordFolders);
+        FileManager.setBanWordExecutables(banWordExecutables);
         applicationLibrary.setLibrary(applications);
         close();
     }
@@ -102,10 +104,12 @@ public class OptionWindow extends WindowLayout {
     }
 
     private void setAll() {
-        applications.setAll(applicationLibrary.getLibraryCopies());
         sourceFolders.setAll(FileManager.getFolders());
         sourceFiles.setAll(FileManager.getExecutables());
         blacklist.setAll(FileManager.getBlacklist());
+        banWordFolders.setAll(FileManager.getBanWordFolders());
+        banWordExecutables.setAll(FileManager.getBanWordExecutables());
+        applications.setAll(applicationLibrary.getLibraryCopies());
     }
 
     @Override
