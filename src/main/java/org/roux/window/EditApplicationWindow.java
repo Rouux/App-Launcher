@@ -17,6 +17,7 @@ import org.roux.application.Application;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.roux.utils.Utils.*;
 
@@ -32,12 +33,12 @@ public class EditApplicationWindow extends WindowLayout {
     private final TextField nameField;
     private TextField pathField;
     private final ListView<String> keywordView;
-    private final AddKeywordWindow addKeywordWindow;
+    private final TextFieldDialog addKeywordDialog;
     private final CheckBox blacklistCheckbox;
 
-    public EditApplicationWindow(final Stage owner, final ObservableList<String> blacklist) {
+    public EditApplicationWindow(final Stage source, final ObservableList<String> blacklist) {
         this.blacklist = blacklist;
-        addKeywordWindow = new AddKeywordWindow(this);
+        addKeywordDialog = new TextFieldDialog(source);
         nameField = buildNameField();
         final HBox pathOptions = buildPathOptions();
         keywordView = buildKeywordView();
@@ -54,7 +55,7 @@ public class EditApplicationWindow extends WindowLayout {
                          confirmOrCancelButtons);
 
         setOnShowing(event -> root.requestFocus());
-        initOwner(owner);
+        initOwner(source);
         setRoot(root);
     }
 
@@ -83,8 +84,8 @@ public class EditApplicationWindow extends WindowLayout {
         nameField.setText(application.getName());
         pathField.setText(application.getExecutablePath().toString());
         blacklistCheckbox.setSelected(application.isBlacklisted());
-        final List<String> dontDeleteItIsNeeded = new ArrayList<>(application.getKeywords());
-        keywordView.setItems(FXCollections.observableList(dontDeleteItIsNeeded));
+        final List<String> dontTouchMe = new ArrayList<>(application.getKeywords());
+        keywordView.setItems(FXCollections.observableList(dontTouchMe));
 
         show();
     }
@@ -164,7 +165,8 @@ public class EditApplicationWindow extends WindowLayout {
     private HBox buildKeywordButtons() {
         final Button add =
                 makeGraphicButton("add-icon.png", SearchWindow.BUTTON_SIZE - 8, event -> {
-                    addKeywordWindow.open(keywordView);
+                    final Optional<String> result = addKeywordDialog.openDialog();
+                    result.ifPresent(keywordView.getItems()::add);
                     root.requestFocus();
                 });
         final Button remove =

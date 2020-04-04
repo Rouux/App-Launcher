@@ -29,7 +29,7 @@ public class BanWordTab extends CustomTab {
     private final ObservableList<String> banWordExecutables;
     private final ListView<String> fileView;
 
-    private final TextFieldDialog textInputDialog;
+    private final TextFieldDialog addBanWordDialog;
 
     public BanWordTab(final Stage sourceWindow, final String name,
                       final ObservableList<String> banWordFolders,
@@ -37,7 +37,7 @@ public class BanWordTab extends CustomTab {
         super(sourceWindow, name);
         this.banWordFolders = banWordFolders;
         this.banWordExecutables = banWordExecutables;
-        textInputDialog = new TextFieldDialog(sourceWindow);
+        addBanWordDialog = new TextFieldDialog(sourceWindow);
 
         folderView = buildFolderView();
         folderView.getStyleClass().add("alternating-row-colors");
@@ -91,7 +91,7 @@ public class BanWordTab extends CustomTab {
 
     private HBox buildFolderViewButtons() {
         final Button add = buildAddButton(event -> {
-            final Optional<String> result = textInputDialog.openDialog();
+            final Optional<String> result = addBanWordDialog.openDialog();
             result.ifPresent(banWordFolders::add);
             looseFocus();
         });
@@ -106,7 +106,7 @@ public class BanWordTab extends CustomTab {
 
     private HBox buildFileViewButtons() {
         final Button add = buildAddButton(event -> {
-            final Optional<String> result = textInputDialog.openDialog();
+            final Optional<String> result = addBanWordDialog.openDialog();
             result.ifPresent(banWordExecutables::add);
             looseFocus();
         });
