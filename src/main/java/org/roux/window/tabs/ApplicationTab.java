@@ -141,12 +141,27 @@ public class ApplicationTab extends CustomTab {
             }
         });
 
+        final Button revertBlacklistState = makeTextButton("!Blacklist", event -> {
+            final Application application = applicationView.getSelectionModel().getSelectedItem();
+            if(application != null) {
+                if(application.isBlacklisted()) {
+                    blacklist.remove(application.getExecutablePath().toString());
+                    application.setBlacklisted(false);
+                } else {
+                    blacklist.add(application.getExecutablePath().toString());
+                    application.setBlacklisted(true);
+                }
+                invalidated(null);
+            }
+        });
+
         final CheckBox checkBox = new CheckBox();
         seeBlacklistedProperty.bind(checkBox.selectedProperty());
         checkBox.setSelected(false);
 
         final HBox buttons = new HBox(edit, makeVerticalSeparator(),
                                       remove, makeVerticalSeparator(),
+                                      revertBlacklistState, makeVerticalSeparator(),
                                       new Label("See blacklisted"), checkBox);
         buttons.setAlignment(Pos.CENTER);
         buttons.setSpacing(10);

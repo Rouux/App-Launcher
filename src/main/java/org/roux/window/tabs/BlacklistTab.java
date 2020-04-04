@@ -1,8 +1,6 @@
 package org.roux.window.tabs;
 
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -10,7 +8,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
@@ -29,13 +26,10 @@ import static org.roux.utils.Utils.*;
 public class BlacklistTab extends CustomTab {
     private final DirectoryChooser directoryChooser;
     private final FileChooser fileChooser;
+
     private final ObservableList<String> blacklist;
     private final ObservableList<Application> applications;
-
     private final ListView<String> blacklistView;
-
-    private final ListView<String> banView;
-    private final ObservableList<String> bannedFiles = FXCollections.observableArrayList();
 
     public BlacklistTab(final Stage sourceWindow, final String name,
                         final ObservableList<String> blacklist,
@@ -50,16 +44,10 @@ public class BlacklistTab extends CustomTab {
         blacklistView.getStyleClass().add("alternating-row-colors");
         final HBox blacklistButtons = buildBlacklistButtons();
 
-        banView = buildBannedView();
-        final HBox fileViewButtons = buildBannedButtons();
-
         final VBox root = new VBox(new Label(""), // Pour ajouter un retour a la ligne
                                    new Label("Blacklist"),
                                    blacklistView,
                                    blacklistButtons
-                                   //                                   ,new Label("Banned"),
-                                   //                                   banView,
-                                   //                                   fileViewButtons
         );
         root.setSpacing(5);
         setRoot(sourceWindow, root);
@@ -76,10 +64,6 @@ public class BlacklistTab extends CustomTab {
 
     public ListView<String> buildBlacklistView() {
         return buildView(blacklist);
-    }
-
-    private static Button buildAddButton(final EventHandler<MouseEvent> event) {
-        return makeGraphicButton("add-icon.png", SearchWindow.BUTTON_SIZE - 12, event);
     }
 
     private Button buildRemoveButton(final ListView<String> listView,
@@ -131,24 +115,6 @@ public class BlacklistTab extends CustomTab {
         return buildButtonBox(addFolder, makeVerticalSeparator(),
                               addFile, makeVerticalSeparator(),
                               remove);
-    }
-
-    public ListView<String> buildBannedView() {
-        return buildView(bannedFiles);
-    }
-
-    public HBox buildBannedButtons() {
-        final Button add = buildAddButton(event -> {
-            final File selectedExecutable = fileChooser.showOpenDialog(sourceWindow);
-            if(selectedExecutable != null && selectedExecutable.canExecute()) {
-                bannedFiles.add(selectedExecutable.getAbsolutePath());
-            }
-            looseFocus();
-        });
-        final Button remove = buildRemoveButton(banView, bannedFiles);
-
-        return buildButtonBox(add, makeVerticalSeparator(), remove);
-
     }
 
     private Application getApplicationFromPath(final String path) {
