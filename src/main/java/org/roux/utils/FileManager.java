@@ -64,6 +64,22 @@ public class FileManager {
         }
     }
 
+    public static List<Path> getFilesFromFolder(final Predicate<Path> customPredicate,
+                                                final Path folder) {
+        List<Path> list = new ArrayList<>();
+        try {
+            list = Files.walk(folder).parallel()
+                    .filter(path -> path.toFile().isFile())
+                    .filter(path -> path.toFile().canExecute())
+                    .filter(path -> ApplicationLibrary.isExtensionAllowed(path.toString()))
+                    .filter(customPredicate)
+                    .collect(Collectors.toList());
+        } catch(final IOException exception) {
+            exception.printStackTrace();
+        }
+        return list;
+    }
+
     /**
      * Files ? Which one ? All of them. Well, all the executable one. Mucho timo & memory consumo so
      * !! WARNING !!
@@ -76,23 +92,35 @@ public class FileManager {
 
         final List<Path> files = new ArrayList<>();
         for(final Path folder : folders) {
-            try {
-                final List<Path> list = Files.walk(folder)
-                        .filter(path -> path.toFile().isFile())
-                        .filter(path -> path.toFile().canExecute())
-                        .filter(path -> ApplicationLibrary.isExtensionAllowed(path.toString()))
-                        .filter(customPredicate)
-                        .collect(Collectors.toList());
-                files.addAll(list);
-            } catch(final IOException exception) {
-                exception.printStackTrace();
-            }
+            files.addAll(getFilesFromFolder(customPredicate, folder));
         }
         return files;
     }
 
     public static List<Path> getFilesFromFolders() {
         return getFilesFromFolders(path -> true);
+    }
+
+    private static long countFilesInFolder(final Path folder) {
+        long count = 0;
+        try {
+            count = Files.walk(folder).count();
+        } catch(final IOException exception) {
+            exception.printStackTrace();
+        }
+        return count;
+    }
+
+    public static long countFilesInFolders() {
+        long count = 0;
+        final List<Path> folders = FileManager.getFolders().stream()
+                .map(folder -> Paths.get(folder))
+                .filter(path -> path.toFile().isDirectory())
+                .collect(Collectors.toList());
+        for(final Path folder : folders) {
+            count += countFilesInFolder(folder);
+        }
+        return count;
     }
 
     public static void save(final ApplicationLibrary applicationLibrary) {

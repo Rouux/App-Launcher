@@ -23,8 +23,8 @@ import static org.roux.utils.Utils.makeTextButton;
 
 public class OptionWindow extends WindowLayout {
 
-    public static final double WINDOW_DEFAULT_WIDTH = 500.0d;
-    public static final double WINDOW_DEFAULT_HEIGHT = 560.0d;
+    public static final double WINDOW_DEFAULT_WIDTH = 520.0d;
+    public static final double WINDOW_DEFAULT_HEIGHT = 580.0d;
 
     private final Stage owner;
     private final ApplicationLibrary applicationLibrary;

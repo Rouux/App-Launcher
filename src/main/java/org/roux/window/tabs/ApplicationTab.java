@@ -49,12 +49,14 @@ public class ApplicationTab extends CustomTab {
                                    applicationView, applicationButtons);
         root.setSpacing(5);
         setRoot(sourceWindow, root);
+        setOnSelectionChanged(event -> {
+            Utils.autoResizeColumns(applicationView);
+        });
     }
 
     public TableView<Application> buildApplicationView() {
-        final TableView<Application> table = new TableView<>();
+        final TableView<Application> table = new TableView<>(applications);
         table.setPrefHeight(WindowLayout.WINDOW_MAXIMUM_HEIGHT);
-        table.getItems().setAll(applications);
         table.setEditable(false);
         table.setStyle("-fx-font-size: 12");
         table.setRowFactory(tv -> {
@@ -71,9 +73,6 @@ public class ApplicationTab extends CustomTab {
                             row.getStyleClass().remove("table-row-blacklisted");
                         }
                     });
-            row.hoverProperty().addListener((observable, oldValue, newValue) -> {
-
-            });
             row.setOnMouseClicked(event -> {
                 if(event.getClickCount() == 2 && !row.isEmpty() && row.getItem() != null) {
                     final Application application = row.getItem();
@@ -83,7 +82,6 @@ public class ApplicationTab extends CustomTab {
 
             return row;
         });
-        applications.addListener((Observable observable) -> Utils.autoResizeColumns(table));
         blacklist.addListener(this::invalidated);
         seeBlacklistedProperty.addListener(this::invalidated);
 
@@ -91,7 +89,6 @@ public class ApplicationTab extends CustomTab {
         final TableColumn<Application, String> executable = buildExecutableColumn();
         final TableColumn<Application, String> keywords = buildKeywordsColumn();
         table.getColumns().setAll(name, executable, keywords);
-        Utils.autoResizeColumns(table);
         return table;
     }
 
@@ -100,6 +97,7 @@ public class ApplicationTab extends CustomTab {
         column.setCellFactory(TextFieldTableCell.forTableColumn());
         column.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getName()));
         column.setMinWidth(80.0d);
+        column.setSortable(false);
 
         return column;
     }
@@ -114,6 +112,7 @@ public class ApplicationTab extends CustomTab {
                     return new ReadOnlyStringWrapper(filename);
                 });
         column.setMinWidth(80.0d);
+        column.setSortable(false);
 
         return column;
     }
@@ -124,6 +123,7 @@ public class ApplicationTab extends CustomTab {
         column.setCellValueFactory(
                 data -> new ReadOnlyStringWrapper(data.getValue().getKeywords().toString()));
         column.setMinWidth(80.0d);
+        column.setSortable(false);
 
         return column;
     }

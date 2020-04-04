@@ -5,7 +5,7 @@
 }
 
 .scroll-pane {
-    -fx-border-color: table_view_border_color;
+    -fx-border-color: background_color;
 }
 
 /* ListView */
@@ -47,7 +47,7 @@
 }
 
 .table-view:row-selection > .virtual-flow > .clipped-container > .sheet > .table-row-cell > .table-cell {
-    -fx-padding: 0.8em 0.5em 0.4em 1em;
+    -fx-padding: 0.8em 0.6em 0.4em 1em;
     -fx-background-color: transparent;
 }
 
@@ -60,6 +60,23 @@
     -fx-border-color: transparent table_view_border_color transparent transparent;
     -fx-border-width: 1;
 }
+
+/*.table-view:row-selection > .column-header-background > .nested-column-header > .column-header.table-column {*/
+/*    -fx-padding: 0.8em 0.5em 0.4em 1em;*/
+/*    -fx-background-color: transparent;*/
+/*}*/
+
+/*.table-view .column-header .label {*/
+/*    -fx-padding: 0.8em 0.5em 0.4em 1em;*/
+/*}*/
+
+.table-view .column-header {
+    -fx-padding: 0em 0em 0em 1em;
+}
+
+/*.table-cell {*/
+/*    -fx-padding: 0.8em 0.5em 0.4em 1em; !* 10 24 6 12 *!*/
+/*}*/
 
 .table-view:row-selection > .virtual-flow > .clipped-container > .sheet > .table-row-cell:hover:odd {
     -fx-background-color: alternate_row_color;
