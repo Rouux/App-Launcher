@@ -73,8 +73,8 @@ public class FileManager {
             list = Files.walk(folder).parallel()
                     .filter(path -> path.toFile().isFile() && path.toFile().canExecute())
                     .filter(path -> ApplicationLibrary.isExtensionAllowed(path.toString()))
-                    .filter(path -> !folderContainsBanWord(path))
-                    .filter(path -> !executableContainsBanWord(path))
+                    .filter(path -> !(path.toFile().isDirectory() && folderContainsBanWord(path)))
+                    .filter(path -> !(path.toFile().isFile() && executableContainsBanWord(path)))
                     .filter(customPredicate)
                     .collect(Collectors.toList());
         } catch(final IOException exception) {
@@ -84,13 +84,13 @@ public class FileManager {
     }
 
     private static boolean folderContainsBanWord(final Path folder) {
-        final Path path = folder.toFile().isDirectory() ? folder : folder.getParent();
-        return getBanWordFolders().parallelStream().anyMatch(s -> path.toString().contains(s));
+        return getBanWordFolders().parallelStream()
+                .anyMatch(s -> folder.toString().contains(s));
     }
 
     private static boolean executableContainsBanWord(final Path executable) {
-        final Path path = executable.toFile().isFile() ? executable : executable.getParent();
-        return getBanWordExecutables().parallelStream().anyMatch(s -> path.toString().contains(s));
+        return getBanWordExecutables().parallelStream()
+                .anyMatch(s -> executable.getFileName().toString().contains(s));
     }
 
     /**
@@ -117,7 +117,12 @@ public class FileManager {
     private static long countFilesInFolder(final Path folder) {
         long count = 0;
         try {
-            count = Files.walk(folder).count();
+            count = Files.walk(folder)
+                    //                    .filter(path -> !(path.toFile().isDirectory() &&
+                    //                    folderContainsBanWord(path)))
+                    //                    .filter(path -> !(path.toFile().isFile() &&
+                    //                    executableContainsBanWord(path)))
+                    .count();
         } catch(final IOException exception) {
             exception.printStackTrace();
         }

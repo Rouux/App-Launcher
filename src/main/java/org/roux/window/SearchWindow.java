@@ -14,6 +14,8 @@ import org.roux.utils.AutoCompleteTextField;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.List;
+import java.util.Optional;
 
 import static org.roux.utils.Utils.makeGraphicButton;
 import static org.roux.utils.Utils.makeVerticalSeparator;
@@ -70,9 +72,13 @@ public class SearchWindow extends UndecoratedWindow {
     }
 
     private void scan() {
-        applicationLibrary.scan();
-        textField.getEntries().clear();
-        textField.getEntries().addAll(applicationLibrary.getNames(false));
+        final ScanDialog scanDialog = new ScanDialog(this);
+        final Optional<List<Path>> result = scanDialog.openDialog();
+        if(result.isPresent()) {
+            applicationLibrary.updateLibrary(result.get());
+            textField.getEntries().clear();
+            textField.getEntries().addAll(applicationLibrary.getNames(false));
+        }
     }
 
     private Parent buildRoot() {

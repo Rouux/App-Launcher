@@ -33,9 +33,9 @@ public class ApplicationLibrary {
         library.sort((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()));
     }
 
-    public void scan() {
+    public void updateLibrary(final List<Path> filesFromFolders) {
         final List<Application> newApplications = new ArrayList<>();
-        final Map<Path, String> executables = getExecutables();
+        final Map<Path, String> executables = mergeExecutables(filesFromFolders);
         for(final Map.Entry<Path, String> entry : executables.entrySet()) {
             final Path path = entry.getKey();
             final String name = entry.getValue();
@@ -53,10 +53,9 @@ public class ApplicationLibrary {
         //        return library;
     }
 
-    private Map<Path, String> getExecutables() {
+    private Map<Path, String> mergeExecutables(final List<Path> filesFromFolders) {
         final Map<Path, String> results = new HashMap<>();
-        FileManager.getFilesFromFolders()
-                .forEach(path -> results.put(path, deductName(path)));
+        filesFromFolders.forEach(path -> results.put(path, deductName(path)));
         FileManager.getExecutables()
                 .forEach(executable -> results.put(Paths.get(executable),
                                                    FilenameUtils.removeExtension(executable)));
