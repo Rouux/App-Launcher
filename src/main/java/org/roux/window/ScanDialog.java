@@ -23,8 +23,8 @@ import static org.roux.utils.Utils.makeTextButton;
 
 public class ScanDialog extends WindowLayout {
 
-    private final static int WINDOW_WIDTH = 720;
-    private final static int WINDOW_HEIGHT = 480;
+    private final static int WINDOW_WIDTH = 560;
+    private final static int WINDOW_HEIGHT = 150;
     private ScannerTool scannerTool;
 
     private final VBox root;
@@ -44,8 +44,8 @@ public class ScanDialog extends WindowLayout {
         progress.setPrefHeight(10);
         progress.setAlignment(Pos.CENTER_LEFT);
         final HBox confirmOrCancelButtons = buildConfirmOrCancelButtons();
-        root = buildRoot(fileScanningStatus, progress, confirmOrCancelButtons);
 
+        root = buildRoot(fileScanningStatus, progress, confirmOrCancelButtons);
         initModality(Modality.APPLICATION_MODAL);
         initOwner(owner);
         setRoot(root);

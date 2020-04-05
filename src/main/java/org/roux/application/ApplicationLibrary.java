@@ -33,16 +33,17 @@ public class ApplicationLibrary {
         library.sort((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()));
     }
 
-    public void updateLibrary(final List<Path> filesFromFolders) {
+    public void updateLibrary(final Map<Path, Boolean> isBlacklistedByPath) {
         final List<Application> newApplications = new ArrayList<>();
-        final Map<Path, String> executables = mergeExecutables(filesFromFolders);
+        final Map<Path, String> executables = mergeExecutables(isBlacklistedByPath.keySet());
         for(final Map.Entry<Path, String> entry : executables.entrySet()) {
             final Path path = entry.getKey();
             final String name = entry.getValue();
             Application application;
             if((application = findSamePathApplication(path)) == null) {
                 application = new Application(path, name);
-                application.setBlacklisted(isBlacklisted(application.getExecutablePath()));
+                if(isBlacklisted(application.getExecutablePath()))
+                    application.setBlacklisted(true);
             }
             newApplications.add(application);
         }
@@ -53,7 +54,7 @@ public class ApplicationLibrary {
         //        return library;
     }
 
-    private Map<Path, String> mergeExecutables(final List<Path> filesFromFolders) {
+    private Map<Path, String> mergeExecutables(final Set<Path> filesFromFolders) {
         final Map<Path, String> results = new HashMap<>();
         filesFromFolders.forEach(path -> results.put(path, deductName(path)));
         FileManager.getExecutables()
@@ -70,7 +71,7 @@ public class ApplicationLibrary {
         return Paths.get(firstFolderPath).relativize(path).getName(0).toString();
     }
 
-    private Application findSamePathApplication(final Path path) {
+    public Application findSamePathApplication(final Path path) {
         return library.stream()
                 .filter(app -> app.getExecutablePath().equals(path))
                 .findFirst()

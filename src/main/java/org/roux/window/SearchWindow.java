@@ -15,7 +15,9 @@ import org.roux.utils.AutoCompleteTextField;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.roux.utils.Utils.makeGraphicButton;
 import static org.roux.utils.Utils.makeVerticalSeparator;
@@ -73,9 +75,21 @@ public class SearchWindow extends UndecoratedWindow {
 
     private void scan() {
         final ScanDialog scanDialog = new ScanDialog(this);
+        final ScanResultDialog scanResultDialog = new ScanResultDialog(this);
         final Optional<List<Path>> result = scanDialog.openDialog();
         if(result.isPresent()) {
-            applicationLibrary.updateLibrary(result.get());
+            final List<Path> filteredResult = result.get()
+                    .stream()
+                    .filter(path -> applicationLibrary.findSamePathApplication(path) == null)
+                    .collect(Collectors.toList());
+            final Map<Path, Boolean> isBlacklistedByExecutable =
+                    scanResultDialog.seeResultDialog(filteredResult);
+            for(final Path path : result.get()) {
+                isBlacklistedByExecutable.computeIfAbsent(
+                        path,
+                        isKept -> applicationLibrary.findSamePathApplication(path).isBlacklisted());
+            }
+            applicationLibrary.updateLibrary(isBlacklistedByExecutable);
             textField.getEntries().clear();
             textField.getEntries().addAll(applicationLibrary.getNames(false));
         }
