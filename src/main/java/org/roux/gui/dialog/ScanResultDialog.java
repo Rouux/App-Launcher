@@ -9,6 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.roux.gui.window.DialogLayout;
 import org.roux.gui.window.WindowLayout;
@@ -24,7 +25,7 @@ import static org.roux.utils.Utils.makeTextButton;
 public class ScanResultDialog extends DialogLayout {
 
     private final static int WINDOW_WIDTH = 720;
-    private final static int WINDOW_HEIGHT = 480;
+    private final static int WINDOW_HEIGHT = 560;
 
     private final ObservableList<Path> keepListObservable = FXCollections.observableArrayList();
     private final ObservableList<Path> blacklistObservable = FXCollections.observableArrayList();
@@ -36,11 +37,12 @@ public class ScanResultDialog extends DialogLayout {
         keepView = buildResultView();
         blacklistView = buildBlacklistView();
         final HBox resultButtons = buildResultButtons();
-        buildRoot(WINDOW_WIDTH, WINDOW_HEIGHT,
-                  new Label("Keep"),
-                  keepView, resultButtons,
-                  new Label("Discard (blacklist)"),
-                  blacklistView);
+        final VBox root = buildRoot(WINDOW_WIDTH, WINDOW_HEIGHT,
+                                    new Label("Keep"),
+                                    keepView, resultButtons,
+                                    new Label("Discard (blacklist)"),
+                                    blacklistView);
+        root.setSpacing(10);
     }
 
     @Override
