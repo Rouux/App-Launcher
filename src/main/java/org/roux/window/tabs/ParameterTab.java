@@ -15,6 +15,6 @@ public class ParameterTab extends CustomTab {
         final VBox root = new VBox(searchMaxDisplaySlider);
         root.setAlignment(Pos.CENTER);
         root.setSpacing(5);
-        setRoot(sourceWindow, root);
+        setRoot(root);
     }
 }

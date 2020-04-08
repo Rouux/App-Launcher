@@ -48,7 +48,7 @@ public class ApplicationTab extends CustomTab {
         final VBox root = new VBox(new Label(""), new Label("Applications"),
                                    applicationView, applicationButtons);
         root.setSpacing(5);
-        setRoot(sourceWindow, root);
+        setRoot(root);
         setOnSelectionChanged(event -> Utils.autoResizeColumns(applicationView));
     }
 

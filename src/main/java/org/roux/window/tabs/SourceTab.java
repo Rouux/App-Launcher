@@ -55,7 +55,7 @@ public class SourceTab extends CustomTab {
                 new Label("Folders"), folderView, folderViewButtons,
                 new Label("Files"), fileView, fileViewButtons);
         root.setSpacing(5);
-        setRoot(sourceWindow, root);
+        setRoot(root);
     }
 
     private ListView<String> buildView(final ObservableList<String> observableList) {

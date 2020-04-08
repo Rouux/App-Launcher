@@ -50,7 +50,7 @@ public class BlacklistTab extends CustomTab {
                                    blacklistButtons
         );
         root.setSpacing(5);
-        setRoot(sourceWindow, root);
+        setRoot(root);
     }
 
     private static ListView<String> buildView(final ObservableList<String> observableList) {

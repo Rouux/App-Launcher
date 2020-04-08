@@ -1,21 +1,13 @@
 package org.roux.window;
 
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.util.Optional;
 
-import static org.roux.utils.Utils.makeTextButton;
-
-public class TextFieldDialog extends WindowLayout {
+public class TextFieldDialog extends DialogLayout {
 
     private final static int WINDOW_WIDTH = 280;
     private final static int WINDOW_HEIGHT = 120;
@@ -34,14 +26,10 @@ public class TextFieldDialog extends WindowLayout {
     }
 
     public TextFieldDialog(final Stage owner) {
+        super(owner);
         textField = buildTextField();
-        final HBox confirmOrCancelButtons = buildConfirmOrCancelButtons();
-        root = buildRoot(textField, confirmOrCancelButtons);
-
+        root = buildRoot(WINDOW_WIDTH, WINDOW_HEIGHT, textField);
         setOnShowing(event -> textField.requestFocus());
-        initModality(Modality.APPLICATION_MODAL);
-        initOwner(owner);
-        setRoot(root);
     }
 
     @Override
@@ -62,33 +50,15 @@ public class TextFieldDialog extends WindowLayout {
         return Optional.ofNullable(result.isBlank() ? null : result);
     }
 
-    private VBox buildRoot(final Node... nodes) {
-        final VBox root = new VBox(nodes);
-        root.setSpacing(20);
-        root.setPadding(new Insets(20, 10, 10, 10));
-        root.setPrefSize(WINDOW_WIDTH, WINDOW_HEIGHT);
-        return root;
-    }
-
     private TextField buildTextField() {
         final TextField textField = new TextField();
         textField.setOnKeyReleased(keyEvent -> {
             if(keyEvent.getCode() == KeyCode.ENTER) {
-                root.requestFocus();
+                looseFocus();
                 keyEvent.consume();
             }
         });
         return textField;
-    }
-
-    private HBox buildConfirmOrCancelButtons() {
-        final Button confirmButton = makeTextButton("    OK    ", event -> onConfirmAction());
-        final Button cancelButton = makeTextButton(" Cancel ", event -> onCancelAction());
-
-        final HBox confirmOrCancel = new HBox(confirmButton, cancelButton);
-        confirmOrCancel.setAlignment(Pos.CENTER_RIGHT);
-        confirmOrCancel.setSpacing(10);
-        return confirmOrCancel;
     }
 
     public void setPrompt(final String prompt) {
