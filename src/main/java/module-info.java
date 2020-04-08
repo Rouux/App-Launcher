@@ -12,7 +12,4 @@ module org.roux {
     requires javafx.fxml;
 
     exports org.roux;
-    exports org.roux.window;
-    exports org.roux.application;
-    exports org.roux.utils;
 }

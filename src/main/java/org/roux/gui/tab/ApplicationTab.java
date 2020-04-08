@@ -1,4 +1,4 @@
-package org.roux.window.tabs;
+package org.roux.gui.tab;
 
 import javafx.beans.Observable;
 import javafx.beans.property.BooleanProperty;
@@ -15,9 +15,9 @@ import javafx.stage.Stage;
 import org.apache.commons.io.FilenameUtils;
 import org.fxmisc.easybind.EasyBind;
 import org.roux.application.Application;
+import org.roux.gui.window.EditApplicationWindow;
+import org.roux.gui.window.WindowLayout;
 import org.roux.utils.Utils;
-import org.roux.window.EditApplicationWindow;
-import org.roux.window.WindowLayout;
 
 import static org.roux.utils.Utils.makeTextButton;
 import static org.roux.utils.Utils.makeVerticalSeparator;

@@ -17,14 +17,6 @@ public class Application {
     private List<String> keywords = new ArrayList<>();
     private final BooleanProperty isBlacklisted = new SimpleBooleanProperty(false);
 
-    public static void main(final String[] args) {
-        System.out.println(beautifyName("DOOM Eternal"));
-        System.out.println(beautifyName("Worms.W.M.D"));
-        System.out.println(beautifyName("WorldWarZ"));
-        System.out.println(beautifyName("Getting.Over.It.with.Bennett.Foddy.v1.5762"));
-        System.out.println(beautifyName("C:\\Games\\DOOM Eternal\\DOOMEternalx64vk.exe"));
-    }
-
     private static String beautifyName(final String name) {
         return name.replaceAll(".exe$", "")
                 .replaceAll("(.*)(\\\\)(.*)", "$3")

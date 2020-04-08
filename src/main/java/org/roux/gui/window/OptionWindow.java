@@ -1,4 +1,4 @@
-package org.roux.window;
+package org.roux.gui.window;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -13,11 +13,11 @@ import javafx.stage.Stage;
 import jfxtras.styles.jmetro.JMetroStyleClass;
 import org.roux.application.Application;
 import org.roux.application.ApplicationLibrary;
+import org.roux.gui.tab.ApplicationTab;
+import org.roux.gui.tab.BanWordTab;
+import org.roux.gui.tab.BlacklistTab;
+import org.roux.gui.tab.SourceTab;
 import org.roux.utils.FileManager;
-import org.roux.window.tabs.ApplicationTab;
-import org.roux.window.tabs.BanWordTab;
-import org.roux.window.tabs.BlacklistTab;
-import org.roux.window.tabs.SourceTab;
 
 import static org.roux.utils.Utils.makeTextButton;
 

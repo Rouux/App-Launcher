@@ -4,11 +4,11 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.stage.Stage;
 import org.roux.application.ApplicationLibrary;
+import org.roux.gui.window.ErrorWindow;
+import org.roux.gui.window.SearchWindow;
 import org.roux.utils.FileManager;
-import org.roux.window.ErrorWindow;
-import org.roux.window.SearchWindow;
 
-public class App extends Application {
+public class JavaFXApplication extends Application {
 
     private final ApplicationLibrary applicationLibrary = new ApplicationLibrary();
 
@@ -23,7 +23,7 @@ public class App extends Application {
 
     @Override
     public void start(final Stage stage) {
-        Thread.setDefaultUncaughtExceptionHandler(App::showError);
+        Thread.setDefaultUncaughtExceptionHandler(JavaFXApplication::showError);
 
         final SearchWindow searchWindow = new SearchWindow(applicationLibrary);
         searchWindow.show();

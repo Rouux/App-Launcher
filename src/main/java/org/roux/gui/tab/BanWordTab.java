@@ -1,4 +1,4 @@
-package org.roux.window.tabs;
+package org.roux.gui.tab;
 
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -13,8 +13,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import org.roux.window.SearchWindow;
-import org.roux.window.TextFieldDialog;
+import org.roux.gui.dialog.TextFieldDialog;
+import org.roux.gui.window.SearchWindow;
 
 import java.util.List;
 import java.util.Optional;

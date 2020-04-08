@@ -1,4 +1,4 @@
-package org.roux.window;
+package org.roux.gui.window;
 
 import javafx.scene.Parent;
 import javafx.scene.Scene;

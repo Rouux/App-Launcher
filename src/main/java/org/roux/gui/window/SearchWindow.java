@@ -1,4 +1,4 @@
-package org.roux.window;
+package org.roux.gui.window;
 
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -10,7 +10,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import org.roux.application.Application;
 import org.roux.application.ApplicationLibrary;
-import org.roux.utils.AutoCompleteTextField;
+import org.roux.gui.dialog.ScanDialog;
+import org.roux.gui.dialog.ScanResultDialog;
+import org.roux.gui.utils.AutoCompleteTextField;
 
 import java.io.IOException;
 import java.nio.file.Path;

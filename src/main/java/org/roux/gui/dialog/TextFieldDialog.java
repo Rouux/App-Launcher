@@ -1,9 +1,10 @@
-package org.roux.window;
+package org.roux.gui.dialog;
 
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.roux.gui.window.DialogLayout;
 
 import java.util.Optional;
 

@@ -10,8 +10,6 @@ import javafx.stage.Stage;
 /*
  * Thanks to : Alexander Berg on
  *  https://stackoverflow.com/questions/19455059/allow-user-to-resize-an-undecorated-stage
- *
- *  And well my own work (Roux) to merge move and resize together
  */
 public abstract class UndecoratedWindowHelper {
 

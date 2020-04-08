@@ -1,4 +1,4 @@
-package org.roux.window.tabs;
+package org.roux.gui.tab;
 
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -15,7 +15,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import org.roux.window.SearchWindow;
+import org.roux.gui.window.SearchWindow;
 
 import java.io.File;
 import java.util.List;

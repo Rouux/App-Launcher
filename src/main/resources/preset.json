@@ -1,4 +1,18 @@
 {
+  "banWordExecutables": [
+    "redist",
+    "dxsetup",
+    "unins",
+    "DXSETUP"
+  ],
+  "banWordFolders": [
+    "Steamworks Shared",
+    "Resources",
+    "resources",
+    "lib",
+    "uninstall",
+    "resource"
+  ],
   "folders": [
     "C:\\Program Files\\Epic Games",
     "C:\\Program Files (x86)\\Steam\\steamapps\\common"

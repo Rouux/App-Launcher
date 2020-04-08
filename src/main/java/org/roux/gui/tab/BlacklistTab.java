@@ -1,4 +1,4 @@
-package org.roux.window.tabs;
+package org.roux.gui.tab;
 
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -14,8 +14,8 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.roux.application.Application;
-import org.roux.window.SearchWindow;
-import org.roux.window.WindowLayout;
+import org.roux.gui.window.SearchWindow;
+import org.roux.gui.window.WindowLayout;
 
 import java.io.File;
 import java.util.List;

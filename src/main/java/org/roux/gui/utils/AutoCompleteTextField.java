@@ -1,4 +1,4 @@
-package org.roux.utils;
+package org.roux.gui.utils;
 
 import javafx.geometry.Side;
 import javafx.scene.control.CustomMenuItem;
@@ -6,7 +6,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import org.roux.application.ApplicationLibrary;
-import org.roux.window.SearchWindow;
+import org.roux.gui.window.SearchWindow;
+import org.roux.utils.FileManager;
 
 import java.util.LinkedList;
 import java.util.List;

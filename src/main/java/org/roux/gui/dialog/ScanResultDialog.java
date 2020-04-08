@@ -1,4 +1,4 @@
-package org.roux.window;
+package org.roux.gui.dialog;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -10,6 +10,8 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
+import org.roux.gui.window.DialogLayout;
+import org.roux.gui.window.WindowLayout;
 import org.roux.utils.FileManager;
 
 import java.nio.file.Path;

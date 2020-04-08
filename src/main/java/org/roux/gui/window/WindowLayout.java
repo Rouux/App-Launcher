@@ -1,4 +1,4 @@
-package org.roux.window;
+package org.roux.gui.window;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;

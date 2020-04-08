@@ -1,4 +1,4 @@
-package org.roux.window.tabs;
+package org.roux.gui.tab;
 
 import javafx.scene.Parent;
 import javafx.scene.control.Tab;

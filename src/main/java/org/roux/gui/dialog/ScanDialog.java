@@ -1,4 +1,4 @@
-package org.roux.window;
+package org.roux.gui.dialog;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.When;
@@ -9,6 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
+import org.roux.gui.window.DialogLayout;
 import org.roux.utils.ScannerTool;
 
 import java.nio.file.Path;

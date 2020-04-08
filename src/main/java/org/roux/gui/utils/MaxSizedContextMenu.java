@@ -1,4 +1,4 @@
-package org.roux.utils;
+package org.roux.gui.utils;
 
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
