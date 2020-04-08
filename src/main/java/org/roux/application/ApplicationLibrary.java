@@ -63,7 +63,7 @@ public class ApplicationLibrary {
         return results;
     }
 
-    private static String deductName(final Path path) {
+    public static String deductName(final Path path) {
         final String firstFolderPath = FileManager.getFolders().stream()
                 .filter(path::startsWith)
                 .findFirst()

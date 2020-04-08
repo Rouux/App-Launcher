@@ -24,7 +24,7 @@ import static org.roux.utils.Utils.*;
 
 public class EditApplicationWindow extends WindowLayout {
 
-    private final static int WINDOW_WIDTH = 420;
+    private final static int WINDOW_WIDTH = 500;
     private final static int WINDOW_HEIGHT = 360;
 
     private final VBox root;

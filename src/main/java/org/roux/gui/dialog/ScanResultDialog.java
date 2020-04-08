@@ -1,16 +1,16 @@
 package org.roux.gui.dialog;
 
+import javafx.beans.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.SelectionMode;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import org.roux.application.ApplicationLibrary;
 import org.roux.gui.window.DialogLayout;
 import org.roux.gui.window.WindowLayout;
 import org.roux.utils.FileManager;
@@ -31,15 +31,22 @@ public class ScanResultDialog extends DialogLayout {
     private final ObservableList<Path> blacklistObservable = FXCollections.observableArrayList();
     private final ListView<Path> keepView;
     private final ListView<Path> blacklistView;
+    private final Label warningIdenticalNames;
 
     public ScanResultDialog(final Stage owner) {
         super(owner);
         keepView = buildResultView();
         blacklistView = buildBlacklistView();
         final HBox resultButtons = buildResultButtons();
+        warningIdenticalNames = new Label("");
+        warningIdenticalNames.setVisible(false);
+        warningIdenticalNames.setFont(Font.font(16));
+        warningIdenticalNames.setStyle("-fx-text-fill: red;");
         final VBox root = buildRoot(WINDOW_WIDTH, WINDOW_HEIGHT,
                                     new Label("Keep"),
-                                    keepView, resultButtons,
+                                    keepView,
+                                    warningIdenticalNames,
+                                    resultButtons,
                                     new Label("Discard (blacklist)"),
                                     blacklistView);
         root.setSpacing(10);
@@ -47,8 +54,12 @@ public class ScanResultDialog extends DialogLayout {
 
     @Override
     protected void onConfirmAction() {
+        keepListObservable.forEach(path -> {
+            if(ApplicationLibrary.isBlacklisted(path))
+                FileManager.getBlacklist().remove(path.toString());
+        });
         blacklistObservable.forEach(path -> {
-            if(!FileManager.getBlacklist().contains(path.toString()))
+            if(!ApplicationLibrary.isBlacklisted(path))
                 FileManager.getBlacklist().add(path.toString());
         });
         close();
@@ -61,9 +72,10 @@ public class ScanResultDialog extends DialogLayout {
         close();
     }
 
-    public Map<Path, Boolean> seeResultDialog(final List<Path> result) {
+    public Map<Path, Boolean> seeResultDialog(final List<Path> result,
+                                              final List<Path> blacklistedResult) {
         keepListObservable.setAll(result);
-        blacklistObservable.clear();
+        blacklistObservable.setAll(blacklistedResult);
         showAndWait();
         final Map<Path, Boolean> pathToValid = new HashMap<>();
         keepListObservable.forEach(path -> pathToValid.put(path, false));
@@ -78,6 +90,25 @@ public class ScanResultDialog extends DialogLayout {
         listView.setItems(keepListObservable);
         listView.setPrefHeight(WindowLayout.WINDOW_MAXIMUM_HEIGHT);
         listView.getStyleClass().add("alternating-row-colors");
+        keepListObservable.addListener((Observable newValue) -> {
+            final List<Path> paths = (List<Path>) newValue;
+            for(int i = 0; i < paths.size() - 1; i++) {
+                final String name = ApplicationLibrary.deductName(paths.get(i));
+                for(int j = i + 1; j < paths.size(); j++) {
+                    if(ApplicationLibrary.deductName(paths.get(j)).equals(name)) {
+                        warningIdenticalNames.setVisible(true);
+                        warningIdenticalNames.setText(
+                                "WARNING : 2 Applications will share the same names");
+                        final Tooltip tooltip = new Tooltip(paths.get(i) + " & " + paths.get(j));
+                        warningIdenticalNames.setTooltip(tooltip);
+                        return;
+                    }
+                }
+            }
+            warningIdenticalNames.setText("");
+            warningIdenticalNames.setVisible(false);
+            warningIdenticalNames.setTooltip(null);
+        });
 
         return listView;
     }

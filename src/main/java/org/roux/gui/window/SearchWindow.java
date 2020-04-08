@@ -84,9 +84,15 @@ public class SearchWindow extends UndecoratedWindow {
             final List<Path> filteredResult = scanResult
                     .stream()
                     .filter(path -> applicationLibrary.findSamePathApplication(path) == null)
+                    .filter(path -> !ApplicationLibrary.isBlacklisted(path))
+                    .collect(Collectors.toList());
+            final List<Path> filteredBlacklistedResult = scanResult
+                    .stream()
+                    .filter(path -> applicationLibrary.findSamePathApplication(path) == null)
+                    .filter(ApplicationLibrary::isBlacklisted)
                     .collect(Collectors.toList());
             final Map<Path, Boolean> isBlacklistedByExecutable =
-                    scanResultDialog.seeResultDialog(filteredResult);
+                    scanResultDialog.seeResultDialog(filteredResult, filteredBlacklistedResult);
             scanResult.removeIf(path -> applicationLibrary.findSamePathApplication(path) == null);
             for(final Path path : scanResult) {
                 isBlacklistedByExecutable.computeIfAbsent(
