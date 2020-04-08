@@ -53,11 +53,6 @@
             <artifactId>easybind</artifactId>
             <version>1.0.3</version>
         </dependency>
-        <dependency>
-            <groupId>net.raumzeitfalle.fx</groupId>
-            <artifactId>scenic-view</artifactId>
-            <version>11.0.2</version>
-        </dependency>
     </dependencies>
 
     <build>

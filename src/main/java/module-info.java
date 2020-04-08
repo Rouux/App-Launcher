@@ -6,7 +6,6 @@ module org.roux {
     requires org.jfxtras.styles.jmetro;
     requires org.apache.commons.io;
     requires easybind;
-    requires org.scenicview.scenicview;
 
     exports org.roux;
 }
