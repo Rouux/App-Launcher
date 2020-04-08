@@ -8,7 +8,6 @@ module org.roux {
     requires easybind;
     requires org.scenicview.scenicview;
     requires javafx.web;
-    requires javafx.swing;
 
     exports org.roux;
 }
