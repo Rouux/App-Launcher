@@ -8,6 +8,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
@@ -41,7 +42,6 @@ public class BlacklistTab extends CustomTab {
         fileChooser = new FileChooser();
 
         blacklistView = buildBlacklistView();
-        blacklistView.getStyleClass().add("alternating-row-colors");
         final HBox blacklistButtons = buildBlacklistButtons();
 
         final VBox root = new VBox(new Label(""), // Pour ajouter un retour a la ligne
@@ -53,11 +53,22 @@ public class BlacklistTab extends CustomTab {
         setRoot(root);
     }
 
-    private static ListView<String> buildView(final ObservableList<String> observableList) {
+    private ListView<String> buildView(final ObservableList<String> observableList) {
         final ListView<String> listView = new ListView<>();
         listView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         listView.setItems(observableList);
+        listView.getStyleClass().add("alternating-row-colors");
         listView.setPrefHeight(WindowLayout.WINDOW_MAXIMUM_HEIGHT);
+        listView.setOnKeyReleased(event -> {
+            if(event.getCode().equals(KeyCode.DELETE)) {
+                final List<String> selectedItems = listView.getSelectionModel().getSelectedItems();
+                for(final String path : selectedItems) {
+                    final Application application = getApplicationFromPath(path);
+                    if(application != null) application.setBlacklisted(false);
+                }
+                observableList.removeAll(selectedItems);
+            }
+        });
 
         return listView;
     }

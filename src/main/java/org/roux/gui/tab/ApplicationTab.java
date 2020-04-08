@@ -9,6 +9,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -42,7 +43,6 @@ public class ApplicationTab extends CustomTab {
         editApplicationWindow.setOnHidden(event -> applicationView.refresh());
 
         applicationView = buildApplicationView();
-        applicationView.getStyleClass().add("alternating-row-colors");
         final HBox applicationButtons = buildApplicationButtons();
 
         final VBox root = new VBox(new Label(""), new Label("Applications"),
@@ -56,7 +56,17 @@ public class ApplicationTab extends CustomTab {
         final TableView<Application> table = new TableView<>(applications);
         table.setPrefHeight(WindowLayout.WINDOW_MAXIMUM_HEIGHT);
         table.setEditable(false);
+        table.getStyleClass().add("alternating-row-colors");
         table.setStyle("-fx-font-size: 12");
+        table.setOnKeyReleased(event -> {
+            if(event.getCode().equals(KeyCode.DELETE)) {
+                final Application application
+                        = applicationView.getSelectionModel().getSelectedItem();
+                if(application != null) {
+                    applications.remove(application);
+                }
+            }
+        });
         table.setRowFactory(tv -> {
             final TableRow<Application> row = new TableRow<>();
             EasyBind.select(row.itemProperty())

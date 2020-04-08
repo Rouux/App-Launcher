@@ -9,6 +9,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -40,11 +41,9 @@ public class BanWordTab extends CustomTab {
         addBanWordDialog = new TextFieldDialog(sourceWindow);
 
         folderView = buildFolderView();
-        folderView.getStyleClass().add("alternating-row-colors");
         final HBox folderViewButtons = buildFolderViewButtons();
 
         fileView = buildFileView();
-        fileView.getStyleClass().add("alternating-row-colors");
         final HBox fileViewButtons = buildFileViewButtons();
 
         final VBox root = new VBox(
@@ -58,7 +57,13 @@ public class BanWordTab extends CustomTab {
     private ListView<String> buildView(final ObservableList<String> observableList) {
         final ListView<String> listView = new ListView<>();
         listView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        listView.getStyleClass().add("alternating-row-colors");
         listView.setItems(observableList);
+        listView.setOnKeyReleased(event -> {
+            if(event.getCode().equals(KeyCode.DELETE)) {
+                observableList.removeAll(listView.getSelectionModel().getSelectedItems());
+            }
+        });
 
         return listView;
     }
