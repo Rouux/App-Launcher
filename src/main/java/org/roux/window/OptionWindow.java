@@ -14,7 +14,10 @@ import jfxtras.styles.jmetro.JMetroStyleClass;
 import org.roux.application.Application;
 import org.roux.application.ApplicationLibrary;
 import org.roux.utils.FileManager;
-import org.roux.window.tabs.*;
+import org.roux.window.tabs.ApplicationTab;
+import org.roux.window.tabs.BanWordTab;
+import org.roux.window.tabs.BlacklistTab;
+import org.roux.window.tabs.SourceTab;
 
 import static org.roux.utils.Utils.makeTextButton;
 
@@ -44,10 +47,9 @@ public class OptionWindow extends WindowLayout {
 
         final TabPane tabPane = new TabPane(
                 new SourceTab(this, "Sources", sourceFolders, sourceFiles),
-                new ApplicationTab(this, "Apps", applications, blacklist),
+                new ApplicationTab(this, "Applications", applications, blacklist),
                 new BlacklistTab(this, "Blacklist", blacklist, applications),
-                new BanWordTab(this, "Ban words", banWordFolders, banWordExecutables),
-                new ParameterTab(this, "Other")
+                new BanWordTab(this, "Ban words", banWordFolders, banWordExecutables)
         );
         final HBox confirmOrCancelButtons = buildConfirmOrCancelButtons();
         final VBox root = buildRoot(tabPane, confirmOrCancelButtons);
