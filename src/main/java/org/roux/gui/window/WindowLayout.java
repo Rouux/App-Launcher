@@ -25,7 +25,7 @@ public abstract class WindowLayout extends UndecoratedWindow {
     public static final double WINDOW_DEFAULT_HEIGHT = 480.0d;
     public static final double WINDOW_MAXIMUM_WIDTH = screenBounds.getWidth();
     public static final double WINDOW_MAXIMUM_HEIGHT = screenBounds.getHeight();
-    public static final double BUTTON_SIZE = 16.0d;
+    public static final int BUTTON_SIZE = 16;
 
     private final HBox header;
     private final BorderPane layout;

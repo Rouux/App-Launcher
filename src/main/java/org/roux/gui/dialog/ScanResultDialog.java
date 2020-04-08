@@ -14,13 +14,12 @@ import org.roux.application.ApplicationLibrary;
 import org.roux.gui.window.DialogLayout;
 import org.roux.gui.window.WindowLayout;
 import org.roux.utils.FileManager;
+import org.roux.utils.Utils;
 
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static org.roux.utils.Utils.makeTextButton;
 
 public class ScanResultDialog extends DialogLayout {
 
@@ -124,7 +123,7 @@ public class ScanResultDialog extends DialogLayout {
     }
 
     public HBox buildResultButtons() {
-        final Button blacklist = makeTextButton("V", event -> {
+        final Button blacklist = Utils.makeGraphicButton("arrow-down.png", BUTTON_SIZE, event -> {
             final List<Path> selectedItems
                     = keepView.getSelectionModel().getSelectedItems();
             blacklistObservable.addAll(selectedItems);
@@ -132,7 +131,7 @@ public class ScanResultDialog extends DialogLayout {
             looseFocus();
         });
 
-        final Button keep = makeTextButton("^", event -> {
+        final Button keep = Utils.makeGraphicButton("arrow-up.png", BUTTON_SIZE, event -> {
             final List<Path> selectedItems
                     = blacklistView.getSelectionModel().getSelectedItems();
             keepListObservable.addAll(selectedItems);
