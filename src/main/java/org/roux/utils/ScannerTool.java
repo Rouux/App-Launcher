@@ -28,7 +28,7 @@ public class ScannerTool extends Task<String> {
 
     private final LongProperty longProperty;
     private final StringProperty stringProperty;
-    private final RecursiveConfig recursiveConfig;
+    private RecursiveConfig recursiveConfig;
 
     private long fileCount = 0;
     private List<Path> files = new ArrayList<>();
@@ -36,12 +36,12 @@ public class ScannerTool extends Task<String> {
     public ScannerTool() {
         longProperty = new SimpleLongProperty();
         stringProperty = new SimpleStringProperty();
-        recursiveConfig =
-                new RecursiveConfig(visitPredicate, filePredicate, longProperty, stringProperty);
     }
 
     @Override
     protected String call() {
+        recursiveConfig =
+                new RecursiveConfig(visitPredicate, filePredicate, longProperty, stringProperty);
         fileCount = countFiles(recursiveConfig);
         longProperty.addListener((observable, oldValue, newValue) -> {
             if(newValue != null)
@@ -67,7 +67,6 @@ public class ScannerTool extends Task<String> {
                 .map(folder -> Paths.get(folder))
                 .filter(path -> path.toFile().isDirectory())
                 .collect(Collectors.toList());
-
         for(final Path folder : folders) {
             walk(folder, recursiveConfig);
         }
@@ -89,7 +88,6 @@ public class ScannerTool extends Task<String> {
 
     private void walk(final Path start,
                       final RecursiveConfig recursiveConfig) {
-        recursiveConfig.init();
         try {
             Files.walkFileTree(start, recursiveConfig);
         } catch(final IOException exception) {

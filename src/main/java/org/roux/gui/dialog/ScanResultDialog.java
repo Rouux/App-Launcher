@@ -97,7 +97,7 @@ public class ScanResultDialog extends DialogLayout {
                     if(ApplicationLibrary.deductName(paths.get(j)).equals(name)) {
                         warningIdenticalNames.setVisible(true);
                         warningIdenticalNames.setText(
-                                "WARNING : 2 Applications will share the same names");
+                                "WARNING : Multiple applications will share the same names");
                         final Tooltip tooltip = new Tooltip(paths.get(i) + " & " + paths.get(j));
                         warningIdenticalNames.setTooltip(tooltip);
                         return;
